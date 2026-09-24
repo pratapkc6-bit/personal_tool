@@ -65,6 +65,25 @@ export async function scanGmail(userId: string, maxResults = 30) {
       });
     }
 
+    if (saved.requiresAction || saved.classification === "SECURITY") {
+      await db.notification.upsert({
+        where: {
+          userId_dedupeKey: {
+            userId,
+            dedupeKey: `email:${item.id}`,
+          },
+        },
+        update: {},
+        create: {
+          userId,
+          type: saved.classification === "SECURITY" ? "SECURITY_ALERT" : "IMPORTANT_EMAIL",
+          title: saved.subject || "Important email",
+          body: saved.recommendedAction || saved.whyItMatters || "Review this message.",
+          dedupeKey: `email:${item.id}`,
+        },
+      });
+    }
+
     processed++;
   }
 
