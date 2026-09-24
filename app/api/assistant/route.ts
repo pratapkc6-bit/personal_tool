@@ -27,6 +27,9 @@ type PendingAction =
       nextAction?: string;
     };
 
+type CalendarPendingAction = Extract<PendingAction, { type: "CREATE_CALENDAR_EVENT" }>;
+type TaskPendingAction = Extract<PendingAction, { type: "CREATE_TASK" }>;
+
 function pad(value: number) {
   return String(value).padStart(2, "0");
 }
@@ -45,7 +48,7 @@ function parseDarwinDate(text: string) {
   return new Date(darwin);
 }
 
-function eventPreview(message: string): PendingAction | null {
+function eventPreview(message: string): CalendarPendingAction | null {
   if (!/\b(add|schedule|book|appointment|workout|meeting)\b/i.test(message)) return null;
   const startDate = parseDarwinDate(message);
   if (!startDate) return null;
@@ -77,7 +80,7 @@ function eventPreview(message: string): PendingAction | null {
   };
 }
 
-function taskPreview(message: string): PendingAction | null {
+function taskPreview(message: string): TaskPendingAction | null {
   if (!/\b(remind me|create task|add task|i have to|i need to)\b/i.test(message)) return null;
   const due = parseDarwinDate(message);
   const title = message
