@@ -1,0 +1,259 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TaskStatus {
+  OPEN
+  WAITING
+  COMPLETED
+  NO_LONGER_RELEVANT
+}
+
+enum Priority {
+  URGENT
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum EmailClassification {
+  ACTION_REQUIRED
+  WAITING
+  INFORMATION
+  LOW_VALUE
+  SECURITY
+  WORK
+  CAREER
+  STUDY
+  FINANCE
+}
+
+enum FollowupStatus {
+  OPEN
+  COMPLETED
+  NO_LONGER_RELEVANT
+}
+
+model User {
+  id                 String              @id @default(cuid())
+  name               String?
+  email              String?             @unique
+  emailVerified      DateTime?
+  image               String?
+  accounts            Account[]
+  sessions            Session[]
+  tasks               Task[]
+  followups           Followup[]
+  emailIntelligence   EmailIntelligence[]
+  emailActions        EmailAction[]
+  calendarEventLinks  CalendarEventLink[]
+  rosterImports       RosterImport[]
+  reminders           Reminder[]
+  notifications       Notification[]
+  assistantActivity   AssistantActivity[]
+  settings            Setting[]
+  auditLogs           AuditLog[]
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  @@unique([identifier, token])
+}
+
+model Task {
+  id         String     @id @default(cuid())
+  userId     String
+  title      String
+  category   String
+  priority   Priority   @default(MEDIUM)
+  status     TaskStatus @default(OPEN)
+  dueAt      DateTime?
+  source     String
+  sourceRef  String?
+  nextAction String?
+  notes      String?    @db.Text
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId, status, dueAt])
+}
+
+model Followup {
+  id               String         @id @default(cuid())
+  userId           String
+  subject          String
+  personCompany    String?
+  dateStarted      DateTime       @default(now())
+  lastUpdate       DateTime       @default(now())
+  expectedResponse String?
+  nextFollowupAt   DateTime?
+  status           FollowupStatus @default(OPEN)
+  source           String
+  sourceRef        String?
+  notes            String?        @db.Text
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId, status, nextFollowupAt])
+}
+
+model EmailIntelligence {
+  id             String              @id @default(cuid())
+  userId         String
+  gmailMessageId String
+  threadId       String?
+  sender         String?
+  subject        String?
+  snippet        String?             @db.Text
+  classification EmailClassification
+  requiresAction Boolean             @default(false)
+  importance     Priority            @default(LOW)
+  deadlineAt     DateTime?
+  whatHappened   String?             @db.Text
+  whyItMatters   String?             @db.Text
+  recommendedAction String?          @db.Text
+  receivedAt     DateTime?
+  processedAt    DateTime            @default(now())
+  user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([userId, gmailMessageId])
+  @@index([userId, requiresAction, processedAt])
+}
+
+model EmailAction {
+  id             String   @id @default(cuid())
+  userId         String
+  gmailMessageId String?
+  actionType     String
+  status         String
+  draftId        String?
+  payload        Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model CalendarEventLink {
+  id             String   @id @default(cuid())
+  userId         String
+  sourceType     String
+  sourceKey      String
+  sourceEmailId  String?
+  googleEventId  String
+  sourceDate     DateTime?
+  startAt        DateTime?
+  endAt          DateTime?
+  metadata       Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([userId, sourceType, sourceKey])
+  @@unique([userId, googleEventId])
+  @@index([userId, sourceType, sourceDate])
+}
+
+model RosterImport {
+  id              String   @id @default(cuid())
+  userId          String
+  sourceMessageId String
+  sender          String?
+  subject         String?
+  rosterStart     DateTime?
+  rosterEnd       DateTime?
+  shifts          Json
+  result          Json?
+  importedAt      DateTime @default(now())
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([userId, sourceMessageId])
+}
+
+model Reminder {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  remindAt  DateTime
+  status    String   @default("OPEN")
+  source    String
+  sourceRef String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  title     String
+  body      String   @db.Text
+  dedupeKey String?
+  readAt    DateTime?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([userId, dedupeKey])
+}
+
+model AssistantActivity {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  summary   String
+  details   Json?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId, createdAt])
+}
+
+model Setting {
+  id        String   @id @default(cuid())
+  userId    String
+  key       String
+  value     Json
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([userId, key])
+}
+
+model AuditLog {
+  id            String   @id @default(cuid())
+  userId        String
+  action        String
+  source        String
+  sourceRef     String?
+  previousState Json?
+  newState      Json?
+  result        String
+  createdAt     DateTime @default(now())
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId, createdAt])
+}
