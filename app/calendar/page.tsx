@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { CalendarBoard } from "@/components/calendar-board";
 import { EventCreator } from "@/components/event-creator";
 
@@ -10,7 +11,9 @@ export default function CalendarPage() {
           <h1 className="text-2xl font-bold tracking-tight">Live calendar</h1>
           <p className="mt-1 text-sm text-slate-600">Day, week, month and agenda views. Create, edit, reschedule and delete changes are previewed before writing.</p>
         </div>
-        <EventCreator />
+        <Suspense fallback={<div className="h-10 w-28 rounded-xl bg-slate-100" aria-hidden />}>
+          <EventCreator />
+        </Suspense>
       </div>
       <CalendarBoard />
     </div>
