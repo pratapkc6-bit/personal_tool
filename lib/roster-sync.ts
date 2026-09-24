@@ -210,6 +210,25 @@ export async function syncLatestMyobRoster(userId: string) {
     details: { sourceMessageId: selected.id, created, updated, removed },
   });
 
+  if (created + updated + removed > 0) {
+    await db.notification.upsert({
+      where: {
+        userId_dedupeKey: {
+          userId,
+          dedupeKey: `roster:${selected.id}`,
+        },
+      },
+      update: {},
+      create: {
+        userId,
+        type: updated || removed ? "SHIFT_CHANGE" : "NEW_ROSTER",
+        title: updated || removed ? "Work roster changed" : "New work roster",
+        body: `${created} new, ${updated} changed, ${removed} removed shift${created + updated + removed === 1 ? "" : "s"}.`,
+        dedupeKey: `roster:${selected.id}`,
+      },
+    });
+  }
+
   await audit({
     userId,
     action: "MYOB_ROSTER_SYNC",
