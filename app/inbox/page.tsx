@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { GmailScanButton } from "@/components/gmail-scan-button";
+import { RosterSyncButton } from "@/components/roster-sync-button";
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +25,7 @@ export default async function InboxPage() {
         </div>
         <div className="flex gap-2">
           <Link href="/inbox/compose" className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold">Compose</Link>
+          <RosterSyncButton />
           <GmailScanButton />
         </div>
       </div>
