@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { authOptions, runtimeAuthConfigured } from "@/lib/auth";
 import { buildSecretaryBriefing } from "@/lib/secretary";
 import { getGoogleServices } from "@/lib/google";
 import { Section } from "@/components/section";
@@ -15,6 +15,36 @@ function formatDate(date: Date, options: Intl.DateTimeFormatOptions) {
 }
 
 export default async function HomePage() {
+  if (!runtimeAuthConfigured) {
+    const missing = [
+      !process.env.DATABASE_URL && "DATABASE_URL",
+      !process.env.NEXTAUTH_SECRET && "NEXTAUTH_SECRET",
+      !process.env.GOOGLE_CLIENT_ID && "GOOGLE_CLIENT_ID",
+      !process.env.GOOGLE_CLIENT_SECRET && "GOOGLE_CLIENT_SECRET",
+    ].filter(Boolean) as string[];
+
+    return (
+      <div className="mx-auto max-w-2xl py-8">
+        <div className="rounded-3xl border border-amber-200 bg-white p-6 shadow-card">
+          <p className="text-sm font-semibold text-amber-700">DEPLOYMENT LIVE · SETUP REQUIRED</p>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight">Pratap Personal Secretary is running.</h1>
+          <p className="mt-3 text-slate-600">
+            The server is healthy, but Google and database integrations are not configured in this Vercel environment yet.
+          </p>
+          <div className="mt-5 rounded-2xl bg-slate-50 p-4">
+            <p className="text-sm font-semibold text-slate-800">Missing runtime configuration</p>
+            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-600">
+              {missing.map((name) => <li key={name}>{name}</li>)}
+            </ul>
+          </div>
+          <p className="mt-4 text-sm text-slate-500">
+            Gmail, Calendar, MYOB roster sync and database-backed tasks will activate after these secrets are connected.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   const session = await getServerSession(authOptions);
   const now = new Date();
 
