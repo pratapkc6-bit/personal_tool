@@ -34,6 +34,18 @@ export default function AboutPage() {
         <code className="mt-1 block break-all rounded-xl bg-slate-100 p-3 text-xs">{PRODUCTION_URL}</code>
         <p className="mt-4 text-sm text-slate-600">Google authorized redirect URI must exactly match</p>
         <code className="mt-1 block break-all rounded-xl bg-slate-100 p-3 text-xs">{GOOGLE_CALLBACK_URL}</code>
+
+        <div className="mt-5 rounded-2xl border border-slate-200 p-4">
+          <p className="font-semibold">Running OAuth diagnostics</p>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            <Info label="Effective NEXTAUTH_URL" value={meta.effectiveNextAuthUrl} mono />
+            <Info label="Actual callback base" value={meta.effectiveGoogleCallback} mono />
+            <Info label="Google Client ID hint" value={meta.googleClientIdHint} mono />
+          </div>
+          <p className="mt-3 text-xs text-slate-500">
+            The Client ID hint lets you confirm that Vercel is using the same Google OAuth client that you edited in Google Cloud, without exposing the full credential.
+          </p>
+        </div>
       </section>
 
       <Link href="/connections" className="inline-flex rounded-xl bg-slate-900 px-4 py-3 font-semibold text-white">
