@@ -26,6 +26,41 @@ export const runtimeAuthConfigured = Boolean(
   process.env.GOOGLE_CLIENT_SECRET
 );
 
+const baseAdapter = PrismaAdapter(db);
+
+const safeAdapter: NonNullable<NextAuthOptions["adapter"]> = {
+  ...baseAdapter,
+  async linkAccount(account) {
+    const {
+      userId,
+      type,
+      provider,
+      providerAccountId,
+      refresh_token,
+      access_token,
+      expires_at,
+      token_type,
+      scope,
+      id_token,
+      session_state,
+    } = account;
+
+    return baseAdapter.linkAccount!({
+      userId,
+      type,
+      provider,
+      providerAccountId,
+      refresh_token,
+      access_token,
+      expires_at,
+      token_type,
+      scope,
+      id_token,
+      session_state,
+    });
+  },
+};
+
 const providers = runtimeAuthConfigured
   ? [
       GoogleProvider({
@@ -58,7 +93,7 @@ const providers = runtimeAuthConfigured
 export const authOptions: NextAuthOptions = {
   ...(runtimeAuthConfigured
     ? {
-        adapter: PrismaAdapter(db),
+        adapter: safeAdapter,
         session: { strategy: "database" as const },
       }
     : {
