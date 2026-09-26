@@ -1,6 +1,6 @@
 # Pratap Personal Secretary
 
-Current release: **v0.7.1 — Zoro local intelligence, no paid AI API**. See [setup, capabilities and limits](docs/ZORO_0_7.md).
+Current release: **v0.8.0 — optional on-device browser model, no paid AI API**. See [on-device setup](docs/ON_DEVICE.md) and [local secretary capabilities](docs/ZORO_0_7.md).
 
 A private, mobile-first AI personal secretary that connects Gmail, Google Calendar, tasks, MYOB work rosters, follow-ups, reminders, activity history and natural-language assistance.
 
