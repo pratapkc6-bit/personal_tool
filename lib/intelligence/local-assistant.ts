@@ -1,4 +1,5 @@
 import type { AssistantContext } from "@/lib/intelligence/context-builder";
+import { dayKey, planDay } from "./day-planner";
 
 export type AssistantHistoryMessage = {
   role: "user" | "assistant";
@@ -7,6 +8,7 @@ export type AssistantHistoryMessage = {
 
 type Intent =
   | "CAPABILITIES"
+  | "PLAN"
   | "BRIEFING"
   | "PRIORITIES"
   | "EMAIL"
@@ -23,6 +25,9 @@ function normalize(text: string) {
 
 function baseIntent(message: string): Intent {
   const text = normalize(message);
+
+  if (/\b(plan (my |the )?(day|today|tomorrow)|make (me )?a plan|time ?block|fit .* in|find .*time|find .*\d+.*(minutes?|hours?)|when .*\d+.*(minutes?|hours?))\b/.test(text)) return "PLAN";
+  if (/\b(what should i do|what do i need to do|priorities|focus on|important today)\b/.test(text)) return "PRIORITIES";
 
   if (
     /\b(what can you do|what do you do|how can you help|what are your capabilities|what are your features|what can i ask you)\b/.test(text)
@@ -54,14 +59,14 @@ function baseIntent(message: string): Intent {
 
 function inferIntent(message: string, history: AssistantHistoryMessage[]): Intent {
   const direct = baseIntent(message);
-  if (direct !== "GENERAL") return direct;
-
   const text = normalize(message);
+  const dayOnly = /^(and |what about |how about )?(today|tomorrow|tonight)[?.!]*$/.test(text);
+  if (direct !== "GENERAL" && !dayOnly) return direct;
   const looksLikeFollowUp =
     text.length < 80 &&
     /^(and |what about|how about|why|when|which|the first|the second|the third|first|second|third|tomorrow|today|tonight|then|that|it)/.test(text);
 
-  if (!looksLikeFollowUp) return "GENERAL";
+  if (!looksLikeFollowUp) return direct;
 
   for (let i = history.length - 1; i >= 0; i--) {
     if (history[i].role !== "user") continue;
@@ -69,7 +74,7 @@ function inferIntent(message: string, history: AssistantHistoryMessage[]): Inten
     if (previous !== "GENERAL") return previous;
   }
 
-  return "GENERAL";
+  return direct;
 }
 
 function formatWhen(value: string | Date | null | undefined, timezone: string) {
@@ -154,7 +159,7 @@ function capabilitiesAnswer(context: AssistantContext) {
     "• rank what deserves attention instead of repeating every alert",
     "• tell you what to do now, today, or next",
     "• show deadlines and explain why something is urgent",
-    "• reason over your next 7 days of Google Calendar",
+    "• plan today or tomorrow with free-time windows and overlapping-event warnings",
     "• track waiting items and follow-ups",
     "• prepare tasks, calendar events and MYOB roster changes, then ask for confirmation before writing",
     "",
@@ -169,7 +174,9 @@ function priorityAnswer(context: AssistantContext) {
     const next = context.calendarEvents[0];
     return next
       ? `You have no stored action items right now. Your next calendar item is ${next.title} at ${formatWhen(next.start, context.timezone)}.`
-      : "You have no stored action items or upcoming calendar events in the next 7 days.";
+      : context.calendarStatus === "available"
+        ? "You have no stored action items or upcoming calendar events in the next 7 days."
+        : "You have no stored action items. Calendar is unavailable or incomplete, so I cannot verify your next commitment.";
   }
 
   const now = new Date(context.generatedAt);
@@ -263,40 +270,52 @@ function followupAnswer(context: AssistantContext) {
   ].join("\n");
 }
 
+function planningAnswer(message: string, context: AssistantContext, includePriorities: boolean) {
+  if (/\b(monday|tuesday|wednesday|thursday|friday|saturday|sunday|next week|next month)\b|\d{4}-\d{2}-\d{2}/i.test(message)) {
+    return "I can currently plan today or tomorrow. Which of those days would you like?";
+  }
+  if (context.calendarStatus !== "available") {
+    return "I cannot reliably check free time because Google Calendar is " +
+      (context.calendarStatus === "partial" ? "only partially loaded." : "unavailable. Check your Google connection and try again.") +
+      (includePriorities ? "\n\n" + priorityAnswer(context) : "");
+  }
+  const now = new Date(context.generatedAt);
+  const day = targetDay(message, now, context.timezone) || dayKey(now, context.timezone);
+  const duration = message.match(/(\d+)\s*(minutes?|mins?|hours?|hrs?)\b/i);
+  const minutes = duration ? Number(duration[1]) * (/^(hour|hr)/i.test(duration[2]) ? 60 : 1) : 30;
+  if (minutes < 1 || minutes > 540) return "Choose a focus block between 1 minute and 9 hours.";
+  const plan = planDay(context.calendarEvents, day, context.timezone, now, minutes);
+  const when = (value: number) => formatWhen(new Date(value), context.timezone);
+  const lines = ["Plan for " + day + " (" + context.timezone + "):", ""];
+  if (plan.incomplete) lines.push("Some events have missing or invalid times; I cannot reliably suggest free time.");
+  lines.push(...plan.commitments.map(e => "• " + e.title + " — " + when(e.from) + " to " + when(e.to)));
+  if (!plan.commitments.length) lines.push("No busy events found for this day.");
+  if (plan.conflicts.length) lines.push("", "Conflicts to resolve:", ...plan.conflicts.map(c => "• " + c));
+  if (!plan.incomplete) {
+    lines.push("", "Available windows of at least " + minutes + " minutes (09:00–18:00):");
+    lines.push(...plan.slots.map(s => "• " + when(s.start) + " to " + when(s.end) + " (" + Math.floor((s.end - s.start) / 60_000) + " minutes)"));
+    if (!plan.slots.length) lines.push("No matching window remains in these planning hours.");
+  }
+  if (includePriorities && context.topPriorities.length) {
+    lines.push("", "Suggested focus order (durations are not known):");
+    lines.push(...context.topPriorities.map((p, i) => (i + 1) + ". " + p.title + " — " + (p.nextAction || p.reason)));
+    if (plan.slots[0]) lines.push("Start with a " + minutes + "-minute review of the first item at " + when(plan.slots[0].start) + ".");
+  }
+  lines.push("", "Suggestions only; nothing has been scheduled. Availability reflects busy events on your primary Google Calendar.");
+  return lines.join("\n");
+}
+
 function calendarAnswer(message: string, context: AssistantContext) {
+  if (/\b(free|available|busy|time available)\b/i.test(message)) return planningAnswer(message, context, false);
+  if (context.calendarStatus !== "available") return "Google Calendar is unavailable or incomplete. I cannot reliably report your schedule; check your connection and try again.";
   const now = new Date(context.generatedAt);
   const requestedDay = targetDay(message, now, context.timezone);
   const events = requestedDay
-    ? context.calendarEvents.filter((event) => dateKey(event.start, context.timezone) === requestedDay)
+    ? planDay(context.calendarEvents, requestedDay, context.timezone, now).commitments
     : context.calendarEvents;
-
-  const isAvailabilityQuestion = /\b(free|available|busy|time available)\b/i.test(message);
-
-  if (!events.length) {
-    if (requestedDay && isAvailabilityQuestion) {
-      return "I do not see any Google Calendar events for that day, so your calendar currently looks open. That only reflects events stored in Google Calendar.";
-    }
-    return requestedDay
-      ? "I do not see any Google Calendar events for that day."
-      : "I do not see any events on your Google Calendar in the next 7 days.";
-  }
-
-  if (requestedDay && isAvailabilityQuestion) {
-    return [
-      `You have ${events.length} calendar commitment${events.length === 1 ? "" : "s"} that day:`,
-      "",
-      ...events.map((event) => `• ${event.title} — ${formatWhen(event.start, context.timezone)}${event.end ? ` to ${formatWhen(event.end, context.timezone)}` : ""}`),
-      "",
-      "Outside those stored events, I do not see another calendar conflict.",
-    ].join("\n");
-  }
-
-  return [
-    requestedDay ? "Your schedule for that day:" : "Your next calendar items:",
-    "",
-    ...events.slice(0, 8).map((event, index) =>
-      `${index + 1}. ${event.title} — ${formatWhen(event.start, context.timezone)}`
-    ),
+  if (!events.length) return requestedDay ? "No busy Calendar events found for that day." : "No busy Calendar events found in the next 7 days.";
+  return [requestedDay ? "Your schedule for that day:" : "Your next calendar items:", "",
+    ...events.slice(0, 12).map((e, i) => (i + 1) + ". " + e.title + " — " + formatWhen(e.start, context.timezone)),
   ].join("\n");
 }
 
@@ -342,8 +361,15 @@ export function answerWithLocalIntelligence(
   history: AssistantHistoryMessage[] = []
 ) {
   const intent = inferIntent(message, history);
+  if (intent === "PLAN" && /^(and |what about |how about )?(today|tomorrow|tonight)[?.!]*$/i.test(message.trim())) {
+    const previous = [...history].reverse().find(item => item.role === "user" && baseIntent(item.text) === "PLAN");
+    const duration = previous?.text.match(/\d+\s*(minutes?|mins?|hours?|hrs?)\b/i)?.[0];
+    if (duration) message += " " + duration;
+  }
 
   switch (intent) {
+    case "PLAN":
+      return planningAnswer(message, context, true);
     case "CAPABILITIES":
       return capabilitiesAnswer(context);
     case "BRIEFING":
