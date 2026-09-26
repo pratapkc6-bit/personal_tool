@@ -177,6 +177,27 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
     };
   }, []);
 
+
+  useEffect(() => {
+    const pending = window.sessionStorage.getItem("zoro:pending-command");
+    const openedByWakeWord = window.sessionStorage.getItem("zoro:open-voice") === "1";
+    window.sessionStorage.removeItem("zoro:open-voice");
+
+    if (pending) {
+      window.sessionStorage.removeItem("zoro:pending-command");
+      const timer = window.setTimeout(() => void send(pending, true), 450);
+      return () => window.clearTimeout(timer);
+    }
+
+    if (!settings.handsFreeWakeWord) return;
+    const timer = window.setTimeout(() => {
+      if (!voiceModeRef.current && !busyRef.current) enableVoiceMode();
+    }, openedByWakeWord ? 450 : (settings.autoGreeting ? 5000 : 900));
+    return () => window.clearTimeout(timer);
+  // Startup behavior is intentionally evaluated once for this Assistant mount.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   function resetComposer() {
     setInput("");
     if (composerRef.current) composerRef.current.style.height = "";
@@ -281,7 +302,7 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
     const value = (valueOverride ?? input).trim();
     if (!value || busyRef.current) return;
 
-    const history = messagesRef.current.slice(-12).map(({ role, text }) => ({
+    const history = messagesRef.current.slice(-20).map(({ role, text }) => ({
       role,
       text: text.slice(0, 4000),
     }));

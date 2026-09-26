@@ -6,7 +6,7 @@ import { stripTypeScriptTypes } from "node:module";
 // Erase type-only database imports so these logic tests need no credentials or database.
 const source = readFileSync(new URL("../lib/intelligence/local-assistant.ts", import.meta.url), "utf8")
   .replace('"./day-planner"', JSON.stringify(new URL("../lib/intelligence/day-planner.ts", import.meta.url).href));
-const { answerWithLocalIntelligence: answer, isOpenEndedConversation } = await import("data:text/javascript;base64," + Buffer.from(stripTypeScriptTypes(source)).toString("base64"));
+const { answerWithLocalIntelligence: answer, isOpenEndedConversation, normalizeAssistantInput } = await import("data:text/javascript;base64," + Buffer.from(stripTypeScriptTypes(source)).toString("base64"));
 const priority = { title: "Submit assignment", priority: "HIGH", nextAction: "Review the draft", reason: "Due soon", dueAt: null };
 const context = {
   generatedAt: "2026-09-26T00:00:00Z", timezone: "Australia/Darwin", calendarStatus: "available",
@@ -41,4 +41,18 @@ test("failed and truncated Calendar cannot imply availability", () => {
 });
 test("day follow-up retains email topic", () => {
   assert.match(answer("Tomorrow?", context, [{ role: "user", text: "Which emails need action?" }]), /emails/);
+});
+
+test("speech-like input is normalised before intent matching", () => {
+  assert.equal(normalizeAssistantInput("Um check my emial tommorow"), "check my email tomorrow");
+  assert.equal(normalizeAssistantInput("calender schedual"), "calendar schedule");
+});
+test("casual priority wording is understood", () => {
+  assert.match(answer("hey zoro what i do now", context), /Submit assignment/);
+});
+test("vague everyday briefing wording is understood", () => {
+  assert.match(answer("anything for me?", context), /current briefing/i);
+});
+test("simple greeting gets a contextual answer instead of an unmapped error", () => {
+  assert.match(answer("hey", context), /top priority|ready/i);
 });

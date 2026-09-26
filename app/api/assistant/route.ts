@@ -5,7 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getGoogleServices } from "@/lib/google";
 import { buildAssistantContext } from "@/lib/intelligence/context-builder";
-import { answerWithLocalIntelligence, isOpenEndedConversation, type AssistantHistoryMessage } from "@/lib/intelligence/local-assistant";
+import { answerWithLocalIntelligence, isOpenEndedConversation, normalizeAssistantInput, type AssistantHistoryMessage } from "@/lib/intelligence/local-assistant";
 import { scanGmail } from "@/lib/gmail-scan";
 import { syncLatestMyobRoster } from "@/lib/roster-sync";
 import { audit, activity } from "@/lib/audit";
@@ -37,11 +37,15 @@ function parseDarwinDate(text: string) {
 }
 
 function eventPreview(message: string): CalendarPendingAction | null {
-  if (/\b(remind me|create task|add task|i have to|i need to)\b/i.test(message)) return null;
-  if (!/\b(add|schedule|book|create)\b.*\b(appointment|workout|meeting|event)\b/i.test(message) &&
-      !/\b(add|schedule|book)\b/i.test(message)) return null;
+  const understood = normalizeAssistantInput(message);
+  if (/\b(remind me|remember me|create task|add task|make a task|i have to|i need to|note that i need to)\b/i.test(understood)) return null;
+  if (/^(what|when|where|which|am i|do i|have i|show|tell me).*[?]?$/i.test(understood) &&
+      !/\b(add|schedule|book|create|put|set)\b/i.test(understood)) return null;
+  const hasEventWord = /\b(appointment|workout|meeting|event|gym|class|check-?up)\b/i.test(understood);
+  const hasActionVerb = /\b(add|schedule|book|create|put|set|block|i have|i've got|need an?)\b/i.test(understood);
+  if (!hasActionVerb || !hasEventWord) return null;
 
-  const startDate = parseDarwinDate(message);
+  const startDate = parseDarwinDate(understood);
   if (!startDate) return null;
 
   const lower = message.toLowerCase();
@@ -72,12 +76,14 @@ function eventPreview(message: string): CalendarPendingAction | null {
 }
 
 function taskPreview(message: string): TaskPendingAction | null {
-  if (!/\b(remind me|create task|add task|i have to|i need to)\b/i.test(message)) return null;
-  const due = parseDarwinDate(message);
-  const title = message
-    .replace(/^(remind me to|create task|add task|i have to|i need to)\s*/i, "")
+  const understood = normalizeAssistantInput(message);
+  if (!/\b(remind me|remember me|create task|add task|make a task|i have to|i need to|note that i need to)\b/i.test(understood)) return null;
+  const due = parseDarwinDate(understood);
+  const rawTitle = understood
+    .replace(/^(please\s+)?(remind me to|remember me to|create task|add task|make a task|i have to|i need to|note that i need to)\s*/i, "")
     .replace(/\s+(today|tomorrow|on\s+\w+|next\s+\w+|at\s+\d.*)$/i, "")
     .trim();
+  const title = rawTitle ? rawTitle.charAt(0).toUpperCase() + rawTitle.slice(1) : "";
 
   return {
     type: "CREATE_TASK",
@@ -170,13 +176,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ...await executeAction(session.user.id, action), engine: "action" });
     }
     const message = body.message!;
+    const understood = normalizeAssistantInput(message);
     await db.setting.deleteMany({ where: { userId: session.user.id, key: "assistant_pending_action" } });
     const history: AssistantHistoryMessage[] = body.history || [];
-    if (/^(please )?(check|scan|refresh)\s+(my )?(email|emails|gmail|inbox)[.!?]*$/i.test(message)) {
+    if (/^(please )?(check|scan|refresh|look at|show|see)\s+(my )?(email|emails|mail|gmail|inbox|messages)[.!?]*$/i.test(understood)) {
       const result = await scanGmail(session.user.id);
       return NextResponse.json({ message: `Gmail scan complete. ${result.processed} new messages processed and ${result.actionItems.length} action items detected.`, engine: "local", suggestedPrompts: ["Which emails need action?", "What should I do now?"] });
     }
-    if (/^(please )?(sync|add|check)\s+(my |the )?(myob )?roster[.!?]*$/i.test(message)) {
+    if (/^(please )?(sync|add|check|update|refresh)\s+(my |the )?(myob )?roster[.!?]*$/i.test(understood)) {
       return NextResponse.json({ message: "Review and confirm to reconcile the latest MYOB roster with Google Calendar.", ...await prepareConfirmation(session.user.id, { type: "SYNC_MYOB_ROSTER" }), engine: "local" });
     }
     const action = taskPreview(message) || eventPreview(message);

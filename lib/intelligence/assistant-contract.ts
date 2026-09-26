@@ -15,5 +15,5 @@ export type PendingAction = z.infer<typeof pendingActionSchema>;
 export const requestSchema = z.object({
   message: z.string().trim().min(1).max(4000).optional(),
   confirmationToken: z.uuid().optional(),
-  history: z.array(z.object({ role: z.enum(["user", "assistant"]), text: z.string().max(4000) })).max(16).optional(),
+  history: z.array(z.object({ role: z.enum(["user", "assistant"]), text: z.string().max(4000) })).max(24).optional(),
 }).strict().refine(value => Boolean(value.message) !== Boolean(value.confirmationToken), "Provide a message or a confirmation token.");

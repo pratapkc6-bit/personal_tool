@@ -9,6 +9,9 @@ export type AssistantSettings = {
   keepListening: boolean;
   language: "en-AU" | "en-US" | "en-GB" | "en-IN";
   speechRate: number;
+  autoGreeting: boolean;
+  proactiveGreeting: boolean;
+  handsFreeWakeWord: boolean;
 };
 
 export const DEFAULT_ASSISTANT_SETTINGS: AssistantSettings = {
@@ -18,6 +21,9 @@ export const DEFAULT_ASSISTANT_SETTINGS: AssistantSettings = {
   keepListening: true,
   language: "en-AU",
   speechRate: 1,
+  autoGreeting: true,
+  proactiveGreeting: true,
+  handsFreeWakeWord: true,
 };
 
 const supportedLanguages = new Set<AssistantSettings["language"]>([
@@ -70,6 +76,15 @@ export function normaliseAssistantSettings(value: unknown): AssistantSettings {
       : DEFAULT_ASSISTANT_SETTINGS.keepListening,
     language,
     speechRate,
+    autoGreeting: typeof input.autoGreeting === "boolean"
+      ? input.autoGreeting
+      : DEFAULT_ASSISTANT_SETTINGS.autoGreeting,
+    proactiveGreeting: typeof input.proactiveGreeting === "boolean"
+      ? input.proactiveGreeting
+      : DEFAULT_ASSISTANT_SETTINGS.proactiveGreeting,
+    handsFreeWakeWord: typeof input.handsFreeWakeWord === "boolean"
+      ? input.handsFreeWakeWord
+      : DEFAULT_ASSISTANT_SETTINGS.handsFreeWakeWord,
   };
 }
 

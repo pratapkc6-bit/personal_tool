@@ -1227,3 +1227,61 @@ section[aria-label="On-device model"] {
   .calendar-sheet-actions button { flex: 1 1 45%; }
   .zoro-chat-identity p { max-width: 150px; }
 }
+
+
+/* Zoro Nexus v1.2 · ambient voice presence */
+.zoro-presence-toast {
+  position: fixed;
+  right: 24px;
+  bottom: 98px;
+  z-index: 95;
+  width: min(360px, calc(100vw - 24px));
+  display: grid;
+  grid-template-columns: 38px minmax(0,1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(105,231,255,.22);
+  border-radius: 16px;
+  color: #dfeaf6;
+  background: rgba(7,13,23,.94);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 22px 70px rgba(0,0,0,.38);
+}
+.zoro-presence-orb {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: var(--nx-cyan);
+  background: rgba(105,231,255,.06);
+}
+.zoro-presence-orb::after {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1px solid rgba(105,231,255,.32);
+  border-radius: 9px;
+}
+.zoro-presence-copy { min-width: 0; display: grid; gap: 3px; }
+.zoro-presence-copy strong { font-size: 10px; }
+.zoro-presence-copy span { color: #66778d; font-size: 8px; line-height: 1.4; }
+.zoro-presence-toast button {
+  min-height: 34px;
+  padding: 0 10px;
+  border: 1px solid rgba(105,231,255,.25);
+  border-radius: 10px;
+  color: #061118;
+  background: linear-gradient(135deg,var(--nx-cyan),#a5f4ff);
+  font-size: 8px;
+  font-weight: 800;
+}
+@media(max-width:760px){
+  .zoro-presence-toast {
+    right: 12px;
+    bottom: 154px;
+    width: calc(100vw - 24px);
+  }
+}

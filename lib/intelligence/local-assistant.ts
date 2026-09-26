@@ -7,6 +7,8 @@ export type AssistantHistoryMessage = {
 };
 
 type Intent =
+  | "GREETING"
+  | "THANKS"
   | "CAPABILITIES"
   | "PLAN"
   | "BRIEFING"
@@ -19,18 +21,42 @@ type Intent =
   | "EXPLAIN_PRIORITY"
   | "GENERAL";
 
+export function normalizeAssistantInput(text: string) {
+  return text
+    .toLowerCase()
+    .replace(/[’']/g, "'")
+    .replace(/\b(tomm?orow|tomorow)\b/g, "tomorrow")
+    .replace(/\b(calender|calandar)\b/g, "calendar")
+    .replace(/\b(schedual|shedule)\b/g, "schedule")
+    .replace(/\b(emial|emaill|e-mail)\b/g, "email")
+    .replace(/\b(mails)\b/g, "emails")
+    .replace(/\b(appoinment|appointement)\b/g, "appointment")
+    .replace(/\b(roaster)\b/g, "roster")
+    .replace(/\b(rember|remeber)\b/g, "remember")
+    .replace(/\b(whats)\b/g, "what's")
+    .replace(/\b(ive)\b/g, "i've")
+    .replace(/\b(dont)\b/g, "don't")
+    .replace(/\b(cant)\b/g, "can't")
+    .replace(/\b(uh+|um+|erm+|hmm+)\b/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function normalize(text: string) {
-  return text.toLowerCase().replace(/[’']/g, "'").replace(/\s+/g, " ").trim();
+  return normalizeAssistantInput(text);
 }
 
 function baseIntent(message: string): Intent {
   const text = normalize(message);
 
+  if (/^(hey|hi|hello|hello zoro|hey zoro|good morning|good afternoon|good evening|morning|afternoon|evening|how are you|are you there)[.!? ]*$/.test(text)) return "GREETING";
+  if (/^(thanks|thank you|cheers|got it|okay thanks|ok thanks)[.!? ]*$/.test(text)) return "THANKS";
+
   if (/\b(plan (my |the )?(day|today|tomorrow)|make (me )?a plan|time ?block|fit .* in|find .*time|find .*\d+.*(minutes?|hours?)|when .*\d+.*(minutes?|hours?))\b/.test(text)) return "PLAN";
-  if (/\b(what should i do|what do i need to do|priorities|focus on|important today)\b/.test(text)) return "PRIORITIES";
+  if (/\b(what should i do|what do i need to do|what i do|what do i do|tell me what to do|what next|next thing|priorities|focus on|important today)\b/.test(text)) return "PRIORITIES";
 
   if (
-    /\b(what can you do|what do you do|how can you help|what are your capabilities|what are your features|what can i ask you)\b/.test(text)
+    /\b(what can you do|what can do for me|what do you do|how can you help|how you help me|what are your capabilities|what are your features|what can i ask you)\b/.test(text)
   ) return "CAPABILITIES";
 
   if (/\b(why (is|are|was|were)? ?(this|that|it|the first|the second|the third)?.*(urgent|important|priority)|why this|why that|explain (this|that|the priority))\b/.test(text)) {
@@ -40,7 +66,7 @@ function baseIntent(message: string): Intent {
   if (/\b(security|sign[- ]?in|suspicious|password|account alert)\b/.test(text)) return "SECURITY";
   if (/\b(deadline|deadlines|due|overdue|when.*due|expires?|expiry)\b/.test(text)) return "DEADLINES";
   if (/\b(waiting|follow[- ]?up|pending|response|reply from|heard back)\b/.test(text)) return "FOLLOWUPS";
-  if (/\b(email|emails|gmail|inbox|message|messages)\b/.test(text)) return "EMAIL";
+  if (/\b(email|emails|mail|gmail|inbox|message|messages)\b/.test(text)) return "EMAIL";
 
   if (
     /\b(calendar|schedule|appointment|appointments|meeting|meetings|shift|shifts|free|available|busy|tomorrow|today|this evening|tonight|this morning|this afternoon)\b/.test(text)
@@ -51,7 +77,7 @@ function baseIntent(message: string): Intent {
   ) return "PRIORITIES";
 
   if (
-    /\b(what'?s new|whats new|brief me|briefing|update me|anything important|what should i know|give me an update|how does my day look)\b/.test(text)
+    /\b(what'?s new|brief me|briefing|update me|anything important|anything for me|got anything for me|what have you got for me|what you got for me|what's up|what should i know|give me an update|tell me what's happening|how does my day look)\b/.test(text)
   ) return "BRIEFING";
 
   return "GENERAL";
@@ -142,6 +168,25 @@ function groupedEmailActions(context: AssistantContext) {
   }
 
   return [...map.values()];
+}
+
+
+function greetingAnswer(context: AssistantContext) {
+  const hour = Number(new Intl.DateTimeFormat("en-AU", {
+    timeZone: context.timezone,
+    hour: "2-digit",
+    hour12: false,
+  }).format(new Date(context.generatedAt)));
+  const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+  const first = context.topPriorities[0];
+  if (first) return greeting + ". I’m here. Your current top priority is " + first.title + ". " + (first.nextAction || first.reason);
+  const next = context.calendarEvents[0];
+  if (next) return greeting + ". I’m here. Your next calendar item is " + next.title + " at " + formatWhen(next.start, context.timezone) + ".";
+  return greeting + ". I’m here and ready. Nothing urgent is showing in the stored secretary data right now.";
+}
+
+function thanksAnswer() {
+  return "You’re welcome. I’ll keep the context from this conversation, so you can continue naturally.";
 }
 
 function capabilitiesAnswer(context: AssistantContext) {
@@ -372,6 +417,10 @@ export function answerWithLocalIntelligence(
   }
 
   switch (intent) {
+    case "GREETING":
+      return greetingAnswer(context);
+    case "THANKS":
+      return thanksAnswer();
     case "PLAN":
       return planningAnswer(message, context, true);
     case "CAPABILITIES":
@@ -394,11 +443,11 @@ export function answerWithLocalIntelligence(
       return priorityFromMessage(message, context);
     default:
       return [
-        "I did not map that request to a specific secretary function yet.",
+        "I understand the request, but the local secretary engine does not have a reliable specialised answer for it yet.",
         "",
-        "I can still help with priorities, Gmail, deadlines, Calendar, follow-ups, tasks, roster sync and explaining why something matters.",
+        "You can speak naturally. I can use the conversation to follow references like “that”, “tomorrow”, “the second one”, and “what about this?”.",
         "",
-        "Try phrasing the goal directly, for example: “What should I do now?” or “Am I free tomorrow?”",
+        "For personal operations I understand priorities, Gmail, deadlines, Calendar, follow-ups, tasks, roster sync and why something matters.",
       ].join("\n");
   }
 }

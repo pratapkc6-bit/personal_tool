@@ -39,6 +39,9 @@ export async function PUT(request: NextRequest) {
         language: settings.language,
         spokenReplies: settings.spokenReplies,
         keepListening: settings.keepListening,
+        autoGreeting: settings.autoGreeting,
+        proactiveGreeting: settings.proactiveGreeting,
+        handsFreeWakeWord: settings.handsFreeWakeWord,
       },
     });
 

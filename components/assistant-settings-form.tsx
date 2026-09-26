@@ -160,8 +160,44 @@ export function AssistantSettingsForm({
         </label>
       </section>
 
+
+      <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-card">
+        <p className="text-sm font-semibold">Startup intelligence</p>
+        <p className="mt-1 text-sm text-slate-500">Control what Zoro does when the app becomes active.</p>
+
+        <label className="mt-4 flex items-start justify-between gap-4">
+          <div>
+            <p className="font-medium">Speak when the app opens</p>
+            <p className="text-sm text-slate-500">Zoro attempts a short spoken greeting when a new app session starts.</p>
+          </div>
+          <input type="checkbox" checked={settings.autoGreeting}
+            onChange={(event) => setSettings((current) => ({ ...current, autoGreeting: event.target.checked }))}
+            className="mt-1 h-5 w-5" />
+        </label>
+
+        <label className="mt-5 flex items-start justify-between gap-4">
+          <div>
+            <p className="font-medium">Include useful context</p>
+            <p className="text-sm text-slate-500">Add the current top priority or overdue count to the startup greeting when available.</p>
+          </div>
+          <input type="checkbox" checked={settings.proactiveGreeting}
+            onChange={(event) => setSettings((current) => ({ ...current, proactiveGreeting: event.target.checked }))}
+            className="mt-1 h-5 w-5" />
+        </label>
+
+        <label className="mt-5 flex items-start justify-between gap-4">
+          <div>
+            <p className="font-medium">Hands-free wake word</p>
+            <p className="text-sm text-slate-500">While the app is active, listen for “{settings.wakeWord}” from other screens and open Zoro.</p>
+          </div>
+          <input type="checkbox" checked={settings.handsFreeWakeWord}
+            onChange={(event) => setSettings((current) => ({ ...current, handsFreeWakeWord: event.target.checked }))}
+            className="mt-1 h-5 w-5" />
+        </label>
+      </section>
+
       <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
-        Custom wake words work only while the Assistant page is active. iPhone can suspend microphone access when the app is backgrounded or closed.
+        Hands-free wake word works only while the web app is active. iPhone can suspend microphone access when the app is backgrounded, the screen is locked, or the app is closed. The browser may also require one tap before voice can start.
       </div>
 
       {status && <p className="text-sm text-slate-600">{status}</p>}

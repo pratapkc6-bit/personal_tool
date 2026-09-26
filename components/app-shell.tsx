@@ -7,6 +7,7 @@ import { WorkspaceNav } from "@/components/workspace-nav";
 import { ZoroLauncher } from "@/components/zoro-launcher";
 import { NexusCommand } from "@/components/nexus-command";
 import { SystemClock } from "@/components/system-clock";
+import { ZoroPresence } from "@/components/zoro-presence";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
@@ -61,6 +62,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </footer>
       </section>
 
+      <ZoroPresence />
       <ZoroLauncher />
       <BottomNav />
     </div>
