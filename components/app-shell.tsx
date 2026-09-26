@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BottomNav } from "@/components/bottom-nav";
+import { APP_VERSION } from "@/lib/release";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
@@ -13,10 +14,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <Link className="rounded-xl px-3 py-2 hover:bg-slate-100" href="/search">Search</Link>
             <Link className="rounded-xl px-3 py-2 hover:bg-slate-100" href="/activity">Activity</Link>
             <Link className="rounded-xl px-3 py-2 hover:bg-slate-100" href="/connections">Connections</Link>
+            <Link className="rounded-xl px-3 py-2 hover:bg-slate-100" href="/about">About</Link>
           </nav>
         </div>
       </header>
       <main className="px-4 py-5">{children}</main>
+      <footer className="px-4 pb-4 text-center text-xs text-slate-500">
+        <Link href="/about" className="hover:text-slate-900">
+          Pratap Personal Secretary v{APP_VERSION}
+        </Link>
+      </footer>
       <BottomNav />
     </div>
   );
