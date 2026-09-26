@@ -47,6 +47,18 @@ The web chat sends a small rolling history to the local intelligence engine so s
 - Calendar writes, task writes and MYOB roster changes require confirmation.
 - No external generative-AI API is required for assistant answers.
 
+## Day planning upgrade
+
+- “Plan my day” combines current priorities with available windows between 09:00 and 18:00.
+- “Find 45 minutes tomorrow” filters windows by requested duration; “What about tomorrow?” retains the planning topic and duration.
+- Overlapping commitments, overnight shifts, and all-day events block the correct time. All-day end dates are exclusive.
+- Calendar fetch failures and truncated responses are explicit; they never imply that the user is free. Cancelled, declined and transparent events are excluded from busy time.
+- Suggestions use the primary Calendar and do not create events. Focus durations are review blocks, not task-completion estimates. Working hours are currently fixed; planning supports today and tomorrow.
+- Calendar queries cover the next seven days, with up to 2,500 events. Missing or invalid event times suppress free-time suggestions.
+- Processing stays local to the application. No model key, new database table, or migration is required.
+
+Run `npm test` on Node 22.13+ for scheduling and conversational regression coverage. CI runs these tests before typecheck and build.
+
 ## External AI
 
 A model API can still be added later behind a provider interface, but v0.4.0 intentionally does not require OpenAI, Gemini or another generative-AI service for Chief-of-Staff reasoning.

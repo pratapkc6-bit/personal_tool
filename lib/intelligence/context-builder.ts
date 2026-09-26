@@ -7,6 +7,7 @@ export async function buildAssistantContext(userId: string) {
   const briefing = await buildSecretaryBriefing(userId);
   const now = new Date();
   const horizon = new Date(now.getTime() + 7 * 86_400_000);
+  let calendarStatus: "available" | "unavailable" | "partial" = "unavailable";
   let calendarEvents: Array<{
     id: string | null | undefined;
     title: string;
@@ -22,10 +23,15 @@ export async function buildAssistantContext(userId: string) {
       timeMax: horizon.toISOString(),
       singleEvents: true,
       orderBy: "startTime",
-      maxResults: 30,
+      maxResults: 2500,
     });
 
-    calendarEvents = (response.data.items ?? []).map((event) => ({
+    calendarStatus = response.data.nextPageToken ? "partial" : "available";
+
+    calendarEvents = (response.data.items ?? []).filter((event) =>
+      event.status !== "cancelled" && event.transparency !== "transparent" &&
+      !event.attendees?.some((attendee) => attendee.self && attendee.responseStatus === "declined")
+    ).map((event) => ({
       id: event.id,
       title: event.summary || "Untitled event",
       start: event.start?.dateTime || event.start?.date || null,
@@ -68,5 +74,7 @@ export async function buildAssistantContext(userId: string) {
       status: task.status,
     })),
     calendarEvents,
+    calendarStatus,
+    calendarHorizon: horizon.toISOString(),
   };
 }
