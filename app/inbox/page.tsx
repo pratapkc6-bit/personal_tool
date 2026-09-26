@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getServerSession } from "next-auth";
+import { Inbox, Radar } from "lucide-react";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { GmailScanButton } from "@/components/gmail-scan-button";
@@ -40,55 +41,63 @@ export default async function InboxPage({
   const urgentCount = items.filter((item) => item.importance === "URGENT").length;
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <p className="text-sm font-semibold text-slate-500">INTELLIGENCE FEED</p>
-          <h1 className="text-2xl font-bold tracking-tight">Your intelligence feed</h1>
-          <p className="mt-1 text-sm text-slate-600">Prioritised by action, deadline and urgency rather than whichever email arrived last.</p>
+    <div className="nexus-page">
+      <div className="nexus-page-heading">
+        <div className="nexus-page-icon"><Radar size={22} /></div>
+        <div className="nexus-page-title">
+          <p className="nexus-kicker">INTELLIGENCE GRID</p>
+          <h1>Signal over noise</h1>
+          <p>Gmail distilled into actions, deadlines and meaningful signals.</p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Link href="/inbox/compose" className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold">Compose</Link>
+        <div className="nexus-page-actions">
+          <Link href="/inbox/compose" className="nexus-secondary-action"><Inbox size={16} /> Compose</Link>
           <RosterSyncButton />
           <GmailScanButton autoStart={params.scan === "1"} />
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-2">
+      <div className="nexus-metric-strip">
         <Metric label="Action required" value={actionCount} />
         <Metric label="Detected deadlines" value={deadlineCount} />
-        <Metric label="Urgent" value={urgentCount} />
+        <Metric label="Urgent signals" value={urgentCount} />
       </div>
 
-      <form className="intelligence-filter" method="get"><label htmlFor="intel-search" className="sr-only">Search loaded email intelligence</label><input id="intel-search" name="q" maxLength={200} defaultValue={query} placeholder="Search sender, subject or next action…" /><label htmlFor="intel-view" className="sr-only">Filter email intelligence</label><select id="intel-view" name="view" defaultValue={view}><option value="all">All intelligence</option><option value="action">Action required</option><option value="urgent">Urgent</option><option value="deadline">Has deadline</option></select><button className="hub-primary">Apply filters</button></form><p className="hub-footnote">Showing {visible.length} of {items.length} loaded messages. Up to 60 records are loaded.</p>
+      <form className="intelligence-filter" method="get">
+        <label htmlFor="intel-search" className="sr-only">Search loaded email intelligence</label>
+        <input id="intel-search" name="q" maxLength={200} defaultValue={query} placeholder="Search sender, subject or next action…" />
+        <label htmlFor="intel-view" className="sr-only">Filter email intelligence</label>
+        <select id="intel-view" name="view" defaultValue={view}>
+          <option value="all">All intelligence</option>
+          <option value="action">Action required</option>
+          <option value="urgent">Urgent</option>
+          <option value="deadline">Has deadline</option>
+        </select>
+        <button className="hub-primary">Apply filters</button>
+      </form>
+      <p className="hub-footnote">Showing {visible.length} of {items.length} loaded messages. Up to 60 records are loaded.</p>
+
       <div className="intelligence-grid">
         {visible.length === 0 ? (
-          <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500">{items.length === 0 ? "No processed email yet. Run a Gmail scan." : "No messages match these filters."}</div>
+          <div className="nexus-empty-state">{items.length === 0 ? "No processed email yet. Run a Gmail scan." : "No messages match these filters."}</div>
         ) : visible.map((item) => (
-          <article key={item.id} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-card">
-            <div className="flex flex-wrap items-start justify-between gap-2">
+          <article key={item.id} className="nexus-intel-card">
+            <div className="nexus-intel-top">
               <div className="min-w-0">
-                <p className="truncate font-semibold">{item.subject || "(no subject)"}</p>
-                <p className="truncate text-sm text-slate-500">{item.sender}</p>
+                <p className="nexus-intel-subject">{item.subject || "(no subject)"}</p>
+                <p className="nexus-intel-sender">{item.sender}</p>
               </div>
-              <div className="flex flex-wrap gap-2">
-                <span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-bold">{item.importance}</span>
-                <span className={`rounded-full px-2 py-1 text-xs font-bold ${item.requiresAction ? "bg-amber-100 text-amber-800" : "bg-slate-100 text-slate-700"}`}>
-                  {item.classification.replaceAll("_", " ")}
-                </span>
+              <div className="nexus-badges">
+                <span>{item.importance}</span>
+                <span className={item.requiresAction ? "is-action" : ""}>{item.classification.replaceAll("_", " ")}</span>
               </div>
             </div>
-
-            {item.deadlineAt && (
-              <p className="mt-3 text-sm font-semibold text-amber-800">Deadline: {formatDeadline(item.deadlineAt)}</p>
-            )}
-
-            <p className="mt-3 text-sm">{item.whatHappened}</p>
-            {item.whyItMatters && <p className="mt-1 text-sm text-slate-500">{item.whyItMatters}</p>}
+            {item.deadlineAt && <p className="nexus-deadline">Deadline · {formatDeadline(item.deadlineAt)}</p>}
+            <p className="nexus-intel-summary">{item.whatHappened}</p>
+            {item.whyItMatters && <p className="nexus-intel-muted">{item.whyItMatters}</p>}
             {item.recommendedAction && (
-              <div className="mt-3 rounded-xl bg-slate-50 p-3">
-                <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Secretary recommendation</p>
-                <p className="mt-1 text-sm font-medium">{item.recommendedAction}</p>
+              <div className="nexus-recommendation">
+                <span>NEXT MOVE</span>
+                <p>{item.recommendedAction}</p>
               </div>
             )}
           </article>
@@ -100,10 +109,9 @@ export default async function InboxPage({
 
 function Metric({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-3">
-      <p className="text-xs text-slate-500">{label}</p>
-      <p className="mt-1 text-xl font-bold">{value}</p>
+    <div className="nexus-metric-card">
+      <span>{label}</span>
+      <strong>{value}</strong>
     </div>
   );
 }
-

@@ -1,4 +1,5 @@
 import { getServerSession } from "next-auth";
+import { Crosshair } from "lucide-react";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { TaskBoard } from "@/components/task-board";
@@ -15,14 +16,16 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
   }) : [];
 
   return (
-    <div className="space-y-4">
-      <div>
-        <p className="text-sm font-semibold text-slate-500">MISSION CONTROL</p>
-        <h1 className="text-2xl font-bold tracking-tight">Your missions</h1>
-        <p className="mt-1 text-sm text-slate-600">Capture an outcome. Choose the next step. Move it forward.</p>
+    <div className="nexus-page">
+      <div className="nexus-page-heading">
+        <div className="nexus-page-icon"><Crosshair size={22} /></div>
+        <div className="nexus-page-title">
+          <p className="nexus-kicker">MISSION CONTROL</p>
+          <h1>Turn intent into motion</h1>
+          <p>Capture outcomes, define the next physical step and keep only the work that matters visible.</p>
+        </div>
       </div>
       <TaskBoard initialShowAdd={params.action === "add"} initialTasks={tasks.map((task) => ({ ...task, dueAt: task.dueAt?.toISOString() || null }))} />
     </div>
   );
 }
-

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getServerSession } from "next-auth";
-import { Settings } from "lucide-react";
+import { Settings, Sparkles } from "lucide-react";
 import { AssistantChat } from "@/components/assistant-chat";
 import { authOptions } from "@/lib/auth";
 import {
@@ -17,23 +17,18 @@ export default async function AssistantPage() {
     : DEFAULT_ASSISTANT_SETTINGS;
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-sm font-semibold text-slate-500">PERSONAL CHIEF OF STAFF</p>
-          <h1 className="text-2xl font-bold tracking-tight">Zoro</h1>
-          <p className="mt-1 text-sm text-slate-600">
-            Type naturally or start Voice Mode. While this screen is open, say “{settings.wakeWord}” to wake the assistant.
-            Calendar, task and roster changes still require confirmation.
+    <div className="nexus-page">
+      <div className="nexus-page-heading">
+        <div className="nexus-page-icon"><Sparkles size={22} /></div>
+        <div className="nexus-page-title">
+          <p className="nexus-kicker">AI COMMAND LAYER</p>
+          <h1>Zoro intelligence</h1>
+          <p>
+            Talk, type, plan and prepare actions. Say “{settings.wakeWord}” while Voice Mode is active.
           </p>
         </div>
-
-        <Link
-          href="/settings/assistant"
-          className="inline-flex items-center gap-2 rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold"
-        >
-          <Settings size={16} />
-          Settings
+        <Link href="/settings/assistant" className="nexus-secondary-action">
+          <Settings size={16} /> Preferences
         </Link>
       </div>
 
