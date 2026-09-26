@@ -3,6 +3,13 @@ import type { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { db } from "@/lib/db";
 
+const PRODUCTION_URL = "https://pratap-personal-secretary-ksuyanpks-projects.vercel.app";
+const GOOGLE_CALLBACK_URL = `${PRODUCTION_URL}/api/auth/callback/google`;
+
+if (process.env.VERCEL_ENV === "production") {
+  process.env.NEXTAUTH_URL = PRODUCTION_URL;
+}
+
 const googleScopes = [
   "openid",
   "email",
@@ -30,8 +37,20 @@ const providers = runtimeAuthConfigured
             access_type: "offline",
             prompt: "consent",
             include_granted_scopes: "true",
+            redirect_uri:
+              process.env.VERCEL_ENV === "production"
+                ? GOOGLE_CALLBACK_URL
+                : undefined,
           },
         },
+        token:
+          process.env.VERCEL_ENV === "production"
+            ? {
+                params: {
+                  redirect_uri: GOOGLE_CALLBACK_URL,
+                },
+              }
+            : undefined,
       }),
     ]
   : [];
@@ -53,6 +72,16 @@ export const authOptions: NextAuthOptions = {
     async session({ session, user, token }) {
       if (session.user) session.user.id = user?.id ?? token?.sub ?? "";
       return session;
+    },
+    async redirect({ url }) {
+      if (process.env.VERCEL_ENV === "production") {
+        if (url.startsWith("/")) return `${PRODUCTION_URL}${url}`;
+        try {
+          if (new URL(url).origin === PRODUCTION_URL) return url;
+        } catch {}
+        return PRODUCTION_URL;
+      }
+      return url;
     },
   },
   pages: {
