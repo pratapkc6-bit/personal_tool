@@ -50,8 +50,8 @@ type VoiceState =
 const QUICK_PROMPTS = [
   "What should I do now?",
   "What's important today?",
-  "What can you do?",
-  "Am I free tomorrow?",
+  "Plan my day",
+  "Find 45 minutes tomorrow",
 ];
 
 function getRecognitionConstructor(): RecognitionConstructor | null {
@@ -498,3 +498,4 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
     </div>
   );
 }
+
