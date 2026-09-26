@@ -2,13 +2,14 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Pratap Personal Secretary · Zoro",
-    short_name: "Zoro",
+    name: "Zoro Hub · Personal Secretary",
+    short_name: "Zoro Hub",
     description: "Personal Chief of Staff with voice mode, Gmail and Calendar intelligence.",
-    start_url: "/assistant",
+    start_url: "/",
     display: "standalone",
-    background_color: "#f6f7fb",
-    theme_color: "#0f172a",
+    background_color: "#090909",
+    theme_color: "#ff9900",
     orientation: "portrait",
   };
 }
+

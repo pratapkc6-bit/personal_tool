@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -19,10 +20,10 @@ export default async function ConnectionsPage() {
 
   if (missing.length > 0) {
     return (
-      <div className="mx-auto max-w-2xl space-y-4">
+      <div className="mx-auto max-w-4xl space-y-4">
         <div>
-          <p className="text-sm font-semibold text-slate-500">ACCOUNT CONNECTIONS</p>
-          <h1 className="text-2xl font-bold tracking-tight">Google connection</h1>
+          <p className="text-sm font-semibold text-slate-500">SYSTEM SETUP</p>
+          <h1 className="text-2xl font-bold tracking-tight">Connect your world</h1>
         </div>
 
         <div className="rounded-3xl border border-amber-300 bg-white p-5 shadow-card">
@@ -59,14 +60,14 @@ export default async function ConnectionsPage() {
   const scopes = account?.scope?.split(" ").filter(Boolean) ?? [];
 
   return (
-    <div className="mx-auto max-w-2xl space-y-4">
+    <div className="mx-auto max-w-4xl space-y-4">
       <div>
-        <p className="text-sm font-semibold text-slate-500">ACCOUNT CONNECTIONS</p>
-        <h1 className="text-2xl font-bold tracking-tight">Google connection</h1>
+        <p className="text-sm font-semibold text-slate-500">SYSTEM SETUP</p>
+        <h1 className="text-2xl font-bold tracking-tight">Connect your world</h1>
         <p className="mt-1 text-sm text-slate-600">The app requests only identity, Gmail read/compose, and Calendar event access needed for the secretary workflow.</p>
       </div>
       <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-card">
-        <ConnectionsClient connected={Boolean(account)} scopes={scopes} />
+        <ConnectionsClient connected={Boolean(account)} scopes={scopes} /><div className="setup-grid"><article className="setup-card"><span>01</span><h2>Your Google account</h2><p>{account ? "Account linked. Check the access badges above." : "Connect Google above to unlock your personal data."}</p></article><article className="setup-card"><span>02</span><h2>Build your briefing</h2><p>Scan Gmail for action items, then review your calendar and daily feed.</p><Link href="/inbox">Open intelligence →</Link></article><article className="setup-card"><span>03</span><h2>Choose your AI mode</h2><p>The secretary works without a paid key. Optionally test a small model on your device.</p><Link href="/assistant">Open Zoro AI →</Link></article></div>
         <div className="mt-5 border-t border-slate-200 pt-4 text-sm text-slate-600">
           <p className="font-semibold text-slate-800">Safety rules</p>
           <p className="mt-1">Email content is treated as untrusted data. Sending email requires a separate explicit confirmation. Automatic roster edits are limited to MYOB-created Calendar events.</p>
@@ -76,3 +77,4 @@ export default async function ConnectionsPage() {
     </div>
   );
 }
+
