@@ -1,6 +1,6 @@
 # Pratap Personal Secretary v0.4.0 Local Intelligence
 
-This document describes the original local engine, which remains available. For the current optional AI layer and command briefing, see [Zoro v0.7.0](ZORO_0_7.md).
+This document describes the original local engine, which remains available. For the current local-only command briefing, see [Zoro v0.7.1](ZORO_0_7.md).
 
 ## Goal
 
