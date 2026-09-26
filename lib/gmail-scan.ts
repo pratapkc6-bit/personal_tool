@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { getGoogleServices } from "@/lib/google";
-import { classifyEmail, header, messageText } from "@/lib/email";
+import { header, messageText } from "@/lib/email";
+import { analyseEmail } from "@/lib/intelligence/email-intelligence";
 import { activity, audit } from "@/lib/audit";
 
 export async function scanGmail(userId: string, maxResults = 30) {
@@ -13,7 +14,7 @@ export async function scanGmail(userId: string, maxResults = 30) {
 
   let processed = 0;
   let skipped = 0;
-  const actionItems: Array<{ id: string; subject: string; action: string | null }> = [];
+  const actionItems: Array<{ id: string; subject: string; action: string | null; deadlineAt: string | null }> = [];
 
   for (const item of list.data.messages ?? []) {
     if (!item.id) continue;
@@ -37,7 +38,9 @@ export async function scanGmail(userId: string, maxResults = 30) {
     const subject = header(full.data, "Subject");
     const dateHeader = header(full.data, "Date");
     const body = messageText(full.data);
-    const intelligence = classifyEmail({ sender, subject, body });
+    const parsedReceivedAt = dateHeader ? new Date(dateHeader) : null;
+    const receivedAt = parsedReceivedAt && Number.isFinite(parsedReceivedAt.getTime()) ? parsedReceivedAt : null;
+    const intelligence = analyseEmail({ sender, subject, body, receivedAt });
 
     const saved = await db.emailIntelligence.create({
       data: {
@@ -50,10 +53,11 @@ export async function scanGmail(userId: string, maxResults = 30) {
         classification: intelligence.classification,
         requiresAction: intelligence.requiresAction,
         importance: intelligence.priority,
+        deadlineAt: intelligence.deadlineAt ?? undefined,
         whatHappened: intelligence.whatHappened,
         whyItMatters: intelligence.whyItMatters,
         recommendedAction: intelligence.recommendedAction,
-        receivedAt: dateHeader ? new Date(dateHeader) : undefined,
+        receivedAt: receivedAt ?? undefined,
       },
     });
 
@@ -62,6 +66,7 @@ export async function scanGmail(userId: string, maxResults = 30) {
         id: saved.id,
         subject: saved.subject || "Email",
         action: saved.recommendedAction,
+        deadlineAt: saved.deadlineAt?.toISOString() || null,
       });
     }
 
