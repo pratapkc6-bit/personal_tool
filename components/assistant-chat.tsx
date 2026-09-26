@@ -5,8 +5,10 @@ import { useEffect, useRef, useState } from "react";
 import { Mic, MicOff, Settings } from "lucide-react";
 import type { AssistantSettings } from "@/lib/assistant-settings";
 
-type Message = { role: "user" | "assistant"; text: string };
-type PendingAction = Record<string, unknown> & { type: string };
+type Message = { role: "user" | "assistant"; text: string; sources?: Array<{ id: string; title: string; href: string }>; engine?: string; notice?: string };
+import type { PendingAction } from "@/lib/intelligence/assistant-contract";
+import { MissionPanel } from "@/components/mission-panel";
+import pkg from "@/package.json";
 
 type SpeechRecognitionResultLike = {
   isFinal: boolean;
@@ -73,7 +75,7 @@ function speechText(text: string) {
     .trim();
 }
 
-export function AssistantChat({ settings }: { settings: AssistantSettings }) {
+export function AssistantChat({ settings, aiConfigured = false }: { settings: AssistantSettings; aiConfigured?: boolean }) {
   const wakeWord = settings.wakeWord.trim();
   const wakeWordLower = wakeWord.toLowerCase();
 
@@ -83,6 +85,10 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
       text: `Zoro is ready. Start Voice Mode and say “${wakeWord}”. I’ll respond, “${settings.wakeResponse}”, then listen for your request.`,
     },
   ]);
+  const [confirmationToken, setConfirmationToken] = useState<string | null>(null);
+  const [suggestions, setSuggestions] = useState(QUICK_PROMPTS);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const conversationEnd = useRef<HTMLDivElement | null>(null);
   const [input, setInput] = useState("");
   const [pendingAction, setPendingAction] = useState<PendingAction | null>(null);
   const [busy, setBusy] = useState(false);
@@ -100,6 +106,7 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
 
   useEffect(() => {
     messagesRef.current = messages;
+    conversationEnd.current?.scrollIntoView({ block: "nearest" });
   }, [messages]);
 
   useEffect(() => {
@@ -190,7 +197,9 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
     const value = (valueOverride ?? input).trim();
     if (!value || busyRef.current) return;
 
-    const history = messagesRef.current.slice(-10);
+    const history = messagesRef.current.slice(-12).map(({ role, text }) => ({ role, text: text.slice(0, 4000) }));
+    setPendingAction(null);
+    setConfirmationToken(null);
     setInput("");
     setMessages((current) => [...current, { role: "user", text: value }]);
     setBusy(true);
@@ -211,8 +220,11 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
       const data = await res.json().catch(() => ({}));
       const reply = data.message || data.error || "Something went wrong.";
 
-      setMessages((current) => [...current, { role: "assistant", text: reply }]);
+      setMessages((current) => [...current, { role: "assistant", text: reply, sources: data.sources, engine: data.engine, notice: data.notice }]);
       setPendingAction(data.pendingAction || null);
+      setConfirmationToken(data.confirmationToken || null);
+      if (data.suggestedPrompts?.length) setSuggestions(data.suggestedPrompts);
+      if (/scan complete/i.test(reply)) setRefreshKey(key => key + 1);
       setBusy(false);
       busyRef.current = false;
 
@@ -338,30 +350,28 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
   }
 
   async function confirmAction() {
-    if (!pendingAction || busyRef.current) return;
-
+    if (!pendingAction || !confirmationToken || busyRef.current) return;
     setBusy(true);
     busyRef.current = true;
     recognitionRef.current?.stop();
-
-    const res = await fetch("/api/assistant", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ confirmedAction: pendingAction }),
-    });
-
-    const data = await res.json().catch(() => ({}));
-    const reply = data.message || data.error || "The action failed.";
-
-    setMessages((current) => [...current, { role: "assistant", text: reply }]);
-    setPendingAction(null);
-    setBusy(false);
-    busyRef.current = false;
-
-    if (voiceModeRef.current && settings.spokenReplies) {
-      speak(reply);
-    } else if (voiceModeRef.current) {
-      restartListening();
+    try {
+      const res = await fetch("/api/assistant", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ confirmationToken }),
+      });
+      const data = await res.json().catch(() => ({}));
+      const reply = data.message || data.error || "The action could not be verified. Check Tasks or Calendar before trying again.";
+      setMessages(current => [...current, { role: "assistant", text: reply, engine: "action" }]);
+      setRefreshKey(key => key + 1);
+      if (voiceModeRef.current && settings.spokenReplies) speak(reply);
+    } catch {
+      setMessages(current => [...current, { role: "assistant", text: "The connection was interrupted. Check Tasks or Calendar before preparing the action again." }]);
+    } finally {
+      setPendingAction(null);
+      setConfirmationToken(null);
+      setBusy(false);
+      busyRef.current = false;
+      if (voiceModeRef.current && !speakingRef.current) restartListening();
     }
   }
 
@@ -376,11 +386,13 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
     : "Voice Mode is off.";
 
   return (
+    <div className="space-y-4">
+    <MissionPanel refreshKey={refreshKey} onPrompt={prompt => void send(prompt)} />
     <div className="flex min-h-[70vh] flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-card">
       <div className="border-b border-slate-100 px-4 py-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="text-xs font-semibold text-emerald-700">ZORO · LOCAL INTELLIGENCE</p>
+            <p className="text-xs font-semibold text-emerald-700">ZORO · v{pkg.version} · {settings.aiEnabled && aiConfigured ? "AI REASONING READY" : "LOCAL MODE"}</p>
             <p className="mt-1 text-xs text-slate-500">{voiceLabel}</p>
           </div>
 
@@ -420,13 +432,17 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
         )}
       </div>
 
-      <div className="flex-1 space-y-3 overflow-y-auto p-4">
+      {(!aiConfigured || !settings.aiEnabled) && <div className="border-b border-slate-100 bg-cyan-50 px-4 py-3 text-xs text-slate-700">{!aiConfigured ? "AI reasoning needs an OpenAI API key on the server. Local planning and voice are available now." : "AI reasoning is available. Enable it in Assistant Settings to have more natural conversations."} <Link href="/settings/assistant" className="font-semibold underline">Assistant Settings</Link></div>}
+      <div role="log" aria-live="polite" aria-relevant="additions" className="max-h-[65vh] flex-1 space-y-3 overflow-y-auto p-4">
         {messages.map((message, index) => (
           <div
             key={index}
             className={`max-w-[88%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm ${message.role === "user" ? "ml-auto bg-slate-900 text-white" : "bg-slate-100 text-slate-800"}`}
           >
+            {message.engine && <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">{message.engine === "ai" ? "AI reasoning" : message.engine === "action" ? "Action result" : "Local intelligence"}</p>}
             {message.text}
+            {message.notice && <p className="mt-2 border-t border-slate-200 pt-2 text-xs text-amber-800">{message.notice}</p>}
+            {message.sources && message.sources.length > 0 && <div className="mt-3 flex flex-wrap gap-2">{message.sources.map(source => <Link key={source.id} href={source.href} className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs text-slate-700">{source.title}</Link>)}</div>}
           </div>
         ))}
 
@@ -439,15 +455,22 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
         {pendingAction && (
           <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
             <p className="text-xs font-bold uppercase tracking-wide text-amber-800">Confirmation required</p>
-            <p className="mt-1 text-sm text-amber-950">This will change stored data or Google Calendar.</p>
+            <p className="mt-1 text-sm text-amber-950">This preview expires in 10 minutes. Confirm only the details shown here.</p>
+            <div className="mt-3 rounded-xl bg-white p-3 text-sm text-slate-900">
+              {pendingAction.type === "CREATE_TASK" ? <><p className="font-semibold">New task: {pendingAction.title}</p><p>Priority: {pendingAction.priority}</p>{pendingAction.dueAt && <p>Due: {new Date(pendingAction.dueAt).toLocaleString("en-AU")}</p>}</>
+                : pendingAction.type === "CREATE_CALENDAR_EVENT" ? <><p className="font-semibold">New event: {pendingAction.summary}</p><p>{new Date(pendingAction.start).toLocaleString("en-AU")} – {new Date(pendingAction.end).toLocaleString("en-AU")}</p><p className="mt-1 text-xs text-slate-500">Times shown in your device timezone. Review for conflicts before confirming.</p></>
+                : <p>Reconcile the latest MYOB roster. Only roster-managed events may be created, updated or removed.</p>}
+            </div>
             <div className="mt-3 flex gap-2">
               <button
-                onClick={() => setPendingAction(null)}
+                disabled={busy}
+                onClick={() => { setPendingAction(null); setConfirmationToken(null); }}
                 className="flex-1 rounded-xl border border-amber-300 bg-white px-3 py-2 text-sm font-semibold"
               >
                 Cancel
               </button>
               <button
+                disabled={busy || !confirmationToken}
                 onClick={confirmAction}
                 className="flex-1 rounded-xl bg-slate-900 px-3 py-2 text-sm font-semibold text-white"
               >
@@ -458,9 +481,10 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
         )}
       </div>
 
+      <div ref={conversationEnd} />
       <div className="border-t border-slate-200 p-3">
         <div className="mb-3 flex gap-2 overflow-x-auto pb-1">
-          {QUICK_PROMPTS.map((prompt) => (
+          {suggestions.map((prompt) => (
             <button
               key={prompt}
               disabled={busy}
@@ -482,7 +506,9 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
                 void send();
               }
             }}
-            placeholder="Ask Zoro about priorities, Gmail, deadlines, schedule or follow-ups…"
+            aria-label="Message Zoro"
+            maxLength={4000}
+            placeholder="Tell Zoro what you want to achieve…"
             rows={2}
             className="min-h-14 flex-1 resize-none rounded-2xl border border-slate-300 px-3 py-3 outline-none focus:border-slate-900"
           />
@@ -495,6 +521,7 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
           </button>
         </div>
       </div>
+    </div>
     </div>
   );
 }
