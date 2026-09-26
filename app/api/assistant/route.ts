@@ -5,7 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getGoogleServices } from "@/lib/google";
 import { buildAssistantContext } from "@/lib/intelligence/context-builder";
-import { answerWithLocalIntelligence, type AssistantHistoryMessage } from "@/lib/intelligence/local-assistant";
+import { answerWithLocalIntelligence, isOpenEndedConversation, type AssistantHistoryMessage } from "@/lib/intelligence/local-assistant";
 import { scanGmail } from "@/lib/gmail-scan";
 import { syncLatestMyobRoster } from "@/lib/roster-sync";
 import { audit, activity } from "@/lib/audit";
@@ -186,6 +186,11 @@ export async function POST(request: NextRequest) {
     const context = await buildAssistantContext(session.user.id);
     return NextResponse.json({
       message: answerWithLocalIntelligence(message, context, history), engine: "local",
+      deviceEligible: isOpenEndedConversation(message, history),
+      deviceReference: JSON.stringify({ generatedAt: context.generatedAt, timezone: context.timezone,
+        calendarStatus: context.calendarStatus,
+        priorities: context.topPriorities.map(p => ({ title: p.title.slice(0, 180), nextAction: p.nextAction?.slice(0, 200), dueAt: p.dueAt })),
+      }),
       suggestedPrompts: ["Plan my day", "Which emails need action?", "What deadlines are coming?"],
     });
   } catch {
