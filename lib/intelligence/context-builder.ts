@@ -38,6 +38,8 @@ export async function buildAssistantContext(userId: string) {
   return {
     generatedAt: now.toISOString(),
     timezone: process.env.APP_TIMEZONE || "Australia/Darwin",
+    summary: briefing.summary,
+    lastGmailScanAt: briefing.lastGmailScanAt,
     topPriorities: briefing.topPriorities,
     deadlines: briefing.deadlines,
     emailActions: briefing.emails.map((email) => ({

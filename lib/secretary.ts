@@ -20,6 +20,36 @@ function readScanAt(value: unknown) {
   return typeof at === "string" ? at : null;
 }
 
+function normalisePriorityTitle(title: string) {
+  return title
+    .toLowerCase()
+    .replace(/^(re|fw|fwd):\s*/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function collapseRepeatedPriorities(items: BriefingPriority[]) {
+  const seen = new Map<string, { item: BriefingPriority; count: number }>();
+
+  for (const item of items) {
+    const key = `${item.source}:${normalisePriorityTitle(item.title)}`;
+    const existing = seen.get(key);
+
+    if (!existing) {
+      seen.set(key, { item, count: 1 });
+      continue;
+    }
+
+    existing.count += 1;
+    if (item.score > existing.item.score) existing.item = item;
+  }
+
+  return [...seen.values()].map(({ item, count }) => ({
+    ...item,
+    reason: count > 1 ? `${count} similar items detected. ${item.reason}` : item.reason,
+  }));
+}
+
 export async function buildSecretaryBriefing(userId: string) {
   const now = new Date();
   const inThirtyDays = new Date(now.getTime() + 30 * 86_400_000);
@@ -45,7 +75,7 @@ export async function buildSecretaryBriefing(userId: string) {
     db.emailIntelligence.findMany({
       where: { userId, requiresAction: true },
       orderBy: [{ deadlineAt: "asc" }, { processedAt: "desc" }],
-      take: 20,
+      take: 30,
     }),
     db.setting.findUnique({
       where: { userId_key: { userId, key: "gmail_last_scan" } },
@@ -109,8 +139,10 @@ export async function buildSecretaryBriefing(userId: string) {
     };
   });
 
-  const allPriorities = [...taskItems, ...emailItems, ...followupItems]
+  const sorted = [...taskItems, ...emailItems, ...followupItems]
     .sort((a, b) => b.score - a.score || (a.dueAt?.getTime() || Infinity) - (b.dueAt?.getTime() || Infinity));
+
+  const allPriorities = collapseRepeatedPriorities(sorted);
 
   const deadlines = allPriorities
     .filter((item) => item.dueAt)
