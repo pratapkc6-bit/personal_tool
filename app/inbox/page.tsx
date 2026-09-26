@@ -22,7 +22,7 @@ function formatDeadline(date: Date) {
 export default async function InboxPage({
   searchParams,
 }: {
-  searchParams: Promise<{ scan?: string }>;
+  searchParams: Promise<{ scan?: string; view?: string; q?: string }>;
 }) {
   const params = await searchParams;
   const session = await getServerSession(authOptions);
@@ -32,6 +32,9 @@ export default async function InboxPage({
     take: 60,
   }) : [];
 
+  const view = ["action", "urgent", "deadline"].includes(params.view || "") ? params.view : "all";
+  const query = (params.q || "").slice(0, 200);
+  const visible = items.filter(item => (view === "all" || (view === "action" && item.requiresAction) || (view === "urgent" && item.importance === "URGENT") || (view === "deadline" && !!item.deadlineAt)) && `${item.subject || ""} ${item.sender || ""} ${item.recommendedAction || ""}`.toLowerCase().includes(query.toLowerCase()));
   const actionCount = items.filter((item) => item.requiresAction).length;
   const deadlineCount = items.filter((item) => item.deadlineAt).length;
   const urgentCount = items.filter((item) => item.importance === "URGENT").length;
@@ -40,8 +43,8 @@ export default async function InboxPage({
     <div className="space-y-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-sm font-semibold text-slate-500">GMAIL INTELLIGENCE</p>
-          <h1 className="text-2xl font-bold tracking-tight">Inbox</h1>
+          <p className="text-sm font-semibold text-slate-500">INTELLIGENCE FEED</p>
+          <h1 className="text-2xl font-bold tracking-tight">Your intelligence feed</h1>
           <p className="mt-1 text-sm text-slate-600">Prioritised by action, deadline and urgency rather than whichever email arrived last.</p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -57,10 +60,11 @@ export default async function InboxPage({
         <Metric label="Urgent" value={urgentCount} />
       </div>
 
-      <div className="space-y-2">
-        {items.length === 0 ? (
-          <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500">No processed email yet. Run a Gmail scan.</div>
-        ) : items.map((item) => (
+      <form className="intelligence-filter" method="get"><label htmlFor="intel-search" className="sr-only">Search loaded email intelligence</label><input id="intel-search" name="q" maxLength={200} defaultValue={query} placeholder="Search sender, subject or next action…" /><label htmlFor="intel-view" className="sr-only">Filter email intelligence</label><select id="intel-view" name="view" defaultValue={view}><option value="all">All intelligence</option><option value="action">Action required</option><option value="urgent">Urgent</option><option value="deadline">Has deadline</option></select><button className="hub-primary">Apply filters</button></form><p className="hub-footnote">Showing {visible.length} of {items.length} loaded messages. Up to 60 records are loaded.</p>
+      <div className="intelligence-grid">
+        {visible.length === 0 ? (
+          <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500">{items.length === 0 ? "No processed email yet. Run a Gmail scan." : "No messages match these filters."}</div>
+        ) : visible.map((item) => (
           <article key={item.id} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-card">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div className="min-w-0">
@@ -102,3 +106,4 @@ function Metric({ label, value }: { label: string; value: number }) {
     </div>
   );
 }
+
