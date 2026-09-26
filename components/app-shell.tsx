@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BottomNav } from "@/components/bottom-nav";
+import { ZoroLauncher } from "@/components/zoro-launcher";
 import { APP_VERSION } from "@/lib/release";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -24,6 +25,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           Pratap Personal Secretary v{APP_VERSION}
         </Link>
       </footer>
+      <ZoroLauncher />
       <BottomNav />
     </div>
   );
