@@ -29,6 +29,17 @@ export default function AboutPage() {
       </section>
 
       <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-card">
+        <h2 className="font-bold">What's new in v0.7.0</h2>
+        <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-600">
+          <li>Daily command briefing with priorities, focus windows, overdue items and conflicts.</li>
+          <li>Optional AI conversations grounded in your secretary records, with source links and useful follow-up questions.</li>
+          <li>A saved personal brief for your goals and preferences.</li>
+          <li>Task and event previews with expiring, single-use confirmations.</li>
+        </ul>
+        <Link href="/assistant" className="mt-4 inline-block font-semibold text-cyan-800">Open Zoro →</Link>
+      </section>
+
+      <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-card">
         <h2 className="font-bold">OAuth configuration</h2>
         <p className="mt-2 text-sm text-slate-600">Production URL</p>
         <code className="mt-1 block break-all rounded-xl bg-slate-100 p-3 text-xs">{PRODUCTION_URL}</code>
