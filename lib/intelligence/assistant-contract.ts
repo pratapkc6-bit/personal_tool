@@ -12,28 +12,6 @@ export const pendingActionSchema = z.discriminatedUnion("type", [
 ]);
 export type PendingAction = z.infer<typeof pendingActionSchema>;
 
-export const reasoningResultSchema = z.object({
-  message: z.string().min(1).max(12000),
-  suggestedPrompts: z.array(z.string().min(1).max(120)).max(3),
-  evidenceIds: z.array(z.string().max(200)).max(8),
-  proposedAction: z.object({
-    type: z.enum(["CREATE_TASK", "CREATE_CALENDAR_EVENT"]),
-    title: z.string().min(1).max(240), start: timestamp.nullable(), end: timestamp.nullable(),
-    dueAt: timestamp.nullable(), priority: z.enum(["URGENT", "HIGH", "MEDIUM", "LOW"]),
-  }).strict().nullable(),
-}).strict();
-
-export function toPendingAction(value: z.infer<typeof reasoningResultSchema>["proposedAction"]): PendingAction | null {
-  if (!value) return null;
-  return pendingActionSchema.parse(value.type === "CREATE_TASK" ? {
-    type: value.type, title: value.title, dueAt: value.dueAt ?? undefined,
-    priority: value.priority, category: "PERSONAL", nextAction: value.title,
-  } : {
-    type: value.type, summary: value.title, start: value.start, end: value.end,
-    category: "PERSONAL", description: "Prepared by Zoro. Created only after your confirmation.",
-  });
-}
-
 export const requestSchema = z.object({
   message: z.string().trim().min(1).max(4000).optional(),
   confirmationToken: z.uuid().optional(),

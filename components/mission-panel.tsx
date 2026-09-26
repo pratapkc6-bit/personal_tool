@@ -48,7 +48,7 @@ export function MissionPanel({ refreshKey, onPrompt }: { refreshKey: number; onP
         <div className="mt-5 flex flex-wrap gap-2">
           <button onClick={() => onPrompt("Brief me on what needs my attention and help me decide what to do first.")} className="rounded-xl bg-cyan-300 px-4 py-2.5 text-sm font-semibold text-slate-950">Brief me</button>
           <button onClick={() => onPrompt("Plan my day")} className="rounded-xl border border-slate-600 px-4 py-2.5 text-sm font-semibold">Build my plan</button>
-          <Link href="/settings/assistant" className="rounded-xl border border-slate-600 px-4 py-2.5 text-sm">Personalize Zoro</Link>
+          <Link href="/settings/assistant" className="rounded-xl border border-slate-600 px-4 py-2.5 text-sm">Voice settings</Link>
         </div>
         <p className="mt-4 text-xs text-slate-500">Updated {time(mission.generatedAt)} · Gmail {mission.lastGmailScanAt ? `last scanned ${new Date(mission.lastGmailScanAt).toLocaleString("en-AU", { timeZone: mission.timezone })}` : "has not been scanned"}</p>
       </> : <p role="status" className="mt-6 text-sm text-slate-300">Gathering your priorities and calendar…</p>}

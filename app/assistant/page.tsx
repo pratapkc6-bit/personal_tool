@@ -37,7 +37,7 @@ export default async function AssistantPage() {
         </Link>
       </div>
 
-      <AssistantChat settings={settings} aiConfigured={Boolean(process.env.OPENAI_API_KEY)} />
+      <AssistantChat settings={settings} />
     </div>
   );
 }
