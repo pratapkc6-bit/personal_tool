@@ -116,3 +116,1114 @@ section[aria-label="On-device model"]{border-color:rgba(168,121,255,.17)!importa
   body::before{background-size:32px 32px}.nexus-shell{display:block;padding-bottom:92px}.nexus-rail{display:none}.nexus-topbar{min-height:64px;grid-template-columns:auto minmax(0,1fr) auto;gap:9px;padding:8px 12px}.nexus-mobile-brand{min-height:44px;display:inline-flex;align-items:center;gap:8px;color:#f3f8ff}.nexus-mobile-brand>span{width:34px;height:34px;display:grid;place-items:center;border:1px solid rgba(105,231,255,.24);border-radius:11px;color:var(--nx-cyan);background:rgba(105,231,255,.06);font-weight:900}.nexus-mobile-brand strong{display:none}.nexus-command-trigger{min-height:42px}.nexus-command-trigger>span{font-size:10px}.nexus-command-trigger kbd{display:none}.nexus-topbar-actions .hub-capture{width:42px;min-width:42px;padding:0;border-radius:13px}.nexus-topbar-actions .hub-capture span{display:none}.nexus-content{padding:14px 12px 26px}.nexus-footer{display:none}.nexus-page-heading{grid-template-columns:44px minmax(0,1fr);min-height:0;padding:16px;border-radius:19px}.nexus-page-icon{width:43px;height:43px;border-radius:14px}.nexus-page-title h1{font-size:25px}.nexus-page-title p:last-child{font-size:11px}.nexus-page-heading>.nexus-secondary-action,.nexus-page-heading>.nexus-page-actions,.nexus-page-heading>.nexus-action-skeleton,.nexus-page-heading>button{grid-column:1/-1;justify-self:stretch}.nexus-page-actions{justify-content:stretch}.nexus-page-actions>*{flex:1 1 auto}.nexus-metric-strip{grid-template-columns:1fr}.nexus-metric-card{min-height:70px}.nexus-zoro-launcher{right:12px;bottom:86px;width:48px;height:48px;min-height:48px;padding:3px;display:grid;grid-template-columns:1fr;place-items:center;border-radius:16px}.nexus-zoro-copy,.nexus-zoro-launcher>svg{display:none}.nexus-zoro-orb{width:38px;height:38px}.command-center{padding:18px;border-radius:22px}.command-center h1{font-size:clamp(39px,12vw,58px)}.nexus-palette{width:calc(100vw - 18px);border-radius:20px}
 }
 @media(max-width:430px){.nexus-command-trigger>span{max-width:120px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.nexus-page-heading{gap:11px}.nexus-page-icon{width:40px;height:40px}.nexus-page-title h1{font-size:22px}.nexus-mobile-dock-link{min-height:56px}}
+
+
+/* ==========================================================================
+   ZORO NEXUS v1.1 · Calendar + Conversation
+   ========================================================================== */
+
+/* Kill the legacy orange button override. It had a good run. */
+.zoro-app button.bg-slate-900,
+.zoro-app a.bg-slate-900 {
+  background: linear-gradient(135deg, var(--nx-cyan), #a4f4ff) !important;
+  color: #041017 !important;
+  border-color: rgba(105,231,255,.28) !important;
+}
+
+/* ---- Calendar command workspace ----------------------------------------- */
+
+.nexus-create-event {
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 15px;
+  border: 1px solid rgba(105,231,255,.30);
+  border-radius: 14px;
+  color: #041017;
+  font-size: 12px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--nx-cyan), #a6f4ff);
+  box-shadow: 0 0 28px rgba(105,231,255,.08);
+}
+.nexus-create-event:hover { transform: translateY(-1px); box-shadow: 0 10px 35px rgba(105,231,255,.12); }
+
+.nexus-calendar-workspace { display: grid; gap: 12px; }
+
+.calendar-command-deck {
+  display: grid;
+  grid-template-columns: minmax(230px, 1fr) auto;
+  align-items: end;
+  gap: 18px;
+  padding: 18px;
+  border: 1px solid var(--nx-line);
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at 15% 0%, rgba(105,231,255,.055), transparent 18rem),
+    linear-gradient(135deg, rgba(16,25,43,.74), rgba(8,13,23,.82));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.02);
+}
+
+.calendar-live-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #708197;
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: .16em;
+}
+.calendar-live-chip > span {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--nx-green);
+  box-shadow: 0 0 12px rgba(118,243,189,.75);
+}
+.calendar-range h2 {
+  margin-top: 8px;
+  color: #f4f8ff;
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 720;
+  letter-spacing: -.04em;
+}
+.calendar-range p { margin-top: 5px; color: #65748a; font-size: 10px; }
+
+.calendar-control-stack {
+  display: grid;
+  justify-items: end;
+  gap: 9px;
+}
+.calendar-nav-cluster,
+.calendar-view-tabs {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.calendar-nav-cluster button,
+.calendar-view-tabs button {
+  min-height: 38px;
+  border: 1px solid var(--nx-line);
+  border-radius: 11px;
+  color: #8493a9;
+  background: rgba(255,255,255,.025);
+  transition: .18s ease;
+}
+.calendar-nav-cluster button { min-width: 40px; display: grid; place-items: center; }
+.calendar-nav-cluster button:hover,
+.calendar-view-tabs button:hover {
+  border-color: rgba(105,231,255,.24);
+  color: #dffaff;
+  background: rgba(105,231,255,.045);
+}
+.calendar-nav-cluster .calendar-today-button {
+  min-width: auto;
+  padding: 0 13px;
+  color: #c8d4e1;
+  font-size: 10px;
+  font-weight: 750;
+}
+.calendar-nav-cluster .is-loading svg { animation: cc-rotate 1s linear infinite; }
+
+.calendar-view-tabs {
+  padding: 4px;
+  border: 1px solid rgba(255,255,255,.045);
+  border-radius: 13px;
+  background: rgba(0,0,0,.16);
+}
+.calendar-view-tabs button {
+  min-height: 34px;
+  padding: 0 11px;
+  border-color: transparent;
+  font-size: 9px;
+  font-weight: 750;
+}
+.calendar-view-tabs button[aria-pressed="true"] {
+  color: #071118;
+  border-color: rgba(105,231,255,.38);
+  background: linear-gradient(135deg, var(--nx-cyan), #9cf2ff);
+  box-shadow: 0 0 18px rgba(105,231,255,.08);
+}
+
+.calendar-insight-row {
+  display: grid;
+  grid-template-columns: .7fr 1.6fr .7fr;
+  gap: 8px;
+}
+.calendar-insight {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 64px;
+  padding: 12px 14px;
+  border: 1px solid var(--nx-line);
+  border-radius: 15px;
+  color: var(--nx-cyan);
+  background: rgba(12,19,32,.58);
+}
+.calendar-insight > div { min-width: 0; display: grid; }
+.calendar-insight span {
+  color: #5f7087;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+.calendar-insight strong {
+  margin-top: 4px;
+  overflow: hidden;
+  color: #cbd6e3;
+  font-size: 11px;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nexus-calendar-shell {
+  overflow: hidden;
+  padding: 10px;
+  border: 1px solid var(--nx-line);
+  border-radius: 20px;
+  background:
+    linear-gradient(180deg, rgba(10,16,28,.82), rgba(6,10,18,.92));
+  box-shadow: 0 22px 90px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.018);
+}
+
+.nexus-calendar-shell .fc {
+  --fc-border-color: rgba(134,172,229,.10);
+  --fc-page-bg-color: transparent;
+  --fc-neutral-bg-color: rgba(255,255,255,.018);
+  --fc-neutral-text-color: #68788e;
+  --fc-today-bg-color: rgba(105,231,255,.032);
+  --fc-now-indicator-color: var(--nx-cyan);
+  --fc-list-event-hover-bg-color: rgba(105,231,255,.04);
+}
+.nexus-calendar-shell .fc .fc-scrollgrid {
+  overflow: hidden;
+  border: 0;
+  border-radius: 14px;
+  background: rgba(2,6,12,.28);
+}
+.nexus-calendar-shell .fc-theme-standard td,
+.nexus-calendar-shell .fc-theme-standard th {
+  border-color: rgba(134,172,229,.085);
+}
+.nexus-calendar-shell .fc .fc-col-header {
+  background: rgba(255,255,255,.018);
+}
+.nexus-calendar-shell .fc .fc-col-header-cell {
+  padding: 7px 2px;
+  border-top: 0;
+}
+.nexus-calendar-shell .fc .fc-col-header-cell-cushion {
+  color: #8594a9;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .035em;
+  text-transform: uppercase;
+}
+.nexus-calendar-shell .fc .fc-day-today .fc-col-header-cell-cushion { color: var(--nx-cyan); }
+.nexus-calendar-shell .fc .fc-timegrid-axis-cushion,
+.nexus-calendar-shell .fc .fc-timegrid-slot-label-cushion {
+  color: #53637a;
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+}
+.nexus-calendar-shell .fc .fc-timegrid-slot {
+  height: 2.8em;
+}
+.nexus-calendar-shell .fc .fc-timegrid-slot-minor { border-top-style: dotted; }
+.nexus-calendar-shell .fc .fc-timegrid-now-indicator-line {
+  border-width: 1px 0 0;
+  border-color: var(--nx-cyan);
+  box-shadow: 0 0 10px rgba(105,231,255,.35);
+}
+.nexus-calendar-shell .fc .fc-timegrid-now-indicator-arrow {
+  border-color: transparent var(--nx-cyan) transparent transparent;
+}
+.nexus-calendar-shell .fc .fc-event {
+  overflow: hidden;
+  padding: 2px 4px;
+  border: 1px solid rgba(105,231,255,.22);
+  border-left-width: 3px;
+  border-radius: 7px;
+  color: #dff9ff;
+  background: linear-gradient(135deg, rgba(35,89,116,.86), rgba(31,58,97,.88));
+  box-shadow: 0 5px 18px rgba(0,0,0,.18);
+}
+.nexus-calendar-shell .fc .fc-event:hover { filter: brightness(1.12); }
+.nexus-calendar-shell .fc .fc-event-time {
+  font-size: 8px;
+  font-weight: 800;
+  opacity: .72;
+}
+.nexus-calendar-shell .fc .fc-event-title {
+  font-size: 9px;
+  font-weight: 720;
+  line-height: 1.25;
+}
+.nexus-calendar-shell .fc .calendar-category-work { border-left-color: #69e7ff; }
+.nexus-calendar-shell .fc .calendar-category-professional-year { border-left-color: #a879ff; }
+.nexus-calendar-shell .fc .calendar-category-workout { border-left-color: #76f3bd; }
+.nexus-calendar-shell .fc .calendar-category-appointment { border-left-color: #ffd166; }
+.nexus-calendar-shell .fc .calendar-category-deadline { border-left-color: #ff7b8e; }
+.nexus-calendar-shell .fc .calendar-category-reminder { border-left-color: #8da3ff; }
+.nexus-calendar-shell .fc .fc-list {
+  border: 0;
+  color: #c6d2df;
+}
+.nexus-calendar-shell .fc .fc-list-day-cushion { background: rgba(105,231,255,.035); }
+.nexus-calendar-shell .fc .fc-list-event:hover td { background: rgba(105,231,255,.035); }
+
+.calendar-footnote {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 3px;
+  color: #526176;
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.calendar-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px;
+  background: rgba(1,4,10,.68);
+  backdrop-filter: blur(12px);
+}
+.calendar-event-sheet {
+  position: relative;
+  width: min(100%, 500px);
+  height: 100%;
+  overflow: auto;
+  padding: 22px;
+  border: 1px solid rgba(105,231,255,.20);
+  border-radius: 22px;
+  color: #eaf1fb;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(105,231,255,.07), transparent 18rem),
+    rgba(8,13,23,.97);
+  box-shadow: -24px 0 90px rgba(0,0,0,.42);
+}
+.calendar-sheet-handle { display: none; }
+.calendar-sheet-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--nx-line);
+}
+.calendar-sheet-head h2 { margin-top: 5px; font-size: 23px; letter-spacing: -.035em; }
+.calendar-sheet-head > button {
+  width: 42px;
+  min-height: 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--nx-line);
+  border-radius: 13px;
+  color: #7c8aa0;
+  background: rgba(255,255,255,.025);
+}
+
+.calendar-event-meta { display: grid; gap: 8px; margin-top: 18px; }
+.calendar-event-meta > div {
+  display: grid;
+  gap: 5px;
+  padding: 13px;
+  border: 1px solid var(--nx-line);
+  border-radius: 14px;
+  background: rgba(255,255,255,.02);
+}
+.calendar-event-meta span,
+.calendar-confirm-panel > span {
+  color: var(--nx-cyan);
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: .14em;
+}
+.calendar-event-meta strong { color: #d9e3ef; font-size: 12px; font-weight: 620; }
+
+.calendar-edit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 11px;
+  margin-top: 18px;
+}
+.calendar-field {
+  display: grid;
+  gap: 6px;
+  color: #77869c;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.calendar-field-wide { grid-column: 1 / -1; }
+.calendar-field input,
+.calendar-field select,
+.calendar-field textarea {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+  border: 1px solid var(--nx-line);
+  border-radius: 12px;
+  color: #eef4fd;
+  background: rgba(0,0,0,.22);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.calendar-field textarea { min-height: 90px; resize: vertical; }
+
+.calendar-confirm-panel {
+  display: grid;
+  gap: 6px;
+  margin-top: 16px;
+  padding: 14px;
+  border: 1px solid rgba(105,231,255,.17);
+  border-radius: 14px;
+  background: rgba(105,231,255,.035);
+}
+.calendar-confirm-panel p { color: #a8b4c4; font-size: 11px; line-height: 1.55; }
+.calendar-confirm-panel.danger {
+  border-color: rgba(255,123,142,.20);
+  background: rgba(255,123,142,.04);
+}
+.calendar-confirm-panel.danger > span { color: var(--nx-danger); }
+.calendar-confirm-panel.danger button {
+  margin-top: 5px;
+  min-height: 42px;
+  border: 1px solid rgba(255,123,142,.30);
+  border-radius: 11px;
+  color: #ffd6dc;
+  background: rgba(255,123,142,.10);
+}
+.calendar-status { margin-top: 12px; color: #8190a6; font-size: 11px; }
+
+.calendar-sheet-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 18px;
+}
+.calendar-sheet-actions button {
+  flex: 1;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 750;
+}
+.calendar-secondary {
+  border: 1px solid var(--nx-line);
+  color: #aab7c8;
+  background: rgba(255,255,255,.025);
+}
+.calendar-primary {
+  border: 1px solid rgba(105,231,255,.30);
+  color: #041017;
+  background: linear-gradient(135deg, var(--nx-cyan), #a6f4ff);
+}
+.calendar-primary:disabled { opacity: .4; }
+.calendar-danger {
+  border: 1px solid rgba(255,123,142,.22);
+  color: #ff9dac;
+  background: rgba(255,123,142,.04);
+}
+
+/* ---- Zoro Conversation v2 ------------------------------------------------ */
+
+.zoro-ai-workspace {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) 320px;
+  align-items: start;
+  gap: 14px;
+}
+
+.zoro-chat-console {
+  min-width: 0;
+  min-height: 720px;
+  height: min(780px, calc(100vh - 150px));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(105,231,255,.14);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 50% -10%, rgba(105,231,255,.04), transparent 24rem),
+    linear-gradient(180deg, rgba(10,16,28,.92), rgba(6,10,18,.96));
+  box-shadow: 0 28px 100px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.018);
+}
+
+.zoro-chat-header {
+  display: grid;
+  grid-template-columns: auto minmax(0,1fr) auto;
+  align-items: center;
+  gap: 11px;
+  min-height: 72px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--nx-line);
+  background: rgba(255,255,255,.012);
+}
+
+.zoro-voice-core {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(105,231,255,.18);
+  border-radius: 15px;
+  color: #7b8aa0;
+  background: rgba(105,231,255,.035);
+  transition: .2s ease;
+}
+.zoro-core-ring {
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(105,231,255,.14);
+  border-radius: 11px;
+}
+.zoro-core-ring.core-ring-two { inset: 10px; border-color: rgba(168,121,255,.15); }
+.zoro-voice-core.is-live {
+  color: var(--nx-cyan);
+  border-color: rgba(105,231,255,.40);
+  background: rgba(105,231,255,.08);
+  box-shadow: 0 0 28px rgba(105,231,255,.10);
+}
+.zoro-voice-core.state-thinking,
+.zoro-voice-core.state-speaking { color: #b698ff; border-color: rgba(168,121,255,.38); }
+.zoro-voice-core.state-permission,
+.zoro-voice-core.state-unsupported { color: var(--nx-danger); border-color: rgba(255,123,142,.28); }
+
+.zoro-chat-identity { min-width: 0; }
+.zoro-chat-identity > div { display: flex; align-items: center; gap: 7px; }
+.zoro-chat-identity strong { font-size: 14px; letter-spacing: -.01em; }
+.zoro-runtime-badge {
+  padding: 3px 6px;
+  border: 1px solid var(--nx-line);
+  border-radius: 999px;
+  color: #627187;
+  font-size: 8px;
+  font-weight: 800;
+}
+.zoro-chat-identity p {
+  margin-top: 4px;
+  overflow: hidden;
+  color: #68778d;
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.zoro-chat-tools {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.zoro-chat-tools button,
+.zoro-chat-tools a {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  border: 1px solid var(--nx-line);
+  border-radius: 11px;
+  color: #8795aa;
+  background: rgba(255,255,255,.022);
+  font-size: 9px;
+  font-weight: 720;
+}
+.zoro-chat-tools button:hover,
+.zoro-chat-tools a:hover { border-color: rgba(105,231,255,.22); color: #d3e1ef; }
+.zoro-chat-tools .voice-enabled {
+  color: #051017;
+  border-color: rgba(105,231,255,.34);
+  background: linear-gradient(135deg,var(--nx-cyan),#a6f4ff);
+}
+
+.zoro-voice-strip {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 14px;
+  border-bottom: 1px solid rgba(105,231,255,.10);
+  color: #7e8da3;
+  background: rgba(105,231,255,.025);
+  font-size: 9px;
+}
+.zoro-voice-strip p { flex: 1; }
+.zoro-voice-strip strong { color: var(--nx-cyan); }
+.zoro-last-heard {
+  max-width: 40%;
+  overflow: hidden;
+  color: #627187;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.zoro-wave {
+  height: 20px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.zoro-wave i {
+  display: block;
+  width: 2px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--nx-cyan);
+}
+@media(prefers-reduced-motion:no-preference){
+  .zoro-voice-strip .zoro-wave i:nth-child(1){animation:zoroWave .8s ease-in-out infinite}
+  .zoro-voice-strip .zoro-wave i:nth-child(2){animation:zoroWave .8s .1s ease-in-out infinite}
+  .zoro-voice-strip .zoro-wave i:nth-child(3){animation:zoroWave .8s .2s ease-in-out infinite}
+  .zoro-voice-strip .zoro-wave i:nth-child(4){animation:zoroWave .8s .3s ease-in-out infinite}
+  .zoro-voice-strip .zoro-wave i:nth-child(5){animation:zoroWave .8s .4s ease-in-out infinite}
+}
+@keyframes zoroWave { 50% { height: 18px; } }
+
+.zoro-voice-warning {
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255,209,102,.14);
+  color: #d4ad63;
+  background: rgba(255,209,102,.035);
+  font-size: 9px;
+}
+
+.zoro-message-stream {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  padding: 20px clamp(14px,3vw,26px);
+  scrollbar-width: thin;
+  scrollbar-color: #24334a transparent;
+}
+
+.zoro-message {
+  width: min(82%, 720px);
+  display: grid;
+  grid-template-columns: auto minmax(0,1fr);
+  align-items: flex-start;
+  gap: 9px;
+}
+.zoro-message.is-user {
+  align-self: flex-end;
+  grid-template-columns: minmax(0,1fr);
+}
+.zoro-message-avatar {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(105,231,255,.18);
+  border-radius: 10px;
+  color: var(--nx-cyan);
+  background: rgba(105,231,255,.045);
+}
+.zoro-message-body {
+  min-width: 0;
+  padding: 12px 13px;
+  border: 1px solid var(--nx-line);
+  border-radius: 16px 16px 16px 5px;
+  background: rgba(255,255,255,.028);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.018);
+}
+.zoro-message.is-user .zoro-message-body {
+  border-color: rgba(105,231,255,.18);
+  border-radius: 16px 16px 5px 16px;
+  background: linear-gradient(135deg, rgba(33,73,98,.72), rgba(29,46,79,.76));
+}
+.zoro-message-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 7px;
+  color: #52637a;
+  font-size: 7px;
+  font-weight: 850;
+  letter-spacing: .11em;
+}
+.zoro-message-meta time { letter-spacing: 0; font-weight: 600; }
+.zoro-message-meta button {
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  padding: 0 5px;
+  color: #607087;
+  font-size: 8px;
+}
+.zoro-message-text {
+  color: #d8e2ed;
+  font-size: 12px;
+  line-height: 1.72;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.zoro-message.is-user .zoro-message-text { color: #edf9ff; }
+.zoro-message-notice {
+  margin-top: 9px;
+  padding-top: 8px;
+  border-top: 1px solid var(--nx-line);
+  color: #aa8c55;
+  font-size: 9px;
+  line-height: 1.5;
+}
+.zoro-source-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 9px;
+}
+.zoro-source-row a {
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 8px;
+  border: 1px solid var(--nx-line);
+  border-radius: 999px;
+  color: #7f91a8;
+  background: rgba(255,255,255,.02);
+  font-size: 8px;
+}
+
+.zoro-thinking {
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 11px;
+  color: #6d7c91;
+  font-size: 9px;
+}
+.zoro-thinking > span { display: flex; gap: 3px; }
+.zoro-thinking i {
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--nx-cyan);
+  opacity: .35;
+}
+@media(prefers-reduced-motion:no-preference) {
+  .zoro-thinking i:nth-child(1){animation:thinkDot 1s infinite}
+  .zoro-thinking i:nth-child(2){animation:thinkDot 1s .15s infinite}
+  .zoro-thinking i:nth-child(3){animation:thinkDot 1s .3s infinite}
+}
+@keyframes thinkDot { 50% { opacity: 1; transform: translateY(-2px); } }
+
+.zoro-action-card {
+  width: min(92%, 680px);
+  align-self: center;
+  padding: 14px;
+  border: 1px solid rgba(255,209,102,.22);
+  border-radius: 16px;
+  background: rgba(255,209,102,.04);
+}
+.zoro-action-head { display: grid; gap: 4px; }
+.zoro-action-head span { color: var(--nx-amber); font-size: 8px; font-weight: 850; letter-spacing: .13em; }
+.zoro-action-head strong { color: #b6a57e; font-size: 10px; }
+.zoro-action-preview {
+  display: grid;
+  gap: 4px;
+  margin-top: 10px;
+  padding: 11px;
+  border: 1px solid var(--nx-line);
+  border-radius: 12px;
+  background: rgba(0,0,0,.18);
+}
+.zoro-action-preview strong { color: #e7edf5; font-size: 11px; }
+.zoro-action-preview p { color: #7c8aa0; font-size: 9px; }
+.zoro-action-buttons { display: flex; gap: 7px; margin-top: 10px; }
+.zoro-action-buttons button {
+  flex: 1;
+  min-height: 40px;
+  border: 1px solid var(--nx-line);
+  border-radius: 11px;
+  color: #9aa8ba;
+  background: rgba(255,255,255,.025);
+  font-size: 9px;
+  font-weight: 750;
+}
+.zoro-action-buttons button:last-child {
+  color: #061118;
+  border-color: rgba(105,231,255,.26);
+  background: linear-gradient(135deg,var(--nx-cyan),#a6f4ff);
+}
+
+.zoro-composer-zone {
+  padding: 10px 12px 11px;
+  border-top: 1px solid var(--nx-line);
+  background: rgba(5,9,17,.82);
+  backdrop-filter: blur(18px);
+}
+.zoro-prompt-rail {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 7px;
+  scrollbar-width: none;
+}
+.zoro-prompt-rail::-webkit-scrollbar { display: none; }
+.zoro-prompt-rail button {
+  min-height: 30px;
+  flex: 0 0 auto;
+  padding: 0 9px;
+  border: 1px solid var(--nx-line);
+  border-radius: 999px;
+  color: #6f7e93;
+  background: rgba(255,255,255,.02);
+  font-size: 8px;
+  font-weight: 680;
+}
+.zoro-prompt-rail button:hover { border-color: rgba(105,231,255,.20); color: #b9c8d9; }
+.zoro-composer {
+  display: grid;
+  grid-template-columns: 42px minmax(0,1fr) 42px;
+  align-items: end;
+  gap: 7px;
+  padding: 6px;
+  border: 1px solid rgba(105,231,255,.15);
+  border-radius: 16px;
+  background: rgba(255,255,255,.025);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.018);
+}
+.zoro-composer:focus-within {
+  border-color: rgba(105,231,255,.35);
+  box-shadow: 0 0 0 3px rgba(105,231,255,.035);
+}
+.zoro-composer textarea {
+  width: 100%;
+  min-height: 42px;
+  max-height: 140px;
+  padding: 11px 4px 8px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0;
+  resize: none;
+  color: #eaf2fc;
+  background: transparent !important;
+  box-shadow: none !important;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.zoro-composer-mic,
+.zoro-send-button {
+  width: 42px;
+  min-height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+}
+.zoro-composer-mic {
+  border: 1px solid var(--nx-line);
+  color: #68778c;
+  background: rgba(255,255,255,.02);
+}
+.zoro-composer-mic.is-live { color: var(--nx-cyan); border-color: rgba(105,231,255,.32); background: rgba(105,231,255,.06); }
+.zoro-send-button {
+  border: 1px solid rgba(105,231,255,.28);
+  color: #041017;
+  background: linear-gradient(135deg,var(--nx-cyan),#a6f4ff);
+}
+.zoro-send-button:disabled { opacity: .28; }
+.zoro-composer-note {
+  margin-top: 6px;
+  color: #46556b;
+  font-size: 7px;
+  text-align: center;
+}
+
+.zoro-intelligence-column {
+  position: sticky;
+  top: 88px;
+  display: grid;
+  gap: 10px;
+}
+.zoro-context-card,
+.zoro-engine-card {
+  overflow: hidden;
+  border: 1px solid var(--nx-line);
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(16,25,43,.70), rgba(8,13,23,.82));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.018);
+}
+.zoro-context-card { padding: 15px; }
+.zoro-context-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+.zoro-context-head h2 { color: #e8eef7; font-size: 14px; letter-spacing: -.02em; }
+.zoro-context-head > button {
+  width: 36px;
+  min-height: 36px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--nx-line);
+  border-radius: 11px;
+  color: #6f7e93;
+}
+.zoro-context-focus {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-top: 14px;
+  padding: 11px;
+  border: 1px solid rgba(105,231,255,.10);
+  border-radius: 13px;
+  background: rgba(105,231,255,.025);
+}
+.zoro-context-icon {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  color: var(--nx-cyan);
+  background: rgba(105,231,255,.06);
+}
+.zoro-context-focus strong { color: #d9e4ef; font-size: 10px; line-height: 1.45; }
+.zoro-context-focus p { margin-top: 4px; color: #6d7c91; font-size: 9px; line-height: 1.55; }
+.zoro-context-metrics {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 5px;
+  margin-top: 9px;
+}
+.zoro-context-metrics > div {
+  display: grid;
+  gap: 2px;
+  padding: 9px 6px;
+  border: 1px solid var(--nx-line);
+  border-radius: 11px;
+  text-align: center;
+  background: rgba(255,255,255,.018);
+}
+.zoro-context-metrics strong { color: #edf5ff; font-size: 17px; font-weight: 560; }
+.zoro-context-metrics span { color: #58677d; font-size: 7px; }
+.zoro-next-window {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 7px;
+  margin-top: 9px;
+  padding: 9px 10px;
+  color: var(--nx-cyan);
+  border-radius: 11px;
+  background: rgba(105,231,255,.025);
+}
+.zoro-next-window span { color: #627187; font-size: 8px; }
+.zoro-next-window strong { color: #9cb4c5; font-size: 8px; }
+.zoro-context-warning,
+.zoro-context-error { margin-top: 9px; color: #c29c58; font-size: 8px; line-height: 1.5; }
+.zoro-context-actions { display: flex; gap: 6px; margin-top: 11px; }
+.zoro-context-actions button {
+  flex: 1;
+  min-height: 35px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 1px solid var(--nx-line);
+  border-radius: 10px;
+  color: #8392a7;
+  background: rgba(255,255,255,.02);
+  font-size: 8px;
+  font-weight: 730;
+}
+.zoro-context-actions button:first-child { color: #061017; border-color: rgba(105,231,255,.26); background: linear-gradient(135deg,var(--nx-cyan),#a5f4ff); }
+.zoro-context-updated { margin-top: 9px; color: #44536a; font-size: 7px; line-height: 1.5; }
+.zoro-context-loading { padding: 20px 0 8px; color: #627187; font-size: 9px; }
+
+.zoro-engine-card summary {
+  min-height: 66px;
+  display: grid;
+  grid-template-columns: 36px minmax(0,1fr) auto auto;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  list-style: none;
+}
+.zoro-engine-card summary::-webkit-details-marker { display: none; }
+.zoro-engine-icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  color: #a78aff;
+  background: rgba(168,121,255,.07);
+}
+.zoro-engine-copy { display: grid; min-width: 0; }
+.zoro-engine-copy strong { color: #dbe4ef; font-size: 10px; }
+.zoro-engine-copy small { margin-top: 3px; color: #59687e; font-size: 8px; }
+.zoro-engine-state {
+  padding: 4px 6px;
+  border: 1px solid var(--nx-line);
+  border-radius: 999px;
+  color: #68778d;
+  font-size: 7px;
+  font-weight: 850;
+}
+.zoro-engine-state.state-ready { color: var(--nx-green); border-color: rgba(118,243,189,.18); }
+.zoro-engine-chevron { color: #526077; transition: transform .2s ease; }
+.zoro-engine-card[open] .zoro-engine-chevron { transform: rotate(180deg); }
+.zoro-engine-body {
+  display: grid;
+  gap: 9px;
+  padding: 0 12px 13px;
+  border-top: 1px solid rgba(255,255,255,.035);
+}
+.zoro-engine-body > p:first-child { padding-top: 11px; color: #748399; font-size: 9px; line-height: 1.55; }
+.zoro-engine-note,
+.zoro-engine-detail { color: #536278; font-size: 8px; line-height: 1.5; }
+.zoro-engine-body progress { width: 100%; accent-color: var(--nx-violet); }
+.zoro-engine-actions { display: flex; flex-wrap: wrap; gap: 5px; }
+.zoro-engine-actions button {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 9px;
+  border: 1px solid var(--nx-line);
+  border-radius: 10px;
+  color: #8493a8;
+  background: rgba(255,255,255,.02);
+  font-size: 8px;
+  font-weight: 720;
+}
+
+/* The old assistant-specific card styling is intentionally superseded. */
+section[aria-label="Daily command briefing"],
+section[aria-label="On-device model"] {
+  background: linear-gradient(145deg, rgba(16,25,43,.70), rgba(8,13,23,.82)) !important;
+}
+
+/* ---- Responsive tuning --------------------------------------------------- */
+
+@media(max-width: 1000px) {
+  .zoro-ai-workspace { grid-template-columns: minmax(0,1fr) 280px; }
+  .zoro-chat-tools span { display: none; }
+  .zoro-chat-tools button,
+  .zoro-chat-tools a { width: 38px; padding: 0; justify-content: center; }
+}
+
+@media(max-width: 760px) {
+  .calendar-command-deck {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+    gap: 13px;
+    padding: 14px;
+  }
+  .calendar-control-stack { justify-items: stretch; }
+  .calendar-nav-cluster { justify-content: space-between; }
+  .calendar-nav-cluster .calendar-today-button { flex: 1; }
+  .calendar-view-tabs {
+    overflow-x: auto;
+    justify-content: flex-start;
+    scrollbar-width: none;
+  }
+  .calendar-view-tabs::-webkit-scrollbar { display: none; }
+  .calendar-view-tabs button { flex: 0 0 auto; padding-inline: 13px; }
+  .calendar-insight-row { grid-template-columns: 1fr 1fr; }
+  .calendar-insight-wide { grid-column: 1 / -1; grid-row: 2; }
+  .nexus-calendar-shell { padding: 6px; border-radius: 17px; }
+  .nexus-calendar-shell .fc .fc-timegrid-slot { height: 3.2em; }
+  .nexus-calendar-shell .fc .fc-col-header-cell-cushion { font-size: 8px; }
+  .nexus-calendar-shell .fc .fc-timegrid-axis-cushion,
+  .nexus-calendar-shell .fc .fc-timegrid-slot-label-cushion { font-size: 8px; }
+  .calendar-footnote { display: none; }
+
+  .calendar-sheet-backdrop {
+    align-items: flex-end;
+    justify-content: stretch;
+    padding: 0;
+  }
+  .calendar-event-sheet {
+    width: 100%;
+    height: auto;
+    max-height: 88dvh;
+    padding: 14px 14px max(18px, env(safe-area-inset-bottom));
+    border-width: 1px 0 0;
+    border-radius: 22px 22px 0 0;
+    box-shadow: 0 -25px 80px rgba(0,0,0,.46);
+  }
+  .calendar-sheet-handle {
+    width: 38px;
+    height: 4px;
+    display: block;
+    margin: 0 auto 13px;
+    border-radius: 999px;
+    background: #314159;
+  }
+  .calendar-edit-grid { grid-template-columns: 1fr; }
+  .calendar-field-wide { grid-column: auto; }
+
+  .zoro-ai-workspace { display: flex; flex-direction: column; }
+  .zoro-chat-console {
+    order: 1;
+    width: 100%;
+    min-height: 650px;
+    height: calc(100dvh - 150px);
+    max-height: 820px;
+    border-radius: 19px;
+  }
+  .zoro-intelligence-column {
+    position: static;
+    order: 2;
+    width: 100%;
+  }
+  .zoro-chat-header {
+    grid-template-columns: 42px minmax(0,1fr) auto;
+    min-height: 64px;
+    padding: 9px 10px;
+  }
+  .zoro-voice-core { width: 42px; height: 42px; border-radius: 13px; }
+  .zoro-chat-tools button,
+  .zoro-chat-tools a { width: 36px; min-height: 36px; border-radius: 10px; }
+  .zoro-chat-tools button:first-child { display: none; }
+  .zoro-message-stream { padding: 15px 11px; }
+  .zoro-message { width: 94%; }
+  .zoro-message-avatar { width: 28px; height: 28px; }
+  .zoro-message-body { padding: 10px 11px; }
+  .zoro-message-text { font-size: 11px; line-height: 1.65; }
+  .zoro-message-meta { margin-bottom: 6px; }
+  .zoro-message-meta button { font-size: 0; }
+  .zoro-message-meta button svg { width: 13px; height: 13px; }
+  .zoro-composer-zone { padding: 8px 9px 9px; }
+  .zoro-composer { grid-template-columns: 40px minmax(0,1fr) 40px; }
+  .zoro-composer-mic,
+  .zoro-send-button { width: 40px; min-height: 40px; }
+  .zoro-composer textarea { font-size: 12px; }
+  .zoro-composer-note { display: none; }
+  .zoro-voice-strip { flex-wrap: wrap; }
+  .zoro-last-heard { width: 100%; max-width: none; padding-left: 30px; }
+}
+
+@media(max-width: 430px) {
+  .calendar-range h2 { font-size: 21px; }
+  .calendar-insight { padding: 10px; }
+  .calendar-insight strong { font-size: 10px; }
+  .calendar-sheet-actions { flex-wrap: wrap; }
+  .calendar-sheet-actions button { flex: 1 1 45%; }
+  .zoro-chat-identity p { max-width: 150px; }
+}

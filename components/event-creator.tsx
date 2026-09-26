@@ -2,6 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { CalendarPlus, X } from "lucide-react";
 
 function defaultLocal(minutesFromNow: number) {
   const d = new Date(Date.now() + minutesFromNow * 60_000);
@@ -58,53 +59,60 @@ export function EventCreator({ onCreated }: { onCreated?: () => void }) {
 
   return (
     <>
-      <button onClick={() => setOpen(true)} className="rounded-xl bg-slate-900 px-4 py-2 font-semibold text-white">+ Add Event</button>
-      {open && (
-        <div className="fixed inset-0 z-50 flex items-end bg-black/35 p-3 sm:items-center sm:justify-center" onClick={close}>
-          <div className="w-full max-w-xl rounded-3xl bg-white p-5 shadow-xl" onClick={(e) => e.stopPropagation()}>
-            <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Calendar change</p>
-            <h2 className="mt-1 text-xl font-bold">Create event</h2>
+      <button onClick={() => setOpen(true)} className="nexus-create-event">
+        <CalendarPlus size={17} /> Add event
+      </button>
 
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              <label className="text-sm font-semibold sm:col-span-2">Title
-                <input value={summary} onChange={(e) => { setSummary(e.target.value); setPreview(false); }} className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-3 font-normal" />
+      {open && (
+        <div className="calendar-sheet-backdrop" onClick={close}>
+          <section className="calendar-event-sheet" onClick={(event) => event.stopPropagation()}>
+            <div className="calendar-sheet-handle" />
+            <div className="calendar-sheet-head">
+              <div>
+                <p className="nexus-kicker">NEW CALENDAR SIGNAL</p>
+                <h2>Create event</h2>
+              </div>
+              <button onClick={close} aria-label="Close event creator"><X size={18} /></button>
+            </div>
+
+            <div className="calendar-edit-grid">
+              <label className="calendar-field calendar-field-wide">Title
+                <input value={summary} onChange={(event) => { setSummary(event.target.value); setPreview(false); }} placeholder="What is happening?" />
               </label>
-              <label className="text-sm font-semibold">Start
-                <input type="datetime-local" value={start} onChange={(e) => { setStart(e.target.value); setPreview(false); }} className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-3 font-normal" />
+              <label className="calendar-field">Start
+                <input type="datetime-local" value={start} onChange={(event) => { setStart(event.target.value); setPreview(false); }} />
               </label>
-              <label className="text-sm font-semibold">End
-                <input type="datetime-local" value={end} onChange={(e) => { setEnd(e.target.value); setPreview(false); }} className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-3 font-normal" />
+              <label className="calendar-field">End
+                <input type="datetime-local" value={end} onChange={(event) => { setEnd(event.target.value); setPreview(false); }} />
               </label>
-              <label className="text-sm font-semibold">Category
-                <select value={category} onChange={(e) => { setCategory(e.target.value); setPreview(false); }} className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-3 font-normal">
+              <label className="calendar-field">Category
+                <select value={category} onChange={(event) => { setCategory(event.target.value); setPreview(false); }}>
                   {["WORK","PROFESSIONAL_YEAR","WORKOUT","APPOINTMENT","PERSONAL","DEADLINE","REMINDER"].map((value) => <option key={value}>{value}</option>)}
                 </select>
               </label>
-              <label className="text-sm font-semibold sm:col-span-2">Notes
-                <textarea value={description} onChange={(e) => { setDescription(e.target.value); setPreview(false); }} rows={3} className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-3 font-normal" />
+              <label className="calendar-field calendar-field-wide">Notes
+                <textarea value={description} onChange={(event) => { setDescription(event.target.value); setPreview(false); }} rows={3} placeholder="Optional context" />
               </label>
             </div>
 
             {preview && (
-              <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm">
-                <p className="font-bold text-amber-900">Confirmation preview</p>
-                <p className="mt-1">{summary || "Untitled event"}</p>
+              <div className="calendar-confirm-panel">
+                <span>CONFIRMATION PREVIEW</span>
+                <p>{summary || "Untitled event"}</p>
                 <p>{new Date(start).toLocaleString("en-AU")} → {new Date(end).toLocaleString("en-AU")}</p>
                 <p>Category: {category}</p>
               </div>
             )}
 
-            {status && <p className="mt-3 text-sm text-slate-600">{status}</p>}
+            {status && <p className="calendar-status">{status}</p>}
 
-            <div className="mt-5 flex gap-2">
-              <button onClick={close} className="flex-1 rounded-xl border border-slate-300 px-4 py-2 font-semibold">Cancel</button>
-              {!preview ? (
-                <button disabled={!summary || !start || !end} onClick={() => setPreview(true)} className="flex-1 rounded-xl bg-slate-900 px-4 py-2 font-semibold text-white disabled:opacity-40">Preview</button>
-              ) : (
-                <button onClick={create} className="flex-1 rounded-xl bg-slate-900 px-4 py-2 font-semibold text-white">Confirm & create</button>
-              )}
+            <div className="calendar-sheet-actions">
+              <button onClick={close} className="calendar-secondary">Cancel</button>
+              {!preview
+                ? <button disabled={!summary || !start || !end} onClick={() => setPreview(true)} className="calendar-primary">Preview event</button>
+                : <button onClick={create} className="calendar-primary">Confirm & create</button>}
             </div>
-          </div>
+          </section>
         </div>
       )}
     </>
