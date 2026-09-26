@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { Mic, MicOff } from "lucide-react";
+import { Mic, MicOff, Settings } from "lucide-react";
+import type { AssistantSettings } from "@/lib/assistant-settings";
 
 type Message = { role: "user" | "assistant"; text: string };
 type PendingAction = Record<string, unknown> & { type: string };
@@ -71,11 +73,14 @@ function speechText(text: string) {
     .trim();
 }
 
-export function AssistantChat() {
+export function AssistantChat({ settings }: { settings: AssistantSettings }) {
+  const wakeWord = settings.wakeWord.trim();
+  const wakeWordLower = wakeWord.toLowerCase();
+
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      text: "Zoro is ready. Start Voice Mode and say “Zoro”. I’ll ask, “How can I help you?”, then listen for your request.",
+      text: `Zoro is ready. Start Voice Mode and say “${wakeWord}”. I’ll respond, “${settings.wakeResponse}”, then listen for your request.`,
     },
   ]);
   const [input, setInput] = useState("");
@@ -110,6 +115,18 @@ export function AssistantChat() {
     };
   }, []);
 
+  function stopVoiceMode() {
+    voiceModeRef.current = false;
+    awaitingCommandRef.current = false;
+    setVoiceMode(false);
+    setVoiceState("off");
+    setLastHeard("");
+
+    if (restartTimerRef.current) window.clearTimeout(restartTimerRef.current);
+    recognitionRef.current?.abort();
+    window.speechSynthesis?.cancel();
+  }
+
   function restartListening(delay = 400) {
     if (!voiceModeRef.current || speakingRef.current || busyRef.current) return;
     if (restartTimerRef.current) window.clearTimeout(restartTimerRef.current);
@@ -124,9 +141,10 @@ export function AssistantChat() {
     }, delay);
   }
 
-  function speak(text: string) {
+  function speak(text: string, wakePrompt = false) {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
-      restartListening();
+      if (settings.keepListening) restartListening();
+      else stopVoiceMode();
       return;
     }
 
@@ -136,17 +154,30 @@ export function AssistantChat() {
     setVoiceState("speaking");
 
     const utterance = new SpeechSynthesisUtterance(speechText(text));
-    utterance.lang = "en-AU";
-    utterance.rate = 1;
+    utterance.lang = settings.language;
+    utterance.rate = settings.speechRate;
     utterance.pitch = 1;
 
     const finish = () => {
       speakingRef.current = false;
+
       if (!voiceModeRef.current) {
         setVoiceState("off");
         return;
       }
-      setVoiceState(awaitingCommandRef.current ? "awake" : "listening");
+
+      if (wakePrompt) {
+        setVoiceState("awake");
+        restartListening(450);
+        return;
+      }
+
+      if (!settings.keepListening) {
+        stopVoiceMode();
+        return;
+      }
+
+      setVoiceState("listening");
       restartListening(450);
     };
 
@@ -185,13 +216,27 @@ export function AssistantChat() {
       setBusy(false);
       busyRef.current = false;
 
-      if (fromVoice || voiceModeRef.current) speak(reply);
+      if ((fromVoice || voiceModeRef.current) && settings.spokenReplies) {
+        speak(reply);
+      } else if (voiceModeRef.current) {
+        if (settings.keepListening) {
+          setVoiceState("listening");
+          restartListening();
+        } else {
+          stopVoiceMode();
+        }
+      }
     } catch {
       const reply = "I couldn't complete that request. Please try again.";
       setMessages((current) => [...current, { role: "assistant", text: reply }]);
       setBusy(false);
       busyRef.current = false;
-      if (fromVoice || voiceModeRef.current) speak(reply);
+
+      if ((fromVoice || voiceModeRef.current) && settings.spokenReplies) {
+        speak(reply);
+      } else if (voiceModeRef.current) {
+        restartListening();
+      }
     }
   }
 
@@ -208,11 +253,11 @@ export function AssistantChat() {
     }
 
     const lower = transcript.toLowerCase();
-    const wakeIndex = lower.indexOf("zoro");
+    const wakeIndex = lower.indexOf(wakeWordLower);
     if (wakeIndex < 0) return;
 
     const afterWake = transcript
-      .slice(wakeIndex + 4)
+      .slice(wakeIndex + wakeWord.length)
       .replace(/^[\s,.:;!?-]+/, "")
       .trim();
 
@@ -225,7 +270,7 @@ export function AssistantChat() {
     awaitingCommandRef.current = true;
     recognitionRef.current?.stop();
     setVoiceState("awake");
-    speak("How can I help you?");
+    speak(settings.wakeResponse, true);
   }
 
   function createRecognition() {
@@ -238,7 +283,7 @@ export function AssistantChat() {
     const recognition = new Recognition();
     recognition.continuous = true;
     recognition.interimResults = false;
-    recognition.lang = "en-AU";
+    recognition.lang = settings.language;
 
     recognition.onstart = () => {
       if (voiceModeRef.current && !speakingRef.current) {
@@ -292,18 +337,6 @@ export function AssistantChat() {
     }
   }
 
-  function disableVoiceMode() {
-    voiceModeRef.current = false;
-    awaitingCommandRef.current = false;
-    setVoiceMode(false);
-    setVoiceState("off");
-    setLastHeard("");
-
-    if (restartTimerRef.current) window.clearTimeout(restartTimerRef.current);
-    recognitionRef.current?.abort();
-    window.speechSynthesis?.cancel();
-  }
-
   async function confirmAction() {
     if (!pendingAction || busyRef.current) return;
 
@@ -325,15 +358,19 @@ export function AssistantChat() {
     setBusy(false);
     busyRef.current = false;
 
-    if (voiceModeRef.current) speak(reply);
+    if (voiceModeRef.current && settings.spokenReplies) {
+      speak(reply);
+    } else if (voiceModeRef.current) {
+      restartListening();
+    }
   }
 
   const voiceLabel =
     voiceState === "starting" ? "Starting microphone…"
-    : voiceState === "listening" ? "Listening for “Zoro”…"
-    : voiceState === "awake" ? "Zoro is listening to your request…"
-    : voiceState === "thinking" ? "Zoro is thinking…"
-    : voiceState === "speaking" ? "Zoro is speaking…"
+    : voiceState === "listening" ? `Listening for “${wakeWord}”…`
+    : voiceState === "awake" ? "Listening to your request…"
+    : voiceState === "thinking" ? "Thinking…"
+    : voiceState === "speaking" ? "Speaking…"
     : voiceState === "permission" ? "Microphone permission was blocked."
     : voiceState === "unsupported" ? "Voice recognition is not supported in this browser."
     : "Voice Mode is off.";
@@ -347,20 +384,29 @@ export function AssistantChat() {
             <p className="mt-1 text-xs text-slate-500">{voiceLabel}</p>
           </div>
 
-          <button
-            type="button"
-            onClick={voiceMode ? disableVoiceMode : enableVoiceMode}
-            className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold ${voiceMode ? "bg-emerald-100 text-emerald-900" : "bg-slate-900 text-white"}`}
-          >
-            {voiceMode ? <Mic size={18} /> : <MicOff size={18} />}
-            {voiceMode ? "Voice Mode On" : "Start Voice Mode"}
-          </button>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/settings/assistant"
+              aria-label="Assistant settings"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white"
+            >
+              <Settings size={18} />
+            </Link>
+            <button
+              type="button"
+              onClick={voiceMode ? stopVoiceMode : enableVoiceMode}
+              className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold ${voiceMode ? "bg-emerald-100 text-emerald-900" : "bg-slate-900 text-white"}`}
+            >
+              {voiceMode ? <Mic size={18} /> : <MicOff size={18} />}
+              {voiceMode ? "Voice Mode On" : "Start Voice Mode"}
+            </button>
+          </div>
         </div>
 
         {voiceMode && (
           <div className="mt-3 rounded-2xl bg-slate-50 p-3 text-xs text-slate-600">
-            Say <strong>“Zoro”</strong>. When Zoro says “How can I help you?”, speak your request.
-            Keep the Assistant open for wake-word listening.
+            Say <strong>“{wakeWord}”</strong>. When the Assistant replies “{settings.wakeResponse}”, speak your request.
+            Keep this page open for wake-word listening.
             {lastHeard && <p className="mt-1 truncate">Last heard: “{lastHeard}”</p>}
           </div>
         )}
