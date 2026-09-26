@@ -6,13 +6,19 @@ import { stripTypeScriptTypes } from "node:module";
 // Erase type-only database imports so these logic tests need no credentials or database.
 const source = readFileSync(new URL("../lib/intelligence/local-assistant.ts", import.meta.url), "utf8")
   .replace('"./day-planner"', JSON.stringify(new URL("../lib/intelligence/day-planner.ts", import.meta.url).href));
-const { answerWithLocalIntelligence: answer } = await import("data:text/javascript;base64," + Buffer.from(stripTypeScriptTypes(source)).toString("base64"));
+const { answerWithLocalIntelligence: answer, isOpenEndedConversation } = await import("data:text/javascript;base64," + Buffer.from(stripTypeScriptTypes(source)).toString("base64"));
 const priority = { title: "Submit assignment", priority: "HIGH", nextAction: "Review the draft", reason: "Due soon", dueAt: null };
 const context = {
   generatedAt: "2026-09-26T00:00:00Z", timezone: "Australia/Darwin", calendarStatus: "available",
   summary: { urgentCount: 0, dueSoonCount: 0, actionEmailCount: 0, waitingCount: 0 },
   topPriorities: [priority], deadlines: [], emailActions: [], followups: [], tasks: [], calendarEvents: [],
 };
+test("on-device conversation only handles requests outside deterministic secretary functions", () => {
+  assert.equal(isOpenEndedConversation("Help me write a short introduction"), true);
+  assert.equal(isOpenEndedConversation("Am I free tomorrow?"), false);
+  assert.equal(isOpenEndedConversation("Plan my day"), false);
+  assert.equal(isOpenEndedConversation("What about tomorrow?", [{ role: "user", text: "Plan my day" }]), false);
+});
 test("priorities take precedence over today calendar keyword", () => {
   assert.match(answer("What's important today?", context), /Submit assignment/);
 });

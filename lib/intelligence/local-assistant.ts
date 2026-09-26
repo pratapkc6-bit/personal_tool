@@ -355,6 +355,10 @@ function priorityFromMessage(message: string, context: AssistantContext) {
   return parts.join(" ");
 }
 
+export function isOpenEndedConversation(message: string, history: AssistantHistoryMessage[] = []) {
+  return inferIntent(message, history) === "GENERAL";
+}
+
 export function answerWithLocalIntelligence(
   message: string,
   context: AssistantContext,

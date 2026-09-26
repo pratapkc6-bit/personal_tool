@@ -9,6 +9,9 @@ type Message = { role: "user" | "assistant"; text: string; sources?: Array<{ id:
 import type { PendingAction } from "@/lib/intelligence/assistant-contract";
 import { MissionPanel } from "@/components/mission-panel";
 import pkg from "@/package.json";
+import { useDeviceModel } from "@/components/use-device-model";
+import { DeviceModelPanel } from "@/components/device-model-panel";
+import { canUseDeviceAnswer } from "@/lib/intelligence/device-prompt";
 
 type SpeechRecognitionResultLike = {
   isFinal: boolean;
@@ -76,6 +79,7 @@ function speechText(text: string) {
 }
 
 export function AssistantChat({ settings }: { settings: AssistantSettings }) {
+  const deviceModel = useDeviceModel();
   const wakeWord = settings.wakeWord.trim();
   const wakeWordLower = wakeWord.toLowerCase();
 
@@ -218,7 +222,16 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
       });
 
       const data = await res.json().catch(() => ({}));
-      const reply = data.message || data.error || "Something went wrong.";
+      let reply = data.message || data.error || "Something went wrong.";
+      if (deviceModel.state === "ready" && canUseDeviceAnswer(data, res.ok)) {
+        try {
+          reply = await deviceModel.answer(value, history, data.deviceReference || reply);
+          data.engine = "device";
+          data.notice = "Generated on this device by a small experimental model. Verify important details. No action was taken.";
+        } catch {
+          data.notice = "The on-device model could not answer. This is the regular secretary response.";
+        }
+      }
 
       setMessages((current) => [...current, { role: "assistant", text: reply, sources: data.sources, engine: data.engine, notice: data.notice }]);
       setPendingAction(data.pendingAction || null);
@@ -388,6 +401,7 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
   return (
     <div className="space-y-4">
     <MissionPanel refreshKey={refreshKey} onPrompt={prompt => void send(prompt)} />
+    <DeviceModelPanel model={deviceModel} busy={busy} />
     <div className="flex min-h-[70vh] flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-card">
       <div className="border-b border-slate-100 px-4 py-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -438,7 +452,7 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
             key={index}
             className={`max-w-[88%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm ${message.role === "user" ? "ml-auto bg-slate-900 text-white" : "bg-slate-100 text-slate-800"}`}
           >
-            {message.engine && <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">{message.engine === "action" ? "Action result" : "Local intelligence"}</p>}
+            {message.engine && <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">{message.engine === "device" ? "On-device model" : message.engine === "action" ? "Action result" : "Local intelligence"}</p>}
             {message.text}
             {message.notice && <p className="mt-2 border-t border-slate-200 pt-2 text-xs text-amber-800">{message.notice}</p>}
             {message.sources && message.sources.length > 0 && <div className="mt-3 flex flex-wrap gap-2">{message.sources.map(source => <Link key={source.id} href={source.href} className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs text-slate-700">{source.title}</Link>)}</div>}
@@ -524,4 +538,3 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
     </div>
   );
 }
-
