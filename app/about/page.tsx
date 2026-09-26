@@ -29,9 +29,9 @@ export default function AboutPage() {
       </section>
 
       <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-card">
-        <h2 className="font-bold">What's new in v0.9.0</h2>
+        <h2 className="font-bold">What's new in v0.10.0</h2>
         <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-600">
-          <li>New Zoro command center with attention radar, ranked priorities and today's remaining schedule.</li><li>Interactive focus planning with adjustable duration and recovery buffers, plus a pauseable session timer.</li><li>Quick commands, mobile layouts and a refreshed visual identity.</li><li>Optional browser model download with WebGPU checks, progress, a generation test, and cache removal. No Mac or paid AI API required.</li>
+          <li>Black-and-orange Zoro Hub design across Home, Assistant, Calendar, Missions, Intelligence and Setup.</li><li>Capture a task from any screen, search and filter missions, edit next actions, and reopen completed work.</li><li>Save a focus plan to your account after a fresh calendar check. Plans are suggestions, not calendar reservations.</li><li>Filter email intelligence by action, urgency, deadline, sender or subject.</li><li>New Zoro command center with attention radar, ranked priorities and today's remaining schedule.</li><li>Interactive focus planning with adjustable duration and recovery buffers, plus a pauseable session timer.</li><li>Quick commands, mobile layouts and a refreshed visual identity.</li><li>Optional browser model download with WebGPU checks, progress, a generation test, and cache removal. No Mac or paid AI API required.</li>
           <li>Experimental on-device conversation. Compatibility and performance must be tested on your phone.</li>
           <li>Daily command briefing with priorities, focus windows, overdue items and conflicts.</li>
           <li>Local secretary intelligence with no paid AI service, API key, or model subscription.</li>
