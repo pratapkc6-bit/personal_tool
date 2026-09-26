@@ -10,26 +10,13 @@ import { scanGmail } from "@/lib/gmail-scan";
 import { syncLatestMyobRoster } from "@/lib/roster-sync";
 import { audit, activity } from "@/lib/audit";
 
-type PendingAction =
-  | {
-      type: "CREATE_CALENDAR_EVENT";
-      summary: string;
-      start: string;
-      end: string;
-      category: "WORKOUT" | "APPOINTMENT" | "PERSONAL" | "REMINDER";
-      description?: string;
-    }
-  | {
-      type: "CREATE_TASK";
-      title: string;
-      dueAt?: string;
-      priority: "URGENT" | "HIGH" | "MEDIUM" | "LOW";
-      category: string;
-      nextAction?: string;
-    }
-  | {
-      type: "SYNC_MYOB_ROSTER";
-    };
+import { requestSchema, type PendingAction } from "@/lib/intelligence/assistant-contract";
+import { prepareConfirmation, consumeConfirmation } from "@/lib/intelligence/confirmations";
+import { reasonWithAI } from "@/lib/intelligence/reasoning";
+import { buildMission } from "@/lib/intelligence/mission";
+import { loadAssistantSettings } from "@/lib/assistant-settings";
+
+export const maxDuration = 60;
 
 type CalendarPendingAction = Extract<PendingAction, { type: "CREATE_CALENDAR_EVENT" }>;
 type TaskPendingAction = Extract<PendingAction, { type: "CREATE_TASK" }>;
@@ -52,6 +39,7 @@ function parseDarwinDate(text: string) {
 }
 
 function eventPreview(message: string): CalendarPendingAction | null {
+  if (/\b(remind me|create task|add task|i have to|i need to)\b/i.test(message)) return null;
   if (!/\b(add|schedule|book|create)\b.*\b(appointment|workout|meeting|event)\b/i.test(message) &&
       !/\b(add|schedule|book)\b/i.test(message)) return null;
 
@@ -122,7 +110,7 @@ async function executeAction(userId: string, action: PendingAction) {
 
     const duplicate = (duplicates.data.items ?? []).some((event) =>
       event.summary?.toLowerCase() === action.summary.toLowerCase() &&
-      event.start?.dateTime === action.start
+      event.start?.dateTime && Date.parse(event.start.dateTime) === Date.parse(action.start)
     );
 
     if (duplicate) return { message: "That calendar event already exists, so I did not create a duplicate." };
@@ -160,82 +148,64 @@ async function executeAction(userId: string, action: PendingAction) {
   return { message: `Created task "${task.title}".` };
 }
 
-function safeHistory(value: unknown): AssistantHistoryMessage[] {
-  if (!Array.isArray(value)) return [];
-
-  return value
-    .slice(-10)
-    .filter((item): item is { role: string; text: string } =>
-      Boolean(
-        item &&
-        typeof item === "object" &&
-        "role" in item &&
-        "text" in item &&
-        typeof (item as { role?: unknown }).role === "string" &&
-        typeof (item as { text?: unknown }).text === "string"
-      )
-    )
-    .filter((item) => item.role === "user" || item.role === "assistant")
-    .map((item) => ({
-      role: item.role as "user" | "assistant",
-      text: item.text.slice(0, 2000),
-    }));
-}
-
-async function answerWithIntelligence(userId: string, message: string, history: AssistantHistoryMessage[]) {
-  const context = await buildAssistantContext(userId);
-  return answerWithLocalIntelligence(message, context, history);
+export async function GET() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const [context, settings] = await Promise.all([buildAssistantContext(session.user.id), loadAssistantSettings(session.user.id)]);
+    return NextResponse.json({ mission: buildMission(context), aiEnabled: settings.aiEnabled, aiConfigured: Boolean(process.env.OPENAI_API_KEY) }, { headers: { "Cache-Control": "no-store" } });
+  } catch {
+    return NextResponse.json({ error: "Your briefing could not be loaded. Please try again." }, { status: 503 });
+  }
 }
 
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
   try {
-    const body = await request.json();
-
-    if (body.confirmedAction) {
-      return NextResponse.json(await executeAction(session.user.id, body.confirmedAction as PendingAction));
+    const parsed = requestSchema.safeParse(await request.json().catch(() => null));
+    if (!parsed.success) return NextResponse.json({ error: "Send a message up to 4,000 characters, or confirm the latest preview." }, { status: 400 });
+    const body = parsed.data;
+    if (body.confirmationToken) {
+      const action = await consumeConfirmation(session.user.id, body.confirmationToken);
+      if (!action) return NextResponse.json({ error: "That preview expired or was already used. Ask me to prepare it again." }, { status: 409 });
+      return NextResponse.json({ ...await executeAction(session.user.id, action), engine: "action" });
     }
-
-    const message = String(body.message || "").trim();
-    if (!message) return NextResponse.json({ error: "Message is required." }, { status: 400 });
-
-    if (/\b(check|scan)\b.*\b(email|gmail|inbox)\b/i.test(message)) {
+    const message = body.message!;
+    await db.setting.deleteMany({ where: { userId: session.user.id, key: "assistant_pending_action" } });
+    const history: AssistantHistoryMessage[] = body.history || [];
+    if (/^(please )?(check|scan|refresh)\s+(my )?(email|emails|gmail|inbox)[.!?]*$/i.test(message)) {
       const result = await scanGmail(session.user.id);
-      return NextResponse.json({
-        message: `Gmail scan complete. ${result.processed} new message${result.processed === 1 ? "" : "s"} processed and ${result.actionItems.length} action item${result.actionItems.length === 1 ? "" : "s"} detected.`,
-      });
+      return NextResponse.json({ message: `Gmail scan complete. ${result.processed} new messages processed and ${result.actionItems.length} action items detected.`, engine: "local", suggestedPrompts: ["Which emails need action?", "What should I do now?"] });
     }
-
-    if (/\b(sync|add|check)\b.*\broster\b/i.test(message)) {
-      return NextResponse.json({
-        message: "I can reconcile the latest MYOB roster with Google Calendar. Confirm before I make roster-managed Calendar changes.",
-        pendingAction: { type: "SYNC_MYOB_ROSTER" },
-      });
+    if (/^(please )?(sync|add|check)\s+(my |the )?(myob )?roster[.!?]*$/i.test(message)) {
+      return NextResponse.json({ message: "Review and confirm to reconcile the latest MYOB roster with Google Calendar.", ...await prepareConfirmation(session.user.id, { type: "SYNC_MYOB_ROSTER" }), engine: "local" });
     }
-
-    const calendarAction = eventPreview(message);
-    if (calendarAction) {
-      return NextResponse.json({
-        message: `I understood this as: ${calendarAction.summary}, starting ${new Date(calendarAction.start).toLocaleString("en-AU", { timeZone: "Australia/Darwin" })}. Confirm before I change Google Calendar.`,
-        pendingAction: calendarAction,
-      });
+    const settings = await loadAssistantSettings(session.user.id);
+    let notice: string | undefined;
+    let context: Awaited<ReturnType<typeof buildAssistantContext>> | undefined;
+    if (settings.aiEnabled && process.env.OPENAI_API_KEY) {
+      context = await buildAssistantContext(session.user.id);
+      try {
+        const answer = await reasonWithAI({ message, history, context, personalBrief: settings.personalBrief });
+        const confirmation = answer.pendingAction ? await prepareConfirmation(session.user.id, answer.pendingAction) : {};
+        return NextResponse.json({ ...answer, ...confirmation });
+      } catch {
+        notice = "AI reasoning is temporarily unavailable. This answer uses local secretary logic.";
+      }
+    } else if (settings.aiEnabled) {
+      notice = "AI mode needs an OpenAI API key configured on the server. Local secretary mode is active.";
     }
-
-    const taskAction = taskPreview(message);
-    if (taskAction) {
-      return NextResponse.json({
-        message: `I can create the task "${taskAction.title}"${taskAction.dueAt ? ` due ${new Date(taskAction.dueAt).toLocaleString("en-AU", { timeZone: "Australia/Darwin" })}` : ""}. Confirm to add it.`,
-        pendingAction: taskAction,
-      });
+    const action = taskPreview(message) || eventPreview(message);
+    if (action) {
+      return NextResponse.json({ message: "I've prepared an action. Review the details below before confirming.", ...await prepareConfirmation(session.user.id, action), engine: "local", notice });
     }
-
+    context ||= await buildAssistantContext(session.user.id);
     return NextResponse.json({
-      message: await answerWithIntelligence(session.user.id, message, safeHistory(body.history)),
-      engine: "local",
+      message: answerWithLocalIntelligence(message, context, history), engine: "local", notice,
+      suggestedPrompts: ["Plan my day", "Which emails need action?", "What deadlines are coming?"],
     });
-  } catch (error) {
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Assistant request failed" }, { status: 500 });
+  } catch {
+    return NextResponse.json({ error: "I couldn't complete that request. Check your connection and try again. If an action was being confirmed, check Calendar or Tasks before preparing it again." }, { status: 500 });
   }
 }
