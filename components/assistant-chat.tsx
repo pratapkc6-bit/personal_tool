@@ -75,7 +75,7 @@ function speechText(text: string) {
     .trim();
 }
 
-export function AssistantChat({ settings, aiConfigured = false }: { settings: AssistantSettings; aiConfigured?: boolean }) {
+export function AssistantChat({ settings }: { settings: AssistantSettings }) {
   const wakeWord = settings.wakeWord.trim();
   const wakeWordLower = wakeWord.toLowerCase();
 
@@ -392,7 +392,7 @@ export function AssistantChat({ settings, aiConfigured = false }: { settings: As
       <div className="border-b border-slate-100 px-4 py-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="text-xs font-semibold text-emerald-700">ZORO · v{pkg.version} · {settings.aiEnabled && aiConfigured ? "AI REASONING READY" : "LOCAL MODE"}</p>
+            <p className="text-xs font-semibold text-emerald-700">ZORO · v{pkg.version} · LOCAL INTELLIGENCE</p>
             <p className="mt-1 text-xs text-slate-500">{voiceLabel}</p>
           </div>
 
@@ -432,14 +432,13 @@ export function AssistantChat({ settings, aiConfigured = false }: { settings: As
         )}
       </div>
 
-      {(!aiConfigured || !settings.aiEnabled) && <div className="border-b border-slate-100 bg-cyan-50 px-4 py-3 text-xs text-slate-700">{!aiConfigured ? "AI reasoning needs an OpenAI API key on the server. Local planning and voice are available now." : "AI reasoning is available. Enable it in Assistant Settings to have more natural conversations."} <Link href="/settings/assistant" className="font-semibold underline">Assistant Settings</Link></div>}
       <div role="log" aria-live="polite" aria-relevant="additions" className="max-h-[65vh] flex-1 space-y-3 overflow-y-auto p-4">
         {messages.map((message, index) => (
           <div
             key={index}
             className={`max-w-[88%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm ${message.role === "user" ? "ml-auto bg-slate-900 text-white" : "bg-slate-100 text-slate-800"}`}
           >
-            {message.engine && <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">{message.engine === "ai" ? "AI reasoning" : message.engine === "action" ? "Action result" : "Local intelligence"}</p>}
+            {message.engine && <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">{message.engine === "action" ? "Action result" : "Local intelligence"}</p>}
             {message.text}
             {message.notice && <p className="mt-2 border-t border-slate-200 pt-2 text-xs text-amber-800">{message.notice}</p>}
             {message.sources && message.sources.length > 0 && <div className="mt-3 flex flex-wrap gap-2">{message.sources.map(source => <Link key={source.id} href={source.href} className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs text-slate-700">{source.title}</Link>)}</div>}
