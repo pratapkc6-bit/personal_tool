@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { SavedFocusPlan } from "@/components/saved-focus-plan";
 import { APP_VERSION } from "@/lib/release";
 import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, AudioLines, CalendarDays, ChevronRight, Command, Focus, Radio, RefreshCw, Sparkles, Zap } from "lucide-react";
@@ -36,8 +37,10 @@ export function CommandCenter({ name }: { name: string }) {
     tick();
     const interval = window.setInterval(tick, 1000);
     const foreground = () => { if (document.visibilityState === "visible") { tick(); setRevision(value => value + 1); } };
+    const capture = () => setRevision(value => value + 1);
+    window.addEventListener("zoro:task-created", capture);
     document.addEventListener("visibilitychange", foreground);
-    return () => { clearInterval(interval); document.removeEventListener("visibilitychange", foreground); };
+    return () => { clearInterval(interval); window.removeEventListener("zoro:task-created", capture); document.removeEventListener("visibilitychange", foreground); };
   }, []);
   useEffect(() => {
     const open = (event: KeyboardEvent) => {
@@ -57,18 +60,19 @@ export function CommandCenter({ name }: { name: string }) {
   const routes = [{ title: "Talk to Zoro", description: "Voice, conversation and action previews", href: "/assistant" }, { title: "Calendar", description: "Review or create an event", href: "/calendar" }, { title: "Tasks", description: "Capture and complete your work", href: "/tasks" }, { title: "Inbox", description: "Scan messages and see email actions", href: "/inbox" }, { title: "Search everything", description: "Find saved work and messages", href: "/search" }, { title: "Connections", description: "Check Google access and sign in", href: "/connections" }, { title: "Assistant settings", description: "Choose voice and wake word", href: "/settings/assistant" }];
 
   return <div className="command-center">
-    <div className="cc-topline"><span><span className="cc-status-dot" /> ZORO / PERSONAL OPERATING SYSTEM</span><span>v{APP_VERSION}</span></div>
+    <div className="cc-topline"><span><span className="cc-status-dot" /> ZORO HUB / YOUR DAILY FEED</span><span>v{APP_VERSION}</span></div>
     <section className="cc-hero">
       <div className="cc-hero-copy">
         <p className="cc-eyebrow">{stamp}</p>
-        <h1>Your day.<br /><span>Within reach.</span></h1>
-        <p className="cc-intro">Welcome back, {name}. Turn the noise into a next step.</p>
+        <h1>Less noise.<br /><span>More action.</span></h1>
+        <p className="cc-intro">Your personal feed, {name}. Priorities first. Everything else in its place.</p>
         <div className="cc-actions"><Link href="/assistant" className="cc-button cc-primary"><AudioLines size={18} /> Talk to Zoro <ArrowUpRight size={17} /></Link><button className="cc-button cc-secondary" onClick={() => dialog.current?.showModal()}><Command size={16} /> Quick commands</button></div>
       </div>
-      <div className="cc-orbit" aria-hidden="true"><div className="cc-orbit-ring cc-ring-one" /><div className="cc-orbit-ring cc-ring-two" /><div className="cc-orbit-core"><Sparkles size={38} /></div><span className="cc-orbit-label">THINK · PLAN · ACT</span></div>
+      <div className="cc-orbit" aria-hidden="true"><div className="cc-orbit-ring cc-ring-one" /><div className="cc-orbit-ring cc-ring-two" /><div className="cc-orbit-core"><Sparkles size={38} /></div><span className="cc-orbit-label">FOCUS MODE</span></div>
     </section>
 
-    <div className="cc-section-heading"><div><p className="cc-eyebrow">01 / SITUATION ROOM</p><h2>Clarity before action.</h2></div><button className="cc-icon-button" onClick={() => setRevision(value => value + 1)} disabled={loading} aria-label="Refresh command center"><RefreshCw size={18} className={loading ? "cc-spin" : ""} /></button></div>
+    <div className="hub-modules">{[{href:"/tasks", title:"Mission control", caption:"Capture, prioritise, finish", number:"01"},{href:"/inbox",title:"Intelligence feed",caption:"Turn messages into next steps",number:"02"},{href:"/calendar",title:"Your timeline",caption:"Review your real commitments",number:"03"},{href:"/connections",title:"System setup",caption:"Connect your data and AI mode",number:"04"}].map(module => <Link className="hub-module" href={module.href} key={module.href}><span>MODULE {module.number} ↗</span><strong>{module.title}</strong><small>{module.caption}</small></Link>)}</div>
+    <div className="cc-section-heading"><div><p className="cc-eyebrow">RECOMMENDED FOR YOU</p><h2>Clarity before action.</h2></div><button className="cc-icon-button" onClick={() => setRevision(value => value + 1)} disabled={loading} aria-label="Refresh command center"><RefreshCw size={18} className={loading ? "cc-spin" : ""} /></button></div>
     <div role="status" className="cc-freshness">{loading ? "Reading your priorities and calendar…" : error || (data ? `Snapshot ${clock(data.generatedAt)} · ${data.timezone}${stale ? " · Refresh to verify available time" : ""}` : "No data loaded")}</div>
     <div className="cc-metrics">
       {[{ label: "Open tasks loaded", value: data?.taskCount, icon: Focus }, { label: "Due today", value: data?.dueToday, icon: CalendarDays }, { label: "Overdue items", value: data?.overdue, icon: Zap }, { label: "Email actions loaded", value: data?.emailCount, icon: Radio }].map(({ label, value, icon: Icon }) => <div className="cc-metric" key={label}><Icon size={17} /><strong>{value ?? "—"}</strong><span>{label}</span></div>)}
@@ -86,13 +90,13 @@ export function CommandCenter({ name }: { name: string }) {
       </section>
     </div>
 
-    <div className="cc-section-heading"><div><p className="cc-eyebrow">02 / TIME LAB</p><h2>Make space for progress.</h2></div><span className="cc-tag">INTERACTIVE</span></div>
+    <div className="cc-section-heading"><div><p className="cc-eyebrow">BUILD YOUR NEXT SESSION</p><h2>Make space for progress.</h2></div><span className="cc-tag">INTERACTIVE</span></div>
     <div className="cc-grid">
       <section className="cc-panel"><div className="cc-panel-heading"><h2>What can fit today?</h2><Sparkles size={18} /></div><p className="cc-caption">Change your focus length and recovery buffer. Preview up to six sessions within verified gaps, 09:00–18:00.</p>
         <label className="cc-range-label" htmlFor="focus-duration">Focus length <strong>{minutes} min</strong></label><input id="focus-duration" className="cc-range" type="range" min="15" max="90" step="5" value={minutes} disabled={endsAt !== null || remaining !== null} onChange={event => setMinutes(Number(event.target.value))} />
         <div className="cc-buffer"><span>Recovery after each session</span><div>{[0, 5, 10, 15].map(value => <button key={value} aria-pressed={buffer === value} className={buffer === value ? "selected" : ""} onClick={() => setBuffer(value)}>{value}m</button>)}</div></div>
         {canPlan ? <><p className="cc-fit-count"><strong>{sessions.length}</strong> {minutes}-minute sessions fit <span>including recovery</span></p><div className="cc-slots">{sessions.map((slot, index) => <div key={slot.start}><span>0{index + 1}</span><strong>{clock(slot.start)}–{clock(slot.end)}</strong><span>{buffer}m buffer</span></div>)}</div>{!sessions.length && <p className="cc-empty">No window fits this combination. Try a shorter focus block or review tomorrow in Calendar.</p>}</> : <p className="cc-empty">{loading ? "Checking calendar windows…" : stale ? "Refresh the briefing to calculate current windows." : "Calendar gaps are not verified. Check Connections and refresh."}</p>}
-        <p className="cc-caption cc-note">A planning preview only. Nothing is added to your calendar.</p><Link href="/calendar" className="cc-text-button">Open calendar <ArrowUpRight size={14} /></Link>
+        <p className="cc-caption cc-note">A planning preview only. Nothing is added to your calendar.</p><Link href="/calendar" className="cc-text-button">Open calendar <ArrowUpRight size={14} /></Link><SavedFocusPlan title={focusTitle} minutes={minutes} buffer={buffer} enabled={canPlan && sessions.length > 0} />
       </section>
       <section id="focus-session" className="cc-panel cc-focus"><div className="cc-panel-heading"><h2>One thing. Full attention.</h2><Focus size={18} /></div><p className="cc-focus-title">{focusTitle}</p>
         <div className={`cc-timer ${endsAt && !finished ? "cc-timer-active" : ""}`}><span>{String(Math.floor(seconds / 60)).padStart(2, "0")}<i>:</i>{String(seconds % 60).padStart(2, "0")}</span><small>{finished ? "SESSION COMPLETE" : endsAt ? "FOCUS IN PROGRESS" : remaining !== null ? "PAUSED" : "READY WHEN YOU ARE"}</small></div>
@@ -102,7 +106,7 @@ export function CommandCenter({ name }: { name: string }) {
       </section>
     </div>
 
-    <section className="cc-panel cc-timeline"><div className="cc-panel-heading"><div><p className="cc-eyebrow">03 / TODAY'S TRAJECTORY</p><h2>Your remaining schedule</h2></div><Link href="/calendar" className="cc-text-button">Calendar <ArrowUpRight size={15} /></Link></div>
+    <section className="cc-panel cc-timeline"><div className="cc-panel-heading"><div><p className="cc-eyebrow">YOUR TIMELINE</p><h2>Your remaining schedule</h2></div><Link href="/calendar" className="cc-text-button">Calendar <ArrowUpRight size={15} /></Link></div>
       {data?.calendarStatus !== "available" && <p className="cc-caption">Calendar may be incomplete. Review your connection before relying on this timeline.</p>}
       {data?.timeline.filter(item => Date.parse(item.end) > now).map(item => <div className="cc-event" key={item.id}><span>{item.allDay ? "All day" : clock(item.start)}</span><span className="cc-event-dot" /><div><h3>{item.title}</h3><p>{item.allDay ? "All-day commitment" : `Until ${clock(item.end)}`}</p></div>{Date.parse(item.start) <= now && <span className="cc-tag">NOW</span>}</div>)}
       {data && !data.timeline.some(item => Date.parse(item.end) > now) && <p className="cc-empty">{data.verified ? "No remaining events in today's loaded calendar." : "No verified events to show."}</p>}
