@@ -1,5 +1,7 @@
 # Pratap Personal Secretary
 
+Current release: **v0.7.0 — Zoro command briefing and optional AI reasoning**. See [setup, capabilities and limits](docs/ZORO_0_7.md).
+
 A private, mobile-first AI personal secretary that connects Gmail, Google Calendar, tasks, MYOB work rosters, follow-ups, reminders, activity history and natural-language assistance.
 
 Development happens on the `testing` branch first. `main` remains the promotion target.
@@ -50,7 +52,7 @@ Planned after the testing build is verified:
 3. Create Google OAuth credentials and configure the callback:
    `http://localhost:3000/api/auth/callback/google`
 4. Fill `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` and `NEXTAUTH_SECRET`.
-5. Optionally set `OPENAI_API_KEY` for richer assistant answers.
+5. Optionally set `OPENAI_API_KEY` (and `OPENAI_MODEL`), then enable AI reasoning in Assistant Settings for richer assistant answers. Add your goals and preferences to the saved personal brief.
 6. Run:
 
 ```bash
