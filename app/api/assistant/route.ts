@@ -12,9 +12,7 @@ import { audit, activity } from "@/lib/audit";
 
 import { requestSchema, type PendingAction } from "@/lib/intelligence/assistant-contract";
 import { prepareConfirmation, consumeConfirmation } from "@/lib/intelligence/confirmations";
-import { reasonWithAI } from "@/lib/intelligence/reasoning";
 import { buildMission } from "@/lib/intelligence/mission";
-import { loadAssistantSettings } from "@/lib/assistant-settings";
 
 export const maxDuration = 60;
 
@@ -152,8 +150,8 @@ export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   try {
-    const [context, settings] = await Promise.all([buildAssistantContext(session.user.id), loadAssistantSettings(session.user.id)]);
-    return NextResponse.json({ mission: buildMission(context), aiEnabled: settings.aiEnabled, aiConfigured: Boolean(process.env.OPENAI_API_KEY) }, { headers: { "Cache-Control": "no-store" } });
+    const context = await buildAssistantContext(session.user.id);
+    return NextResponse.json({ mission: buildMission(context) }, { headers: { "Cache-Control": "no-store" } });
   } catch {
     return NextResponse.json({ error: "Your briefing could not be loaded. Please try again." }, { status: 503 });
   }
@@ -181,28 +179,13 @@ export async function POST(request: NextRequest) {
     if (/^(please )?(sync|add|check)\s+(my |the )?(myob )?roster[.!?]*$/i.test(message)) {
       return NextResponse.json({ message: "Review and confirm to reconcile the latest MYOB roster with Google Calendar.", ...await prepareConfirmation(session.user.id, { type: "SYNC_MYOB_ROSTER" }), engine: "local" });
     }
-    const settings = await loadAssistantSettings(session.user.id);
-    let notice: string | undefined;
-    let context: Awaited<ReturnType<typeof buildAssistantContext>> | undefined;
-    if (settings.aiEnabled && process.env.OPENAI_API_KEY) {
-      context = await buildAssistantContext(session.user.id);
-      try {
-        const answer = await reasonWithAI({ message, history, context, personalBrief: settings.personalBrief });
-        const confirmation = answer.pendingAction ? await prepareConfirmation(session.user.id, answer.pendingAction) : {};
-        return NextResponse.json({ ...answer, ...confirmation });
-      } catch {
-        notice = "AI reasoning is temporarily unavailable. This answer uses local secretary logic.";
-      }
-    } else if (settings.aiEnabled) {
-      notice = "AI mode needs an OpenAI API key configured on the server. Local secretary mode is active.";
-    }
     const action = taskPreview(message) || eventPreview(message);
     if (action) {
-      return NextResponse.json({ message: "I've prepared an action. Review the details below before confirming.", ...await prepareConfirmation(session.user.id, action), engine: "local", notice });
+      return NextResponse.json({ message: "I've prepared an action. Review the details below before confirming.", ...await prepareConfirmation(session.user.id, action), engine: "local" });
     }
-    context ||= await buildAssistantContext(session.user.id);
+    const context = await buildAssistantContext(session.user.id);
     return NextResponse.json({
-      message: answerWithLocalIntelligence(message, context, history), engine: "local", notice,
+      message: answerWithLocalIntelligence(message, context, history), engine: "local",
       suggestedPrompts: ["Plan my day", "Which emails need action?", "What deadlines are coming?"],
     });
   } catch {
