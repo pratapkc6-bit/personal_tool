@@ -3,6 +3,8 @@ import { db } from "@/lib/db";
 export const ASSISTANT_SETTINGS_KEY = "assistant_preferences";
 
 export type AssistantSettings = {
+  aiEnabled: boolean;
+  personalBrief: string;
   wakeWord: string;
   wakeResponse: string;
   spokenReplies: boolean;
@@ -12,6 +14,8 @@ export type AssistantSettings = {
 };
 
 export const DEFAULT_ASSISTANT_SETTINGS: AssistantSettings = {
+  aiEnabled: false,
+  personalBrief: "",
   wakeWord: "Zoro",
   wakeResponse: "How can I help you?",
   spokenReplies: true,
@@ -60,6 +64,8 @@ export function normaliseAssistantSettings(value: unknown): AssistantSettings {
     : DEFAULT_ASSISTANT_SETTINGS.speechRate;
 
   return {
+    aiEnabled: input.aiEnabled === true,
+    personalBrief: typeof input.personalBrief === "string" ? input.personalBrief.trim().slice(0, 2000) : "",
     wakeWord: cleanWakeWord(input.wakeWord),
     wakeResponse: cleanWakeResponse(input.wakeResponse),
     spokenReplies: typeof input.spokenReplies === "boolean"
