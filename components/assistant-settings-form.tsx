@@ -51,18 +51,6 @@ export function AssistantSettingsForm({
 
   return (
     <div className="space-y-4">
-      <section className="rounded-3xl border border-cyan-800 bg-slate-950 p-5 text-white">
-        <h2 className="text-lg font-semibold">Zoro intelligence</h2>
-        <label className="mt-4 flex items-start justify-between gap-4">
-          <span><span className="block font-medium">Enable AI reasoning</span><span className="mt-1 block text-sm text-slate-300">Have natural conversations, weigh tradeoffs, draft plans, and prepare actions using your secretary data.</span></span>
-          <input type="checkbox" checked={settings.aiEnabled} onChange={event => setSettings(current => ({ ...current, aiEnabled: event.target.checked }))} className="mt-1 h-5 w-5 shrink-0" />
-        </label>
-        <p className="mt-3 text-xs leading-relaxed text-slate-400">When enabled, your messages, recent conversation, personal brief, and summaries of your tasks, emails and calendar are sent to OpenAI. Requires a server API key and uses paid API requests. Local mode remains available. Zoro never executes a proposed action without your confirmation.</p>
-        <label className="mt-5 block"><span className="text-sm font-medium">Your personal brief</span>
-          <textarea value={settings.personalBrief} onChange={event => setSettings(current => ({ ...current, personalBrief: event.target.value }))} maxLength={2000} rows={5} placeholder="My goals this month, how I like to work, constraints, and what I want Zoro to prioritize…" className="mt-2 w-full rounded-2xl border border-slate-600 bg-slate-900 p-3 text-sm text-white placeholder:text-slate-500" />
-        </label>
-        <p className="mt-2 text-xs text-slate-400">Saved across sessions and used in AI mode. You control this memory: edit or clear it here. Avoid passwords and secrets.</p>
-      </section>
       <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-card">
         <div>
           <p className="text-sm font-semibold">Wake word</p>
