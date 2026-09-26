@@ -5,11 +5,11 @@ import { usePathname } from "next/navigation";
 import { CalendarDays, Home, Inbox, ListTodo, Sparkles } from "lucide-react";
 
 const items = [
-  { href: "/", label: "Home", icon: Home },
-  { href: "/calendar", label: "Calendar", icon: CalendarDays },
-  { href: "/inbox", label: "Inbox", icon: Inbox },
-  { href: "/tasks", label: "Tasks", icon: ListTodo },
-  { href: "/assistant", label: "Assistant", icon: Sparkles },
+  { href: "/", label: "For you", icon: Home },
+  { href: "/calendar", label: "Timeline", icon: CalendarDays },
+  { href: "/inbox", label: "Intel", icon: Inbox },
+  { href: "/tasks", label: "Missions", icon: ListTodo },
+  { href: "/assistant", label: "Zoro AI", icon: Sparkles },
 ];
 
 export function BottomNav() {
@@ -34,3 +34,4 @@ export function BottomNav() {
     </nav>
   );
 }
+
