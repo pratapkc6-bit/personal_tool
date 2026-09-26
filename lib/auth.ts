@@ -27,10 +27,11 @@ export const runtimeAuthConfigured = Boolean(
 );
 
 const baseAdapter = PrismaAdapter(db);
+type LinkAccountInput = Parameters<NonNullable<typeof baseAdapter.linkAccount>>[0];
 
 const safeAdapter: NonNullable<NextAuthOptions["adapter"]> = {
   ...baseAdapter,
-  async linkAccount(account) {
+  async linkAccount(account: LinkAccountInput) {
     const {
       userId,
       type,
