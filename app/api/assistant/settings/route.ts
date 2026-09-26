@@ -33,12 +33,13 @@ export async function PUT(request: NextRequest) {
     await activity({
       userId: session.user.id,
       type: "ASSISTANT_SETTINGS",
-      summary: `Assistant wake word changed to "${settings.wakeWord}"`,
+      summary: `Assistant preferences saved. ${settings.aiEnabled ? "AI reasoning enabled" : "Local mode selected"}.`,
       details: {
         wakeWord: settings.wakeWord,
         language: settings.language,
         spokenReplies: settings.spokenReplies,
         keepListening: settings.keepListening,
+        aiEnabled: settings.aiEnabled,
       },
     });
 
