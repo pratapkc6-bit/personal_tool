@@ -418,3 +418,93 @@ html[data-theme="dark"] .cc-art-card>span{font-size:10px;letter-spacing:.16em;co
  .zoro-reference-dock .nexus-mobile-dock-inner{min-height:76px}
  .zoro-dock-core{width:66px;height:66px;margin-top:-25px}.zoro-dock-core span{font-size:31px}
 }
+
+
+/* ========================================================================
+   ZORO v4.1 · DEMONIC RITUAL INTERFACE
+   Approved composition translated from the Drive design archive.
+   ======================================================================== */
+html[data-theme="dark"] .demonic-command-center{
+  background:transparent!important;border:0!important;box-shadow:none!important;overflow:visible!important;
+}
+html[data-theme="dark"] .demonic-command-surface{
+  position:relative;min-height:760px;margin:0 0 34px;overflow:hidden;isolation:isolate;
+  border:1px solid rgba(255,42,72,.42);border-radius:30px;
+  background:
+    linear-gradient(180deg,rgba(1,3,6,.08),rgba(1,3,6,.18) 42%,rgba(1,3,6,.92) 88%),
+    url('/assets/dark-demon-realm-v3.svg') center top/cover no-repeat;
+  box-shadow:0 0 0 1px rgba(110,211,255,.08),0 28px 80px rgba(0,0,0,.48),inset 0 0 80px rgba(255,20,55,.08);
+}
+html[data-theme="dark"] .demonic-command-surface::before{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(circle at 50% 12%,rgba(255,30,58,.34),transparent 19rem),
+    linear-gradient(90deg,rgba(255,29,58,.045) 1px,transparent 1px),
+    linear-gradient(rgba(126,217,255,.035) 1px,transparent 1px);
+  background-size:auto,54px 54px,54px 54px;
+  mask-image:linear-gradient(180deg,#000 0 76%,transparent);
+}
+html[data-theme="dark"] .demonic-command-surface::after{
+  content:"";position:absolute;inset:10px;pointer-events:none;border-radius:24px;
+  border:10px solid transparent;border-image:url('/assets/zoro-demonic-frame.svg') 72 stretch;
+  opacity:.7;filter:drop-shadow(0 0 12px rgba(255,31,62,.25));
+}
+.demonic-sky{position:absolute;inset:0;z-index:-1;pointer-events:none}
+.demonic-moon{position:absolute;left:50%;top:58px;width:250px;height:250px;transform:translateX(-50%);border-radius:50%;
+  background:radial-gradient(circle at 42% 38%,#ff7081 0 3%,#ff2c4b 22%,#9b071e 58%,rgba(130,0,20,.22) 70%,transparent 72%);
+  box-shadow:0 0 80px rgba(255,30,58,.52);opacity:.66}
+.demonic-dragon{position:absolute;right:-5%;top:90px;width:48%;height:42%;background:url('/assets/chat-demon-king-v1.svg') center/contain no-repeat;opacity:.32;filter:drop-shadow(0 0 22px rgba(255,34,60,.28))}
+.demonic-runes{position:absolute;top:170px;width:38px;height:280px;opacity:.65;
+  background:repeating-linear-gradient(180deg,transparent 0 18px,#ff2c4b 19px 21px,transparent 22px 38px);
+  filter:drop-shadow(0 0 7px rgba(255,35,61,.6))}
+.demonic-runes.left{left:24px}.demonic-runes.right{right:24px}
+.demonic-status{position:absolute;left:28px;right:28px;top:24px;display:flex;justify-content:space-between;align-items:center;z-index:2;
+  color:#bcd2df;text-transform:uppercase;letter-spacing:.17em;font-size:10px;font-weight:850}
+.demonic-status small{font-size:8px;color:#ff6a80}
+.demonic-portal-grid{position:absolute;left:50%;bottom:82px;width:min(650px,84%);height:430px;transform:translateX(-50%);z-index:3}
+.demonic-core{position:absolute;left:50%;top:50%;width:214px;height:214px;transform:translate(-50%,-50%);border-radius:50%;display:grid;place-items:center;text-decoration:none;
+  background:radial-gradient(circle,rgba(75,3,17,.78),rgba(2,4,7,.97) 70%);border:1px solid #ff314e;
+  box-shadow:0 0 0 8px rgba(255,35,66,.06),0 0 42px rgba(255,35,66,.5),inset 0 0 30px rgba(134,222,255,.08)}
+.demonic-core::before,.demonic-core::after{content:"";position:absolute;border-radius:50%;border:1px solid rgba(255,44,74,.55);inset:-18px;animation:demonicPulse 3.8s ease-in-out infinite}
+.demonic-core::after{inset:-34px;border-color:rgba(132,220,255,.17);animation-delay:-1.4s}
+.demonic-core img{width:92%;height:92%;object-fit:contain;filter:drop-shadow(0 0 15px rgba(255,36,65,.6))}
+.demonic-core span{position:absolute;bottom:-32px;display:flex;align-items:center;gap:6px;color:#f8fbff;font-size:11px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}
+@keyframes demonicPulse{50%{transform:scale(1.035);opacity:.42}}
+.demonic-portal{position:absolute;width:132px;height:132px;border-radius:50%;display:grid;place-items:center;text-decoration:none;color:white;
+  background:radial-gradient(circle at 50% 42%,rgba(19,29,40,.6),rgba(2,5,8,.96) 68%);
+  border:1px solid rgba(149,204,235,.32);box-shadow:0 12px 30px rgba(0,0,0,.42),inset 0 0 24px rgba(135,215,255,.06);
+  transition:.18s ease}
+.demonic-portal:hover{transform:translateY(-4px) scale(1.02);border-color:#ff3a58;box-shadow:0 0 28px rgba(255,33,64,.26)}
+.demonic-portal::before{content:"";position:absolute;inset:-10px;border-radius:50%;border:1px solid rgba(255,45,75,.2);background:conic-gradient(from 45deg,transparent 0 18%,rgba(255,40,70,.3) 19% 21%,transparent 22% 48%,rgba(128,219,255,.2) 49% 51%,transparent 52%);mask:radial-gradient(circle,transparent 62%,#000 64%)}
+.demonic-portal-art{width:76px;height:76px;border-radius:50%;display:grid;place-items:center;background:rgba(5,10,15,.78);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(7px)}
+.demonic-portal small{position:absolute;bottom:-26px;font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:#9fb3c3;font-weight:800}
+.demonic-portal.missions{left:0;top:28px;background-image:linear-gradient(rgba(5,5,8,.38),rgba(5,5,8,.86)),url('/assets/chat-demon-king-v1.svg');background-size:cover;background-position:center}
+.demonic-portal.timeline{right:0;top:28px;background-image:linear-gradient(rgba(5,5,8,.35),rgba(5,5,8,.88)),url('/assets/dark-mountain-v2.svg');background-size:cover;background-position:center}
+.demonic-portal.intel{left:4px;bottom:22px;background-image:linear-gradient(rgba(5,5,8,.3),rgba(5,5,8,.9)),url('/assets/newari-guardian-v2.svg');background-size:cover;background-position:center}
+.demonic-portal.today{right:4px;bottom:22px;background-image:linear-gradient(rgba(5,5,8,.36),rgba(5,5,8,.9)),url('/assets/dark-demon-realm-v3.svg');background-size:cover;background-position:center}
+.demonic-ritual-line{position:absolute;left:50%;bottom:28px;width:58%;transform:translateX(-50%);display:grid;grid-template-columns:1fr 30px 1fr;align-items:center;gap:10px}
+.demonic-ritual-line i{height:1px;background:linear-gradient(90deg,transparent,#ff304d)}.demonic-ritual-line i:last-child{background:linear-gradient(90deg,#ff304d,transparent)}
+.demonic-ritual-line b{width:20px;height:20px;transform:rotate(45deg);border:1px solid #ff304d;box-shadow:0 0 10px rgba(255,40,68,.5)}
+html[data-theme="dark"] .demonic-mobile-brand{width:48px!important;height:48px!important;border-radius:50%!important;overflow:hidden!important;padding:0!important;border:1px solid #ff2c4a!important;background:#040609!important;box-shadow:0 0 18px rgba(255,38,65,.24)!important}
+html[data-theme="dark"] .demonic-mobile-brand img{width:100%;height:100%;object-fit:cover}.demonic-mobile-brand strong{display:none!important}
+.zoro-dock-core{padding:0!important;overflow:hidden!important;background:#030507!important}.zoro-dock-core img{width:100%;height:100%;object-fit:cover;filter:drop-shadow(0 0 12px rgba(255,35,63,.4))}
+html[data-theme="dark"] .zoro-reference-dock .nexus-mobile-dock-inner{position:relative;background:linear-gradient(180deg,rgba(5,8,12,.98),rgba(2,4,7,.99))!important;border:1px solid rgba(255,42,70,.27)!important;box-shadow:0 -8px 30px rgba(0,0,0,.48),inset 0 0 22px rgba(255,35,65,.035)!important}
+html[data-theme="dark"] .zoro-reference-dock .nexus-mobile-dock-inner::before{content:"";position:absolute;inset:-4px;z-index:-1;background:url('/assets/zoro-demonic-frame.svg') center/100% 100% no-repeat;opacity:.42;pointer-events:none}
+@media(max-width:640px){
+ html[data-theme="dark"] .demonic-command-surface{min-height:690px;margin:-8px -8px 24px;border-radius:0;border-left:0;border-right:0}
+ .demonic-status{left:18px;right:18px;top:18px}
+ .demonic-moon{width:200px;height:200px;top:72px}
+ .demonic-dragon{right:-16%;top:112px;width:70%;height:35%}
+ .demonic-runes{top:150px;height:210px;width:22px}.demonic-runes.left{left:10px}.demonic-runes.right{right:10px}
+ .demonic-portal-grid{bottom:68px;width:92%;height:370px}
+ .demonic-core{width:174px;height:174px}.demonic-core span{bottom:-26px;font-size:9px}
+ .demonic-portal{width:104px;height:104px}.demonic-portal-art{width:58px;height:58px}
+ .demonic-portal.missions,.demonic-portal.timeline{top:20px}.demonic-portal.intel,.demonic-portal.today{bottom:18px}
+ .demonic-ritual-line{bottom:20px;width:68%}
+ .demonic-command-center>.cc-section-heading{margin-top:8px}
+}
+@media(max-width:390px){
+ .demonic-command-surface{min-height:650px!important}
+ .demonic-portal-grid{height:342px}.demonic-core{width:158px;height:158px}
+ .demonic-portal{width:94px;height:94px}.demonic-portal-art{width:52px;height:52px}
+}
