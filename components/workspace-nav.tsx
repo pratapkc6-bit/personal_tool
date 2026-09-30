@@ -6,6 +6,7 @@ import {
   Activity,
   DatabaseZap,
   BellRing,
+  BrainCircuit,
   AlarmClock,
   CalendarDays,
   Inbox,
@@ -20,6 +21,7 @@ import {
 const routes = [
   { href: "/", label: "Command", hint: "Daily intelligence", Icon: LayoutDashboard },
   { href: "/assistant", label: "Zoro AI", hint: "Reason & act", Icon: Sparkles },
+  { href: "/core", label: "Core Control", hint: "Approvals & autonomy", Icon: BrainCircuit },
   { href: "/tasks", label: "Missions", hint: "Outcomes & steps", Icon: ListTodo },
   { href: "/calendar", label: "Timeline", hint: "Time & commitments", Icon: CalendarDays },
   { href: "/inbox", label: "Intel", hint: "Gmail intelligence", Icon: Inbox },
