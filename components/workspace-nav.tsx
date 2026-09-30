@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Activity,
-  Info,
   BellRing,
   AlarmClock,
   CalendarDays,
@@ -28,8 +27,7 @@ const routes = [
   { href: "/reminders", label: "Reminders", hint: "Set, snooze & complete", Icon: AlarmClock },
   { href: "/notifications", label: "Alerts", hint: "Push, reminders & watches", Icon: BellRing },
   { href: "/connections", label: "Connections", hint: "Google & data", Icon: PlugZap },
-  { href: "/about", label: "About", hint: "App & release", Icon: Info },
-  { href: "/settings/assistant", label: "Preferences", hint: "Voice & model", Icon: Settings2 },
+  { href: "/settings", label: "Settings", hint: "Preferences & about", Icon: Settings2 },
 ];
 
 export function WorkspaceNav() {
