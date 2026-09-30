@@ -15,6 +15,8 @@ const capabilities = [
 ];
 
 const releaseHighlights = [
+  "Unified Dark Realm Theme: Today, Timeline, Intel, Tasks, Settings, Notifications, Calendar, Reminders, About and dialogs now inherit the same black/red/ice-cyan lighting as the approved Home artwork.",
+  "Shared panel, input, button, navigation and calendar styling replaces mismatched page-by-page colors.",
   "Compact Zoro voice permission chip replaces the intrusive full-width Enable banner on Home.",
   "Voice prompt can now be dismissed permanently on the device while voice remains available from Settings.",
   "Immersive Home interactions: the approved artwork now contains a real inline search field instead of redirecting to Search.",
