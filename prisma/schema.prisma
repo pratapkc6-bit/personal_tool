@@ -59,6 +59,8 @@ model User {
   assistantActivity   AssistantActivity[]
   settings            Setting[]
   auditLogs           AuditLog[]
+  autonomousEvents    AutonomousEvent[]
+  actionProposals     ActionProposal[]
   createdAt            DateTime            @default(now())
   updatedAt            DateTime            @updatedAt
 }
@@ -285,4 +287,43 @@ model AuditLog {
   createdAt     DateTime @default(now())
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@index([userId, createdAt])
+}
+
+
+model AutonomousEvent {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String
+  source      String
+  sourceRef   String?
+  payload     Json?
+  status      String   @default("OBSERVED")
+  dedupeKey   String?
+  observedAt  DateTime @default(now())
+  processedAt DateTime?
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  proposals   ActionProposal[]
+  @@unique([userId, dedupeKey])
+  @@index([userId, status, observedAt])
+}
+
+model ActionProposal {
+  id             String   @id @default(cuid())
+  userId         String
+  eventId        String?
+  actionType     String
+  title          String
+  rationale      String?  @db.Text
+  payload        Json
+  risk           String   @default("LOW")
+  approvalPolicy String   @default("REQUIRE_APPROVAL")
+  status         String   @default("PROPOSED")
+  decidedAt      DateTime?
+  executedAt     DateTime?
+  result         Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event          AutonomousEvent? @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  @@index([userId, status, createdAt])
 }
