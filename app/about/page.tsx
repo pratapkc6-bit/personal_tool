@@ -15,6 +15,8 @@ const capabilities = [
 ];
 
 const releaseHighlights = [
+  "Compact Zoro voice permission chip replaces the intrusive full-width Enable banner on Home.",
+  "Voice prompt can now be dismissed permanently on the device while voice remains available from Settings.",
   "Immersive Home interactions: the approved artwork now contains a real inline search field instead of redirecting to Search.",
   "Home search queries Gmail intelligence, missions, follow-ups and Calendar in-place with Dark Realm result panels.",
   "Artwork hotspots now provide active feedback while preserving the exact approved visual composition.",
