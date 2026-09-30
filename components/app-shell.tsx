@@ -65,7 +65,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </footer>
       </section>
 
-      <div className="hf-snow" aria-hidden="true" />
       <NotificationRuntime />
       <ZoroPresence />
       <ZoroLauncher />
