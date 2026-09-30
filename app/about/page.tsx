@@ -15,6 +15,9 @@ const capabilities = [
 ];
 
 const releaseHighlights = [
+  "Exact Approved Art Home: the Google Drive-approved demonic reference now renders directly as the mobile Home visual surface.",
+  "Real accessible tap zones sit over Search, Notifications, Settings, Zoro, Missions, Timeline, Intel, Today and the bottom navigation.",
+  "Home removes duplicate app chrome on mobile so the approved artwork is no longer diluted by a second header or dock.",
   "Approved Demonic Fidelity pass: rebuilt the mobile home to match the approved dense fantasy composition instead of the simplified geometric version.",
   "Detailed demon core, layered warrior/dragon/spirit scenery, ornamental ritual portals and stronger black/red mobile chrome.",
   "Demonic Ritual UI: approved pattern-first home with a central Oni/Zoro core instead of oversized headline typography.",
