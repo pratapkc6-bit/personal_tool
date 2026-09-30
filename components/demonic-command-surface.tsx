@@ -1,34 +1,30 @@
 "use client";
 import Link from "next/link";
-import { CalendarDays, Inbox, ListTodo, Sparkles, SunMedium } from "lucide-react";
 
-const portals=[
-  {href:"/tasks",label:"Missions",Icon:ListTodo,cls:"missions"},
-  {href:"/calendar",label:"Timeline",Icon:CalendarDays,cls:"timeline"},
-  {href:"/inbox",label:"Intel",Icon:Inbox,cls:"intel"},
-  {href:"/today",label:"Today",Icon:SunMedium,cls:"today"},
-];
+const hotspot=(href:string,label:string,cls:string)=><Link href={href} aria-label={label} title={label} className={"approved-hotspot "+cls}><span>{label}</span></Link>;
 
 export function DemonicCommandSurface({stamp,name}:{stamp:string;name:string}){
- return <section className="demonic-command-surface" aria-label="Zoro ritual command surface">
-   <div className="demonic-sky" aria-hidden="true">
-     <i className="demonic-moon"/>
-     <i className="demonic-warrior"/>
-     <i className="demonic-dragon primary"/>
-     <i className="demonic-dragon secondary"/>
-     <i className="demonic-spirit spirit-left"/>
-     <i className="demonic-spirit spirit-right"/>
-     <i className="demonic-runes left"/>
-     <i className="demonic-runes right"/>
+ return <section className="demonic-command-surface approved-home-surface" aria-label={"Zoro home for "+name}>
+   <div className="approved-home-art" role="img" aria-label="Zoro Dark Realm command interface">
+     <div className="approved-meta" aria-hidden="true"><span>{stamp}</span></div>
+     {hotspot("/","Home","hot-home-mark")}
+     {hotspot("/search","Search or run a command","hot-search")}
+     {hotspot("/notifications","Notifications","hot-notifications")}
+     {hotspot("/settings","Settings","hot-settings")}
+     {hotspot("/assistant","Zoro assistant","hot-profile")}
+     {hotspot("/assistant","Talk to Zoro","hot-zoro-core")}
+     {hotspot("/tasks","Missions","hot-missions")}
+     {hotspot("/calendar","Timeline","hot-timeline")}
+     {hotspot("/inbox","Intelligence","hot-intel")}
+     {hotspot("/today","Today","hot-today")}
+     {hotspot("/reminders","Reminders","hot-ritual")}
+     <nav className="approved-art-nav" aria-label="Zoro visual navigation">
+       {hotspot("/","Home","nav-home")}
+       {hotspot("/calendar","Timeline","nav-timeline")}
+       {hotspot("/assistant","Zoro","nav-zoro")}
+       {hotspot("/intelligence","Intel","nav-intel")}
+       {hotspot("/settings","More","nav-more")}
+     </nav>
    </div>
-   <div className="demonic-status"><span>{stamp}</span><small>{name}&apos;s realm</small></div>
-   <div className="demonic-portal-grid">
-     {portals.map(({href,label,Icon,cls})=><Link key={href} href={href} title={label} className={"demonic-portal "+cls} aria-label={label}><span className="demonic-portal-art"><Icon size={24}/></span><small>{label}</small></Link>)}
-     <Link href="/assistant" className="demonic-core" aria-label="Talk to Zoro">
-       <span className="demonic-core-face"><img src="/assets/chat-demon-king-v1.svg" alt=""/></span>
-       <span className="demonic-core-pulse"><Sparkles size={17}/></span>
-     </Link>
-   </div>
-   <div className="demonic-ritual-line" aria-hidden="true"><i/><b/><i/></div>
  </section>
 }
