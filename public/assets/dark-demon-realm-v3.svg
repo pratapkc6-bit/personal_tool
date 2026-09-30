@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1100" role="img" aria-labelledby="t d">
+<title id="t">House Five Demon Realm sketch</title><desc id="d">Original fantasy horned guardian sketch over frozen Himalayan-inspired ridges for the House Five dark theme.</desc>
+<defs>
+  <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#050a10"/><stop offset=".52" stop-color="#071019"/><stop offset="1" stop-color="#020305"/></linearGradient>
+  <radialGradient id="cold"><stop stop-color="#a8e6ff" stop-opacity=".18"/><stop offset="1" stop-color="#a8e6ff" stop-opacity="0"/></radialGradient>
+  <filter id="fog"><feGaussianBlur stdDeviation="36"/></filter>
+</defs>
+<rect width="1600" height="1100" fill="url(#sky)"/>
+<circle cx="1240" cy="170" r="210" fill="url(#cold)"/>
+<g fill="none" stroke="#a9e5ff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity=".18">
+  <path d="M1225 138c-72 22-131 72-166 143-66-51-135-61-208-31 77 31 120 85 131 163-72 25-124 73-157 144 71-24 131-14 181 31-41 61-54 129-39 205 35-60 83-93 142-102-18 70-7 139 33 207 16-62 44-110 83-144 38 34 66 82 82 144 40-68 51-137 33-207 59 9 107 42 142 102 15-76 2-144-39-205 50-45 110-55 181-31-33-71-85-119-157-144 11-78 54-132 131-163-73-30-142-20-208 31-35-71-94-121-166-143Z"/>
+  <path d="M1018 404c54-55 121-69 201-39-45 13-82 48-105 105-39-8-71-30-96-66Zm414 0c-54-55-121-69-201-39 45 13 82 48 105 105 39-8 71-30 96-66Z"/>
+  <path d="M1171 499c15 39 17 77 5 116l49 33 49-33c-12-39-10-77 5-116"/>
+  <path d="M1064 625c66 48 120 70 161 64 41 6 95-16 161-64-5 95-58 171-161 226-103-55-156-131-161-226Z"/>
+  <path d="M1115 682 1160 744 1225 704 1290 744 1335 682"/>
+  <path d="M1110 824 1015 1025M1340 824 1435 1025"/>
+</g>
+<g fill="#ff425b" opacity=".65"><ellipse cx="1120" cy="432" rx="25" ry="10"/><ellipse cx="1330" cy="432" rx="25" ry="10"/></g>
+<path d="M0 770 125 660 240 720 390 520 498 642 650 392 790 626 930 455 1085 638 1265 372 1410 604 1600 492V1100H0Z" fill="#071018"/>
+<path d="M0 848 180 720 338 822 520 673 694 817 862 650 1042 820 1205 684 1400 828 1600 716V1100H0Z" fill="#04080d"/>
+<g fill="none" stroke="#a8e6ff" stroke-width="3" stroke-opacity=".18"><path d="M650 392 790 626"/><path d="M1265 372 1410 604"/></g>
+<g fill="none" stroke="#ff425b" stroke-width="3" stroke-opacity=".36"><path d="M650 392 628 474 658 510 642 574"/><path d="M1265 372 1237 464 1268 505 1248 566"/></g>
+<ellipse cx="760" cy="760" rx="700" ry="70" fill="#86d6ff" opacity=".045" filter="url(#fog)"/>
+</svg>

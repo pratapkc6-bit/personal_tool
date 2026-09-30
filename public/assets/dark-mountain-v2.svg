@@ -1,1 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900"><defs><linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#08111a"/><stop offset=".52" stop-color="#0a1117"/><stop offset="1" stop-color="#020406"/></linearGradient><linearGradient id="i"><stop stop-color="#b9ecff" stop-opacity=".46"/><stop offset=".62" stop-color="#4d8eaf" stop-opacity=".12"/><stop offset="1" stop-color="#12222d" stop-opacity="0"/></linearGradient></defs><rect width="1600" height="900" fill="url(#s)"/><path d="M0 665 118 566 218 624 365 438 440 503 570 286 684 461 776 215 905 441 1010 331 1105 448 1265 244 1396 458 1492 352 1600 444V900H0Z" fill="#0b1218"/><path d="m505 382 65-96 102 159-70-56-29 62-35-68zM697 339l79-124 121 212-82-83-38 72-38-77zM1192 347l73-103 111 181-72-70-36 62-33-67z" fill="url(#i)"/><path d="M0 721 122 632 287 702 421 577 551 690 694 530 822 682 1000 548 1120 676 1275 532 1428 678 1600 566V900H0Z" fill="#060a0e"/><path d="M0 790c230-49 420-21 620 0 260 27 505-41 980 3v107H0Z" fill="#020406"/><g fill="none" stroke="#ff425b" stroke-opacity=".34" stroke-width="3"><path d="M777 217 750 304 780 332 758 397"/><path d="M1265 246 1233 322 1261 352 1247 403"/></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="t d">
+<title id="t">Dark Realm storm mountains</title><desc id="d">Original jagged Himalayan-inspired night mountain art with ice ridges, storm haze and crimson danger fractures.</desc>
+<defs>
+  <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#08111a"/><stop offset=".52" stop-color="#0a1117"/><stop offset="1" stop-color="#020406"/></linearGradient>
+  <linearGradient id="ice" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b9ecff" stop-opacity=".46"/><stop offset=".62" stop-color="#4d8eaf" stop-opacity=".12"/><stop offset="1" stop-color="#12222d" stop-opacity="0"/></linearGradient>
+  <radialGradient id="moon"><stop stop-color="#d9f2ff" stop-opacity=".16"/><stop offset="1" stop-color="#d9f2ff" stop-opacity="0"/></radialGradient>
+  <filter id="blur"><feGaussianBlur stdDeviation="34"/></filter>
+</defs>
+<rect width="1600" height="900" fill="url(#sky)"/>
+<circle cx="1270" cy="155" r="160" fill="url(#moon)"/>
+<g fill="#9fe2ff" opacity=".16"><circle cx="166" cy="112" r="2"/><circle cx="288" cy="164" r="1.4"/><circle cx="507" cy="88" r="1.5"/><circle cx="780" cy="145" r="1.6"/><circle cx="1018" cy="92" r="1.5"/><circle cx="1460" cy="136" r="1.7"/></g>
+<path d="M0 665 118 566 218 624 365 438 440 503 570 286 684 461 776 215 905 441 1010 331 1105 448 1265 244 1396 458 1492 352 1600 444V900H0Z" fill="#0b1218"/>
+<path d="m505 382 65-96 102 159-70-56-29 62-35-68zM697 339l79-124 121 212-82-83-38 72-38-77zM1192 347l73-103 111 181-72-70-36 62-33-67z" fill="url(#ice)"/>
+<path d="M0 721 122 632 287 702 421 577 551 690 694 530 822 682 1000 548 1120 676 1275 532 1428 678 1600 566V900H0Z" fill="#060a0e"/>
+<path d="M0 790c230-49 420-21 620 0 260 27 505-41 980 3v107H0Z" fill="#020406"/>
+<g fill="none" stroke="#ff425b" stroke-opacity=".34" stroke-width="3">
+  <path d="M777 217 750 304 780 332 758 397"/>
+  <path d="M1265 246 1233 322 1261 352 1247 403"/>
+</g>
+<g fill="none" stroke="#a9e5ff" stroke-opacity=".13" stroke-width="2">
+  <path d="M570 286 684 461"/><path d="M776 215 905 441"/><path d="M1265 244 1396 458"/>
+</g>
+<ellipse cx="790" cy="612" rx="720" ry="72" fill="#78c9f1" opacity=".045" filter="url(#blur)"/>
+<path d="M0 510c190-50 371-33 548 5 205 44 374 31 538-10 186-46 355-43 514 2" fill="none" stroke="#b9eaff" stroke-opacity=".035" stroke-width="70" filter="url(#blur)"/>
+</svg>

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" role="img" aria-labelledby="t d">
+<title id="t">Demon King chat court</title><desc id="d">Original fantasy demon king throne sketch for the House Five dark chat background.</desc>
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#06101a"/><stop offset=".55" stop-color="#071018"/><stop offset="1" stop-color="#020406"/></linearGradient>
+  <radialGradient id="halo"><stop stop-color="#9fe2ff" stop-opacity=".16"/><stop offset=".55" stop-color="#376b88" stop-opacity=".05"/><stop offset="1" stop-color="#020406" stop-opacity="0"/></radialGradient>
+</defs>
+<rect width="1200" height="1200" fill="url(#bg)"/>
+<ellipse cx="600" cy="375" rx="360" ry="330" fill="url(#halo)"/>
+<g fill="none" stroke="#a9e5ff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" opacity=".22">
+  <path d="M600 150c-66 0-125 28-167 78-33-53-84-90-151-111 21 74 22 130 2 168-57 18-104 53-140 105 61-13 112-3 153 31-28 53-35 111-21 174 29-50 67-80 116-91-6 74 13 139 56 194 13-62 40-109 80-141 19 17 43 31 72 43 29-12 53-26 72-43 40 32 67 79 80 141 43-55 62-120 56-194 49 11 87 41 116 91 14-63 7-121-21-174 41-34 92-44 153-31-36-52-83-87-140-105-20-38-19-94 2-168-67 21-118 58-151 111-42-50-101-78-167-78Z"/>
+  <path d="M397 378c55-49 119-58 190-27-42 12-76 42-102 89-36-7-65-27-88-62Zm406 0c-55-49-119-58-190-27 42 12 76 42 102 89 36-7 65-27 88-62Z"/>
+  <path d="M550 476c11 31 11 65 0 102l50 34 50-34c-11-37-11-71 0-102"/>
+  <path d="M430 610c70 50 127 72 170 67 43 5 100-17 170-67-10 104-67 183-170 238-103-55-160-134-170-238Z"/>
+  <path d="M475 674 526 748 600 696 674 748 725 674"/>
+  <path d="M472 842 360 1080M728 842 840 1080"/>
+  <path d="M350 1010h500M405 940h390M458 870h284"/>
+</g>
+<g fill="#ff425b" opacity=".78"><ellipse cx="490" cy="405" rx="24" ry="9"/><ellipse cx="710" cy="405" rx="24" ry="9"/></g>
+<g fill="none" stroke="#ff425b" stroke-width="4" stroke-opacity=".32"><path d="M600 222v98"/><path d="M308 272l94 61"/><path d="M892 272l-94 61"/></g>
+<path d="M0 975 175 845 330 950 470 820 600 922 754 805 914 938 1050 846 1200 925V1200H0Z" fill="#04080d"/>
+</svg>

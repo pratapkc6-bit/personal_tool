@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Bell, CalendarDays, ChevronLeft, ChevronRight, CloudSun, ExternalLink, Moon, Sun, X } from "lucide-react";
+import type { CSSProperties } from "react";
 import { useEffect, useMemo, useState } from "react";
 
 type PatroDay={year:number;month:number;day:number;dayNp:string;ad:string;weekdayNp:string;weekdayEn:string;tithiName?:string;tithiNameNp?:string;paksha?:string;nakshatraName?:string;nakshatraNameNp?:string;yogaName?:string;yogaNameNp?:string;karanaName?:string;karanaNameNp?:string;holidays?:string[];events?:string[];isHoliday?:boolean};
@@ -9,6 +10,18 @@ type Weather={icon:string;max:number|null;min:number|null;rainChance:number|null
 type NtHoliday={title:string;kind:string};
 type PatroMonth={year:number;yearNp:string;month:number;monthNameNp:string;monthNameEn:string;totalDays:number;startWeekday:number;minYear:number;maxYear:number;today:{year:number;month:number;day:number};days:PatroDay[];weather:Record<string,Weather>;ntHolidays:Record<string,NtHoliday[]>;source?:string};
 type CalendarEvent={id?:string;title?:string;start?:string;allDay?:boolean;extendedProps?:{category?:string;description?:string}};
+
+const DARK_REALM_SNOW=Array.from({length:38},(_,i)=>({
+  id:i,
+  style:{
+    "--snow-left":`${((i*37.17)%100).toFixed(2)}%`,
+    "--snow-size":`${(2.5+(i%7)*.68).toFixed(2)}px`,
+    "--snow-duration":`${(9+(i%11)*.93).toFixed(2)}s`,
+    "--snow-delay":`${(-((i*1.47)%18)).toFixed(2)}s`,
+    "--snow-drift":`${(-28+((i*17)%57)).toFixed(1)}px`,
+    "--snow-opacity":`${(.34+(i%8)*.075).toFixed(2)}`
+  } as CSSProperties
+}));
 
 function addDays(date:string,delta:number){const d=new Date(date+"T00:00:00Z");d.setUTCDate(d.getUTCDate()+delta);return d.toISOString().slice(0,10)}
 function eventDate(event:CalendarEvent){const value=event.start||"";if(/^\d{4}-\d{2}-\d{2}$/.test(value))return value;const d=new Date(value);if(Number.isNaN(d.getTime()))return "";return new Intl.DateTimeFormat("en-CA",{timeZone:"Australia/Darwin",year:"numeric",month:"2-digit",day:"2-digit"}).format(d)}
@@ -23,9 +36,14 @@ export function HouseFiveChrome(){
   const [selected,setSelected]=useState<PatroDay|null>(null);
   const [events,setEvents]=useState<CalendarEvent[]>([]);
   const [status,setStatus]=useState("");
+  const [realmFlash,setRealmFlash]=useState(false);
 
   useEffect(()=>{const stored=localStorage.getItem("zoro-house-five-theme");const next=stored==="normal"?"normal":"dark";setTheme(next);document.documentElement.dataset.theme=next},[]);
-  function toggleTheme(){const next=theme==="dark"?"normal":"dark";setTheme(next);localStorage.setItem("zoro-house-five-theme",next);document.documentElement.dataset.theme=next}
+  function toggleTheme(){
+    const next=theme==="dark"?"normal":"dark";
+    setTheme(next);localStorage.setItem("zoro-house-five-theme",next);document.documentElement.dataset.theme=next;
+    if(next==="dark"){setRealmFlash(true);window.setTimeout(()=>setRealmFlash(false),1150)}
+  }
 
   async function enrichDay(day:PatroDay){try{const res=await fetch(`/api/patro?year=${day.year}&month=${day.month}&day=${day.day}`,{cache:"no-store"});const data=await res.json();if(res.ok&&data.detail)setSelected(data.detail)}catch{}}
   async function loadPatro(year?:number,monthNo?:number,keepDay?:number){
@@ -55,6 +73,12 @@ export function HouseFiveChrome(){
   const selectedGoogle=selected?eventsByDate[selected.ad]||[]:[];
 
   return <>
+    <div className={theme==="dark"?"snowfall-layer active":"snowfall-layer"} aria-hidden="true">
+      {DARK_REALM_SNOW.map(f=><i key={f.id} className="snowflake" style={f.style}/>) }
+    </div>
+    <div className={realmFlash?"realm-transition show":"realm-transition"} aria-hidden="true">
+      <div className="realm-transition-art"/><div className="realm-transition-copy"><small>ZORO NEXUS</small><b>ENTERING DARK REALM</b><span>हिमरात्रि · THE MOUNTAIN IS AWAKE</span></div>
+    </div>
     <div className="hf-shell-controls">
       <button className="hf-patro-toggle" onClick={openPatro} aria-label="Open Nepali Patro" title="नेपाली पात्रो"><span>पात्रो</span><b>ने</b></button>
       <button className="hf-theme-toggle" onClick={toggleTheme} aria-label={theme==="dark"?"Switch to normal mode":"Enter Dark Realm"} title={theme==="dark"?"Normal mode":"Dark Realm"}>{theme==="dark"?<Sun size={17}/>:<Moon size={17}/>}</button>

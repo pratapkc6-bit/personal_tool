@@ -32,3 +32,324 @@ html[data-theme="dark"] .command-center,html[data-theme="dark"] .cc-panel,html[d
 .hf-weather-badge{display:grid;grid-template-columns:auto auto;gap:2px 7px;align-items:center;padding:8px 10px;border:1px solid var(--nx-line);border-radius:12px}.hf-weather-badge>span{font-size:25px;grid-row:1/3}.hf-weather-badge b{font-size:17px}.hf-weather-badge small{font-size:8px;color:var(--nx-muted)}.hf-patro-feature{display:grid;gap:4px;margin-top:10px;padding:10px;border:1px solid var(--nx-line);border-radius:12px}.hf-patro-feature b{font-size:9px;letter-spacing:.07em}.hf-patro-feature span{font-size:10px;color:var(--nx-muted)}.hf-weather-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.hf-weather-row span{display:inline-flex;align-items:center;gap:5px;padding:6px 8px;border:1px solid var(--nx-line);border-radius:999px;font-size:8px;color:var(--nx-muted)}
 .hf-panchang{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin-top:12px}.hf-panchang>div{padding:9px;border:1px solid var(--nx-line);border-radius:11px;background:rgba(255,255,255,.02)}.hf-panchang span,.hf-panchang b,.hf-panchang small{display:block}.hf-panchang span{font-size:7px;color:var(--nx-muted);font-weight:900}.hf-panchang b{font-size:11px;margin-top:4px}.hf-panchang small{font-size:7px;color:var(--nx-muted);margin-top:2px}.hf-patro-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.hf-patro-actions button,.hf-patro-actions a{min-height:38px;display:inline-flex;align-items:center;gap:6px;padding:0 10px;border:1px solid var(--nx-line);border-radius:10px;background:rgba(255,255,255,.035);color:inherit;font-size:9px}.hf-patro-actions button:first-child{border-color:rgba(105,231,255,.28);color:var(--nx-cyan)}.hf-patro-status{margin-top:10px!important;padding:9px;border-radius:10px;background:rgba(105,231,255,.06);color:var(--nx-cyan)!important}.hf-patro-loading{min-height:420px;display:grid;place-items:center;align-content:center;gap:8px}.hf-patro-loading span{width:70px;height:70px;display:grid;place-items:center;border-radius:22px;background:#9e1b24;color:white;font-weight:900}
 @media(max-width:900px){.nexus-topbar-actions .nexus-system-clock{display:none}.hf-panchang{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:760px){.hf-patro-backdrop{padding:0}.hf-patro-modal{height:100dvh;max-height:100dvh;border-radius:0}.hf-patro-weekdays,.hf-patro-grid{padding:0 7px;gap:3px}.hf-patro-grid>button{min-height:82px;padding:5px;border-radius:9px}.hf-patro-grid strong{font-size:18px}.hf-patro-grid em{font-size:7px}.hf-cell-signals i{font-size:6.5px;padding:1px 3px}.hf-patro-detail{margin:10px 7px 90px;padding:12px}.hf-patro-detail-title{display:grid}.hf-panchang{grid-template-columns:1fr 1fr}.hf-shell-controls{gap:5px}.hf-theme-toggle,.hf-patro-toggle{width:38px;height:38px;min-height:38px;border-radius:11px}}@media(max-width:430px){.hf-patro-grid>button{min-height:76px}.hf-patro-grid em{display:none}.hf-panchang{grid-template-columns:1fr}.hf-weather-row{display:grid}.hf-patro-actions{display:grid;grid-template-columns:1fr 1fr}.hf-patro-actions a{grid-column:1/-1}}
+
+
+/* ========================================================================
+   ZORO v1.4 · FULL HOUSE FIVE DARK REALM
+   Ported from House Five v10.14 and mapped to Personal Secretary surfaces.
+   ======================================================================== */
+
+html[data-theme="dark"]{
+  --nx-bg:#020406;
+  --nx-panel:#0d131a;
+  --nx-line:#2b3a48;
+  --nx-text:#f4f8fc;
+  --nx-muted:#a5b2c0;
+  --nx-cyan:#9fe2ff;
+  --nx-blue:#5aa8d2;
+  --nx-violet:#a879ff;
+  --nx-green:#70d6b9;
+  --nx-amber:#f1bf62;
+  --nx-danger:#ff425b;
+  color-scheme:dark;
+  background:#020406;
+}
+html[data-theme="dark"] body{
+  color:#f4f8fc!important;
+  background:
+    linear-gradient(180deg,rgba(2,4,7,.18),rgba(2,4,7,.42) 42%,rgba(1,2,4,.78)),
+    url('/assets/dark-demon-realm-v3.svg') center top/cover fixed no-repeat,
+    #020406!important;
+}
+html[data-theme="dark"] body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:-2;opacity:.94!important;
+  background:
+    linear-gradient(180deg,rgba(2,4,7,.12),rgba(2,4,7,.48) 58%,rgba(1,2,4,.92)),
+    url('/assets/dark-demon-realm-v3.svg') center bottom/cover no-repeat!important;
+  mask-image:none!important
+}
+html[data-theme="dark"] body::after{
+  content:"";position:fixed;pointer-events:none;z-index:-1;
+  width:min(58vw,820px)!important;height:min(86vh,980px)!important;right:-11vw!important;top:8vh!important;
+  opacity:.06;background:url('/assets/newari-guardian-v2.svg') center/contain no-repeat!important;
+  filter:drop-shadow(0 0 38px rgba(137,217,255,.12));
+  animation:guardianReveal 12.8s cubic-bezier(.22,.72,.32,1) infinite;
+  transform-origin:62% 44%;will-change:transform,opacity,filter
+}
+html[data-theme="dark"] .nexus-shell::after{
+  content:"";position:fixed;left:0;right:0;top:0;height:3px;z-index:110;pointer-events:none;
+  background:linear-gradient(90deg,#14364b 0,#9fe2ff 30%,#ff3e59 50%,#9fe2ff 70%,#14364b 100%);
+  box-shadow:0 0 18px rgba(118,206,255,.28),0 0 14px rgba(255,62,89,.18)
+}
+@keyframes guardianReveal{
+  0%,44%{opacity:.055;transform:translate3d(0,-2px,0) scale(1) rotate(0)}
+  46%{opacity:.08;transform:translate3d(-2px,-3px,0) scale(1.004) rotate(-.15deg)}
+  48%{opacity:.34;transform:translate3d(-8px,1px,0) scale(1.02) rotate(-.35deg);filter:drop-shadow(0 0 42px rgba(143,224,255,.22)) drop-shadow(0 0 14px rgba(255,66,91,.18))}
+  50%{opacity:.36;transform:translate3d(3px,-7px,0) scale(1.027) rotate(.3deg)}
+  52%{opacity:.32;transform:translate3d(10px,3px,0) scale(1.021) rotate(.5deg)}
+  54%{opacity:.30;transform:translate3d(1px,8px,0) scale(1.026) rotate(-.2deg)}
+  56%{opacity:.24;transform:translate3d(-9px,2px,0) scale(1.018) rotate(-.45deg)}
+  58%{opacity:.035;transform:translate3d(-13px,7px,0) scale(1.01)}
+  70%,100%{opacity:.055;transform:translate3d(0,-2px,0) scale(1)}
+}
+
+/* Shell exactly follows the cold House Five material language. */
+html[data-theme="dark"] .nexus-rail{
+  background:linear-gradient(180deg,rgba(8,13,19,.985),rgba(4,7,11,.985))!important;
+  border-color:#253441!important;box-shadow:12px 0 42px rgba(0,0,0,.28)
+}
+html[data-theme="dark"] .nexus-topbar{
+  background:rgba(5,9,13,.97)!important;border-bottom-color:#263644!important;
+  box-shadow:0 9px 34px rgba(0,0,0,.34)!important;backdrop-filter:blur(18px) saturate(.8)
+}
+html[data-theme="dark"] .nexus-brand-orb{
+  background:linear-gradient(145deg,#a8e7ff,#4d9dc8)!important;color:#041018!important;
+  border-color:#a8e7ff!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.28),0 0 30px rgba(91,178,226,.16)!important
+}
+html[data-theme="dark"] .nexus-brand-copy strong{color:#f7fbff!important}
+html[data-theme="dark"] .nexus-brand-copy small{color:#9fe2ff!important}
+html[data-theme="dark"] .nexus-rail-caption{color:#90a1b2!important}
+html[data-theme="dark"] .nexus-nav-link{color:#a8b5c2!important}
+html[data-theme="dark"] .nexus-nav-link:hover{background:#101820!important;color:#e8f6ff!important}
+html[data-theme="dark"] .nexus-nav-link[aria-current="page"]{
+  background:linear-gradient(180deg,rgba(132,216,255,.17),rgba(65,130,166,.08))!important;
+  border-color:rgba(139,220,255,.24)!important;color:#d8f3ff!important;box-shadow:inset 0 0 0 1px rgba(139,220,255,.08)
+}
+html[data-theme="dark"] .nexus-nav-link[aria-current="page"] .nexus-nav-icon{background:#12212c!important;color:#aee3ff!important}
+html[data-theme="dark"] .nexus-security-card{background:#0a1715!important;border-color:#31564a!important;color:#8de0c4!important}
+html[data-theme="dark"] .nexus-command-trigger,
+html[data-theme="dark"] .nexus-system-clock,
+html[data-theme="dark"] .hf-theme-toggle,
+html[data-theme="dark"] .hf-patro-toggle{
+  background:linear-gradient(145deg,#111b25,#080d13)!important;color:#d9edf8!important;border-color:#385064!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 0 20px rgba(81,174,224,.06)
+}
+
+/* Zero-bright-leak firewall across every Personal Secretary route. */
+html[data-theme="dark"] :where(
+  .nexus-section,.nexus-metric-card,.nexus-intel-card,.nexus-recommendation,.nexus-empty-state,
+  .mission-card,.mission-create,.setup-card,.saved-plan-card,.hub-module,.hub-dialog,
+  .calendar-command-deck,.calendar-insight,.nexus-calendar-shell,.calendar-event-sheet,
+  .zoro-context-card,.zoro-action-card,.zoro-engine-card,.zoro-chat-console,
+  .command-center,.cc-panel,.cc-metric,.nexus-palette,.nexus-palette-list,
+  .nexus-page-heading,.zoro-presence-toast
+){
+  background:linear-gradient(145deg,#101821,#090f15)!important;
+  color:#f4f8fc!important;border-color:#2b3a48!important;
+  box-shadow:0 12px 36px rgba(0,0,0,.24)!important
+}
+html[data-theme="dark"] :where(.bg-white,.bg-slate-50,.bg-slate-100){background:#0d131a!important}
+html[data-theme="dark"] :where(.bg-slate-900,.bg-slate-950){background:#070c11!important}
+html[data-theme="dark"] :where(.bg-cyan-50){background:#0d1c27!important}
+html[data-theme="dark"] :where(.text-slate-950,.text-slate-900,.text-slate-800,.text-slate-700){color:#eef5fb!important}
+html[data-theme="dark"] :where(.text-slate-600,.text-slate-500,.text-slate-400,.text-slate-300,.text-slate-200){color:#a5b2c0!important}
+html[data-theme="dark"] :where(.border-slate-100,.border-slate-200,.border-slate-300,.border-slate-600,.border-slate-700,.border-slate-900){border-color:#2b3a48!important}
+html[data-theme="dark"] :where(h1,h2,h3,strong,b){color:#f6f9fc}
+html[data-theme="dark"] :where(.nexus-kicker,.cc-eyebrow,.hub-kicker){color:#84caef!important}
+html[data-theme="dark"] :where(.nexus-intel-muted,.nexus-intel-sender,.cc-caption,.cc-intro,.hub-footnote,.nexus-footer,small){color:#a5b2c0!important}
+
+/* Controls and forms. */
+html[data-theme="dark"] .zoro-app :where(input:not([type=checkbox]):not([type=range]),textarea,select){
+  background:#070c11!important;color:#f4f8fc!important;border-color:#344654!important;caret-color:#a9e2ff!important
+}
+html[data-theme="dark"] .zoro-app :where(input,textarea)::placeholder{color:#728495!important}
+html[data-theme="dark"] .zoro-app option{background:#0b1117!important;color:#f4f8fc!important}
+html[data-theme="dark"] .zoro-app :where(input,textarea,select):focus{
+  border-color:#79c8ee!important;box-shadow:0 0 0 4px rgba(103,187,229,.14)!important;outline:none
+}
+html[data-theme="dark"] :where(.calendar-secondary,.nexus-secondary-action,.mission-card-actions button,.zoro-engine-actions button,.zoro-context-actions button){
+  background:#151f29!important;color:#e0ebf4!important;border-color:#344654!important
+}
+html[data-theme="dark"] :where(.calendar-primary,.hub-primary,.hub-capture,.nexus-create-event){
+  background:linear-gradient(135deg,#a8e6ff,#5aa8d2)!important;color:#04121a!important;border-color:#a5e1ff!important;
+  box-shadow:0 10px 28px rgba(75,170,219,.18)!important
+}
+html[data-theme="dark"] .calendar-danger{background:#350f17!important;color:#ff9aa8!important;border-color:#7a293a!important}
+
+/* Dashboard / command center. */
+html[data-theme="dark"] .command-center{
+  background:
+    linear-gradient(90deg,rgba(4,8,12,.93),rgba(8,15,21,.80)),
+    url('/assets/dark-mountain-v2.svg') center 68%/cover no-repeat!important;
+  border-color:#334b5c!important;border-top:3px solid #ff425b!important;
+  box-shadow:0 28px 70px rgba(0,0,0,.42),inset 0 1px 0 rgba(166,226,255,.07)!important
+}
+html[data-theme="dark"] .cc-panel,html[data-theme="dark"] .cc-metric{
+  background:linear-gradient(145deg,rgba(17,25,34,.96),rgba(9,15,21,.97))!important;
+  border-color:#314453!important
+}
+html[data-theme="dark"] .cc-primary{background:linear-gradient(135deg,#a8e6ff,#5aa8d2)!important;color:#04121a!important}
+html[data-theme="dark"] .cc-secondary{background:#151f29!important;color:#e0ebf4!important;border-color:#344654!important}
+html[data-theme="dark"] .cc-orbit-core{background:radial-gradient(circle at 30% 20%,rgba(159,226,255,.38),#10202b 70%)!important;border-color:#6dbbdd!important;color:#b9eaff!important}
+html[data-theme="dark"] .cc-orbit-ring{border-color:rgba(159,226,255,.24)!important}
+html[data-theme="dark"] .cc-status-dot,html[data-theme="dark"] .cc-event-dot{background:#ff425b!important;box-shadow:0 0 12px rgba(255,66,91,.55)!important}
+
+/* Tasks / missions. */
+html[data-theme="dark"] .mission-card{border-top-color:#385b70!important}
+html[data-theme="dark"] .mission-card::before{background:linear-gradient(90deg,#9fe2ff,#ff425b,transparent)!important}
+html[data-theme="dark"] .mission-priority{background:#111a23!important;border-color:#3a4e5e!important;color:#dbe8f1!important}
+html[data-theme="dark"] .priority-urgent{background:#2b0d14!important;border-color:#7a293a!important;color:#ff9aa8!important}
+html[data-theme="dark"] .priority-high{background:#2a1d0c!important;border-color:#745220!important;color:#f3c873!important}
+html[data-theme="dark"] .mission-complete{background:#0d211b!important;border-color:#315c4d!important}
+html[data-theme="dark"] .mission-search{background:#070c11!important;border-color:#344654!important}
+html[data-theme="dark"] .mission-filters button[aria-pressed="true"]{background:#18374b!important;border-color:#6fc0e8!important;color:#d8f3ff!important}
+
+/* Gmail / intelligence / search / settings. */
+html[data-theme="dark"] .nexus-intel-card{border-left-color:#385b70!important}
+html[data-theme="dark"] .nexus-intel-card.is-action{background:#220c12!important;border-color:#602333!important}
+html[data-theme="dark"] .nexus-intel-top,.nexus-intel-summary{color:#dce8f1!important}
+html[data-theme="dark"] .nexus-recommendation{background:#0d1c27!important;border-color:#335064!important}
+html[data-theme="dark"] .intelligence-filter input,html[data-theme="dark"] .intelligence-filter select{background:#070c11!important;border-color:#344654!important;color:#f4f8fc!important}
+html[data-theme="dark"] .setup-card{border-top:3px solid #385b70!important}
+html[data-theme="dark"] .saved-plan-card{background:#11170d!important;border-color:#46582a!important}
+
+/* Calendar becomes a Dark Realm instrument panel. */
+html[data-theme="dark"] .calendar-command-deck{
+  background:linear-gradient(145deg,#0d151d,#080d13)!important;border-color:#314554!important;border-top:3px solid #ff425b!important
+}
+html[data-theme="dark"] .calendar-insight{background:#0d131a!important;border-color:#2b3a48!important}
+html[data-theme="dark"] .calendar-live-chip{color:#9fe2ff!important;border-color:#31566d!important;background:#0d1c27!important}
+html[data-theme="dark"] .calendar-nav-cluster button,
+html[data-theme="dark"] .calendar-view-tabs button{
+  background:#0c1218!important;border-color:#344654!important;color:#b4c2cf!important
+}
+html[data-theme="dark"] .calendar-view-tabs button[aria-pressed="true"],
+html[data-theme="dark"] .calendar-today-button{
+  background:#18374b!important;border-color:#6fc0e8!important;color:#d8f3ff!important
+}
+html[data-theme="dark"] .nexus-calendar-shell{
+  background:rgba(7,12,17,.94)!important;border-color:#34495a!important;box-shadow:0 18px 48px rgba(0,0,0,.38)!important
+}
+html[data-theme="dark"] .nexus-calendar-shell .fc{
+  --fc-page-bg-color:#071017;--fc-neutral-bg-color:#0d151d;--fc-neutral-text-color:#c7d4df;
+  --fc-border-color:#2b3a48;--fc-list-event-hover-bg-color:#111c25;--fc-today-bg-color:rgba(159,226,255,.07);
+  --fc-button-bg-color:#151f29;--fc-button-border-color:#344654;--fc-button-hover-bg-color:#1b2d3b;
+  --fc-button-active-bg-color:#18374b;--fc-button-active-border-color:#6fc0e8
+}
+html[data-theme="dark"] .nexus-calendar-shell .fc-day-today{background:rgba(159,226,255,.07)!important}
+html[data-theme="dark"] .nexus-calendar-shell .fc-timegrid-now-indicator-line{border-color:#ff425b!important}
+html[data-theme="dark"] .nexus-calendar-shell .fc-timegrid-now-indicator-arrow{border-left-color:#ff425b!important}
+html[data-theme="dark"] .calendar-sheet-backdrop{background:rgba(0,2,5,.78)!important;backdrop-filter:blur(8px)}
+html[data-theme="dark"] .calendar-event-sheet{background:linear-gradient(180deg,#0e151d,#080d12)!important;border-color:#344b5d!important;color:#f4f8fc!important}
+
+/* Zoro AI is its own Demon King court. */
+html[data-theme="dark"] .zoro-ai-workspace{position:relative;isolation:isolate}
+html[data-theme="dark"] .zoro-chat-console{
+  position:relative;isolation:isolate;overflow:hidden;
+  background:
+    linear-gradient(180deg,rgba(7,12,17,.92),rgba(6,10,15,.96)),
+    url('/assets/chat-demon-king-v1.svg') center 30%/cover no-repeat!important;
+  border-color:#34495a!important;box-shadow:0 22px 62px rgba(0,0,0,.44)!important
+}
+html[data-theme="dark"] .zoro-chat-console::before{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(circle at 72% 28%,rgba(255,63,86,.10),transparent 28%),linear-gradient(180deg,rgba(1,3,5,.06),rgba(1,3,5,.26))
+}
+html[data-theme="dark"] .zoro-chat-console::after{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:url('/assets/chat-demon-king-v1.svg') 58% 28%/auto 112% no-repeat;opacity:0;mix-blend-mode:screen;
+  filter:contrast(1.08) drop-shadow(0 0 20px rgba(152,225,255,.12));
+  animation:demonKingReveal 10.6s cubic-bezier(.22,.72,.32,1) infinite;
+  transform-origin:58% 42%;will-change:transform,opacity,filter
+}
+html[data-theme="dark"] .zoro-chat-console>*{position:relative;z-index:1}
+@keyframes demonKingReveal{
+  0%,57%{opacity:0;transform:translate3d(0,14px,0) scale(.99)}
+  59%{opacity:.04;transform:translate3d(-6px,8px,0) scale(1.002) rotate(-.15deg)}
+  60%{opacity:.30;transform:translate3d(-13px,2px,0) scale(1.018) rotate(-.35deg);filter:contrast(1.16) drop-shadow(0 0 28px rgba(156,228,255,.22)) drop-shadow(0 0 14px rgba(255,66,91,.20))}
+  62%{opacity:.34;transform:translate3d(5px,-10px,0) scale(1.028) rotate(.35deg)}
+  64%{opacity:.32;transform:translate3d(14px,-2px,0) scale(1.022) rotate(.55deg)}
+  66%{opacity:.28;transform:translate3d(2px,9px,0) scale(1.03) rotate(-.2deg)}
+  68%{opacity:.22;transform:translate3d(-11px,1px,0) scale(1.02) rotate(-.45deg)}
+  70%{opacity:.12;transform:translate3d(7px,-5px,0) scale(1.012) rotate(.2deg)}
+  72%{opacity:.02;transform:translate3d(15px,10px,0) scale(1.005)}
+  74%,100%{opacity:0;transform:translate3d(0,14px,0) scale(.99)}
+}
+html[data-theme="dark"] .zoro-chat-header{background:rgba(7,13,19,.90)!important;border-bottom-color:#314554!important;border-top:4px solid #ff425b!important;backdrop-filter:blur(12px)}
+html[data-theme="dark"] .zoro-message-stream{background:linear-gradient(180deg,rgba(5,9,13,.18),rgba(5,9,13,.40))!important}
+html[data-theme="dark"] .zoro-message-body{
+  background:rgba(14,22,30,.96)!important;border-color:#314654!important;color:#eef6fc!important;
+  box-shadow:0 7px 20px rgba(0,0,0,.20)!important
+}
+html[data-theme="dark"] .zoro-message.is-user .zoro-message-body{
+  background:rgba(18,55,75,.97)!important;border-color:#467a98!important;box-shadow:inset 3px 0 0 #8cd8fa,0 8px 22px rgba(0,0,0,.20)!important
+}
+html[data-theme="dark"] .zoro-message-avatar{background:#122331!important;color:#b7e5ff!important;border-color:#365064!important}
+html[data-theme="dark"] .zoro-composer-zone{background:rgba(6,11,16,.96)!important;border-top-color:#314554!important}
+html[data-theme="dark"] .zoro-composer{background:#080f15!important;border-color:#365064!important}
+html[data-theme="dark"] .zoro-composer-mic,html[data-theme="dark"] .zoro-send-button{background:#122331!important;border-color:#3f7898!important;color:#bdeaff!important}
+html[data-theme="dark"] .zoro-intelligence-column{background:transparent!important}
+html[data-theme="dark"] .zoro-context-card,html[data-theme="dark"] .zoro-action-card,html[data-theme="dark"] .zoro-engine-card{
+  background:rgba(10,17,24,.96)!important;border-color:#314554!important
+}
+html[data-theme="dark"] .zoro-voice-core,html[data-theme="dark"] .nexus-zoro-orb{
+  background:radial-gradient(circle at 30% 20%,rgba(159,226,255,.24),#10202b 70%)!important;
+  color:#bdeaff!important;border-color:#4d879f!important;box-shadow:0 0 34px rgba(118,206,255,.12)!important
+}
+html[data-theme="dark"] .nexus-zoro-launcher{background:rgba(7,13,19,.96)!important;border-color:#365064!important;color:#e9f5fb!important;box-shadow:0 18px 48px rgba(0,0,0,.38)!important}
+html[data-theme="dark"] .zoro-presence-toast{background:rgba(7,13,19,.97)!important;border-color:#365064!important}
+
+/* Palette, dialogs and sheets. */
+html[data-theme="dark"] .nexus-palette{background:#080e14!important;border-color:#34495a!important;box-shadow:0 34px 100px rgba(0,0,0,.72)!important}
+html[data-theme="dark"] .nexus-palette-search{background:#070c11!important;border-color:#344654!important}
+html[data-theme="dark"] .nexus-command-item:hover{background:#111c25!important}
+html[data-theme="dark"] .hub-dialog{background:#0d141b!important;border-color:#34495a!important;box-shadow:0 34px 100px rgba(0,0,0,.72)!important}
+
+/* Patro stays inside the same realm instead of glowing like a white rectangle. */
+html[data-theme="dark"] .hf-patro-modal{
+  background:
+    linear-gradient(180deg,rgba(7,12,17,.97),rgba(5,9,13,.98)),
+    url('/assets/dark-mountain-v2.svg') center bottom/cover no-repeat!important;
+  border-color:#344959!important;color:#f4f8fc!important;box-shadow:0 34px 100px rgba(0,0,0,.72)!important
+}
+html[data-theme="dark"] .hf-patro-head{background:rgba(5,9,13,.94)!important;border-color:#2f4352!important}
+html[data-theme="dark"] .hf-patro-grid>button,html[data-theme="dark"] .hf-patro-detail,html[data-theme="dark"] .hf-panchang>div,html[data-theme="dark"] .hf-patro-feature{
+  background:#0a1219!important;color:#f4f8fc!important;border-color:#314756!important
+}
+html[data-theme="dark"] .hf-patro-grid>button.holiday{background:#1b0d12!important;border-color:#69303a!important}
+html[data-theme="dark"] .hf-patro-grid>button.selected{background:#123044!important;border-color:#67b8e3!important}
+
+/* Full House Five snowfall, individual flakes rather than a repeating texture. */
+.hf-snow{display:none!important}
+.snowfall-layer{position:fixed;inset:0;pointer-events:none;z-index:26;overflow:hidden;opacity:0;visibility:hidden;transition:opacity .4s ease}
+.snowfall-layer.active{opacity:.68;visibility:visible}
+.snowflake{
+  position:absolute;left:var(--snow-left);top:-12px;width:var(--snow-size);height:var(--snow-size);border-radius:999px;
+  background:rgba(255,255,255,.96);opacity:var(--snow-opacity);
+  box-shadow:0 0 9px rgba(220,245,255,.36);
+  animation:snowfallDrop var(--snow-duration) linear var(--snow-delay) infinite
+}
+.snowflake:nth-child(3n){filter:blur(.35px)}.snowflake:nth-child(5n){box-shadow:0 0 12px rgba(220,245,255,.48)}
+@keyframes snowfallDrop{0%{transform:translate3d(0,-4vh,0) rotate(0)}100%{transform:translate3d(var(--snow-drift),108vh,0) rotate(180deg)}}
+
+/* House Five entering-realm flash. */
+.realm-transition{
+  position:fixed;inset:0;z-index:2000;display:grid;place-items:center;pointer-events:none;
+  visibility:hidden;opacity:0;background:#010305;overflow:hidden
+}
+.realm-transition.show{visibility:visible;animation:realmGate 1.08s cubic-bezier(.2,.75,.25,1) both}
+.realm-transition-art{position:absolute;inset:0;background:
+  linear-gradient(180deg,rgba(1,3,5,.18),rgba(1,3,5,.74)),
+  url('/assets/newari-guardian-v2.svg') 82% 45%/min(66vw,740px) auto no-repeat,
+  url('/assets/dark-demon-realm-v3.svg') center/cover no-repeat}
+.realm-transition-art::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 46%,rgba(159,226,255,.12),transparent 35%),linear-gradient(90deg,transparent,rgba(255,66,91,.06),transparent)}
+.realm-transition-copy{position:relative;text-align:center;padding:28px;color:#eef8ff;text-shadow:0 4px 30px #000}.realm-transition-copy small{display:block;color:#9fe2ff!important;font-size:10px;letter-spacing:.32em;font-weight:950}.realm-transition-copy b{display:block!important;color:#fff!important;font-size:clamp(28px,7vw,72px);line-height:.95;letter-spacing:-.05em;margin-top:11px}.realm-transition-copy span{display:block;margin-top:12px;color:#ff788a;font-size:10px;letter-spacing:.18em;font-weight:900}
+@keyframes realmGate{0%{opacity:0;transform:scale(1.08)}20%{opacity:1}62%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.985)}}
+
+/* Mobile keeps the same realm rather than falling back to generic dark UI. */
+@media(max-width:760px){
+  html[data-theme="dark"] body{
+    background:linear-gradient(180deg,rgba(2,4,7,.30),rgba(2,4,7,.60)),url('/assets/dark-demon-realm-v3.svg') 60% top/auto 100% fixed no-repeat,#020406!important
+  }
+  html[data-theme="dark"] body::after{width:92vw!important;right:-36vw!important;opacity:.05}
+  html[data-theme="dark"] .nexus-mobile-dock{background:rgba(5,9,13,.97)!important;border-color:#2b3a48!important;box-shadow:0 -12px 36px rgba(0,0,0,.42)!important}
+  html[data-theme="dark"] .nexus-mobile-dock-link{color:#91a1b0!important}
+  html[data-theme="dark"] .nexus-mobile-dock-link[aria-current="page"]{color:#bdeaff!important;background:#122331!important}
+  html[data-theme="dark"] .zoro-chat-console{background:linear-gradient(180deg,rgba(7,12,17,.94),rgba(6,10,15,.97)),url('/assets/chat-demon-king-v1.svg') 54% 25%/auto 115% no-repeat!important}
+  html[data-theme="dark"] .zoro-chat-console::after{background-position:54% 24%;background-size:auto 120%;animation-duration:9.8s}
+  .snowfall-layer.active{opacity:.62}
+}
+@media(prefers-reduced-motion:reduce){
+  html[data-theme="dark"] body::after,html[data-theme="dark"] .zoro-chat-console::after,.snowflake{animation:none!important}
+  .snowfall-layer{display:none!important}.realm-transition{display:none!important}
+}
