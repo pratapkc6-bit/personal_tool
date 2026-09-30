@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { Activity, BellRing, Bot, DatabaseZap, Info, PlugZap, Settings2 } from "lucide-react";
+import { Activity, BellRing, Bot, BrainCircuit, DatabaseZap, Info, PlugZap, Settings2 } from "lucide-react";
 import { APP_VERSION } from "@/lib/release";
 
 const settings = [
+  { href: "/core", title: "Autonomous Core", description: "Review Zoro observations, proposed actions, approvals and execution history.", Icon: BrainCircuit },
   { href: "/settings/assistant", title: "Zoro preferences", description: "Voice, wake word, assistant and local model preferences.", Icon: Bot },
   { href: "/notifications", title: "Notifications & alerts", description: "Push notifications, alert categories, quiet hours and watches.", Icon: BellRing },
   { href: "/connections", title: "Connections", description: "Manage Google, Gmail, Calendar and connected data.", Icon: PlugZap },
