@@ -8,7 +8,10 @@ import { audit, activity } from "@/lib/audit";
 const createSchema=z.object({
   title:z.string().min(1).max(180),
   remindAt:z.string().datetime(),
-  ringSeconds:z.number().int().min(0).max(10).default(3)
+  ringSeconds:z.number().int().min(0).max(10).default(3),
+  recurrence:z.enum(["NONE","DAILY"]).default("NONE"),
+  recurrenceTime:z.string().regex(/^([01]\\d|2[0-3]):[0-5]\\d$/).optional(),
+  timezone:z.string().min(1).max(80).default("Australia/Darwin")
 });
 const actionSchema=z.object({
   id:z.string().min(1),
@@ -33,7 +36,8 @@ export async function POST(request:NextRequest){
     const input=createSchema.parse(await request.json()),remindAt=new Date(input.remindAt);
     if(remindAt.getTime()<=Date.now())return NextResponse.json({error:"Choose a future reminder time."},{status:400});
     const reminder=await db.reminder.create({data:{
-      userId:session.user.id,title:input.title,remindAt,status:"OPEN",source:"Zoro",ringSeconds:input.ringSeconds
+      userId:session.user.id,title:input.title,remindAt,status:"OPEN",source:"Zoro",ringSeconds:input.ringSeconds,
+      recurrence:input.recurrence,recurrenceTime:input.recurrence==="DAILY"?input.recurrenceTime:null,timezone:input.timezone
     }});
     await audit({userId:session.user.id,action:"REMINDER_CREATED",source:"Zoro",sourceRef:reminder.id,newState:reminder,result:"SUCCESS"});
     await activity({userId:session.user.id,type:"REMINDER",summary:`Reminder created: ${reminder.title}`,details:{reminderId:reminder.id,remindAt:reminder.remindAt}});
@@ -50,7 +54,12 @@ export async function PATCH(request:NextRequest){
     const input=actionSchema.parse(await request.json());
     const existing=await db.reminder.findFirst({where:{id:input.id,userId:session.user.id}});
     if(!existing)return NextResponse.json({error:"Reminder not found."},{status:404});
-    const data=input.action==="done"
+    let data:Record<string,unknown>;
+    if(input.action==="done"&&existing.recurrence==="DAILY"){
+      const next=new Date(existing.remindAt); next.setUTCDate(next.getUTCDate()+1);
+      while(next.getTime()<=Date.now())next.setUTCDate(next.getUTCDate()+1);
+      data={status:"OPEN",completedAt:null,snoozedUntil:null,remindAt:next};
+    } else data=input.action==="done"
       ? {status:"COMPLETED",completedAt:new Date(),snoozedUntil:null}
       : input.action==="snooze"
         ? {status:"OPEN",completedAt:null,snoozedUntil:new Date(Date.now()+(input.minutes||10)*60_000)}
