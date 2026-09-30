@@ -15,6 +15,9 @@ const capabilities = [
 ];
 
 const releaseHighlights = [
+  "Zoro Data Hub: normalized external intelligence API with source health and attribution.",
+  "Darwin weather intelligence through Open-Meteo plus AUD reference rates through Frankfurter.",
+  "New Data Hub workspace and authenticated /api/data-hub endpoint for future Zoro tools.",
   "Zoro Core System Health dashboard for database, authentication, Google, push, scheduler and deployment checks.",
   "Zoro notification and alert engine with Normal, Important and Critical priorities.",
   "Reminder Center with snooze, completion and a three-second foreground alarm.",
