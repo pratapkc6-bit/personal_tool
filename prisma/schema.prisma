@@ -209,6 +209,9 @@ model Reminder {
   source      String
   sourceRef   String?
   ringSeconds Int      @default(3)
+  recurrence  String   @default("NONE")
+  recurrenceTime String?
+  timezone    String?
   snoozedUntil DateTime?
   completedAt DateTime?
   createdAt   DateTime @default(now())
