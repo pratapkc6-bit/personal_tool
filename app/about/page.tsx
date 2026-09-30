@@ -15,6 +15,9 @@ const capabilities = [
 ];
 
 const releaseHighlights = [
+  "Autonomous Core 3.0: persistent observation ledger, action proposals, human approval policy and audited execution.",
+  "Core Control workspace for reviewing and approving Zoro actions before execution.",
+  "Initial safe executor allowlist supports task and reminder creation while consequential integrations remain approval-gated.",
   "Cinematic mobile Command home inspired by the Himalayan Dark Realm reference, with red/cyan neon hierarchy.",
   "Rebuilt five-slot mobile dock with a large central Zoro action button and direct More/Settings access.",
   "Visual Mission Control, Intelligence Feed, Timeline and System Setup command cards.",
