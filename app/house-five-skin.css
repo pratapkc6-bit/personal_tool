@@ -1190,3 +1190,122 @@ html[data-theme="dark"] .immersive-live-layer .bg-slate-900{
   .immersive-live-layer{margin:0!important;border-radius:0!important;border-left:0!important;border-right:0!important;padding:16px 14px 34px!important}
   .immersive-live-layer>.nexus-page-heading{margin-top:0}
 }
+
+
+/* Zoro v4.6 immersive section screens */
+.immersive-live-search{
+  position:absolute;z-index:7;left:16%;top:2.15%;width:48%;height:6.4%;
+  display:flex;align-items:center;gap:8px;padding:0 14px;border-radius:999px;
+  background:rgba(2,5,8,.08);border:1px solid transparent;color:#dff2ff;
+  transition:.16s ease;backdrop-filter:blur(0);
+}
+.immersive-live-search input{
+  width:100%;min-width:0;border:0!important;outline:0!important;background:transparent!important;
+  color:#eef8ff!important;font-size:clamp(11px,2vw,15px)!important;font-weight:700;
+  text-shadow:0 1px 8px #000;
+}
+.immersive-live-search input::placeholder{color:#c7d8e4;opacity:.82}
+.immersive-live-search>button{
+  width:28px;height:28px;min-width:28px;border:0;border-radius:50%;
+  display:grid;place-items:center;background:rgba(4,8,12,.82);color:#dcefff;
+}
+.immersive-live-search.is-open{
+  background:rgba(2,6,10,.92);border-color:rgba(255,48,78,.48);
+  box-shadow:0 0 0 1px rgba(149,226,255,.07),0 0 24px rgba(255,35,66,.18);
+  backdrop-filter:blur(14px);
+}
+.immersive-search-results{
+  position:absolute;z-index:8;left:8%;right:8%;top:9%;
+  max-height:38%;overflow:auto;padding:12px;border-radius:20px;
+  background:linear-gradient(180deg,rgba(4,8,12,.98),rgba(2,4,7,.96));
+  border:1px solid rgba(255,48,78,.42);
+  box-shadow:0 24px 70px rgba(0,0,0,.64),inset 0 0 34px rgba(255,31,62,.04);
+  backdrop-filter:blur(18px);
+}
+.immersive-search-results::before{content:"";position:absolute;inset:0;border-radius:20px;pointer-events:none;background:url('/assets/zoro-demonic-frame.svg') center/100% 100% no-repeat;opacity:.14}
+.immersive-search-hint{position:relative;display:grid;gap:4px;padding:8px;color:#eef7fc}
+.immersive-search-hint b{font-size:13px}.immersive-search-hint span{font-size:10px;color:#91a7b8}
+.immersive-search-groups{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.immersive-search-groups section{min-width:0;padding:9px;border:1px solid rgba(110,139,160,.24);border-radius:13px;background:rgba(255,255,255,.025)}
+.immersive-search-groups header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.immersive-search-groups header b{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#9fe2ff}
+.immersive-search-groups header small{font-size:8px;color:#ff7187}
+.immersive-search-groups section>a{display:grid;gap:2px;padding:7px;margin-top:4px;border-radius:9px;text-decoration:none;color:#f0f8fc;background:rgba(255,255,255,.02)}
+.immersive-search-groups section>a:hover,.immersive-search-groups section>a:focus-visible{background:rgba(255,42,70,.06);outline:1px solid rgba(255,55,82,.35)}
+.immersive-search-groups strong{font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.immersive-search-groups span,.immersive-search-groups p{font-size:8px;color:#8da1b1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+html[data-theme="dark"] .immersive-page-timeline .immersive-live-layer{
+  background:
+    linear-gradient(180deg,rgba(3,6,10,.93),rgba(2,4,7,.97)),
+    url('/assets/zoro-timeline-approved.png') center 58%/cover no-repeat!important;
+}
+html[data-theme="dark"] .immersive-page-intel .immersive-live-layer{
+  background:
+    linear-gradient(180deg,rgba(3,6,10,.94),rgba(2,4,7,.98)),
+    url('/assets/zoro-intel-approved.png') center 52%/cover no-repeat!important;
+}
+html[data-theme="dark"] .immersive-page-today .immersive-live-layer{
+  background:
+    linear-gradient(180deg,rgba(3,6,10,.94),rgba(2,4,7,.98)),
+    url('/assets/zoro-today-approved.png') center 56%/cover no-repeat!important;
+}
+html[data-theme="dark"] .immersive-page-settings .immersive-live-layer{
+  background:
+    linear-gradient(180deg,rgba(3,6,10,.94),rgba(2,4,7,.98)),
+    url('/assets/zoro-settings-approved.png') center 50%/cover no-repeat!important;
+}
+
+html[data-theme="dark"] .immersive-live-layer{
+  border-color:rgba(255,45,74,.34)!important;
+  box-shadow:0 26px 74px rgba(0,0,0,.46),inset 0 0 38px rgba(255,35,65,.035)!important;
+}
+html[data-theme="dark"] .immersive-live-layer>.nexus-page-heading,
+html[data-theme="dark"] .immersive-live-layer>header,
+html[data-theme="dark"] .immersive-live-layer>section,
+html[data-theme="dark"] .immersive-live-layer>.nexus-metric-strip,
+html[data-theme="dark"] .immersive-live-layer>.intelligence-filter,
+html[data-theme="dark"] .immersive-live-layer>.intelligence-grid{
+  position:relative;z-index:1;
+}
+html[data-theme="dark"] .immersive-live-layer>.nexus-page-heading,
+html[data-theme="dark"] .immersive-live-layer>header{
+  padding:16px;border:1px solid rgba(255,48,78,.22);border-radius:18px;
+  background:linear-gradient(180deg,rgba(5,9,14,.88),rgba(2,5,8,.86));
+  backdrop-filter:blur(12px);
+}
+html[data-theme="dark"] .immersive-live-layer .rounded-3xl,
+html[data-theme="dark"] .immersive-live-layer .nexus-intel-card,
+html[data-theme="dark"] .immersive-live-layer .nexus-metric-card{
+  backdrop-filter:blur(12px);
+  background:linear-gradient(180deg,rgba(7,11,17,.9),rgba(3,6,10,.92))!important;
+  border-color:rgba(137,177,201,.22)!important;
+}
+html[data-theme="dark"] .immersive-live-layer .rounded-3xl:hover,
+html[data-theme="dark"] .immersive-live-layer .nexus-intel-card:hover{
+  border-color:rgba(255,55,82,.38)!important;
+  box-shadow:0 0 20px rgba(255,35,65,.07)!important;
+}
+@media(max-width:640px){
+  .immersive-section-art{
+    min-height:100svh;
+    display:flex;
+    align-items:flex-start;
+    background:#020306;
+  }
+  .immersive-section-image{
+    width:100vw!important;
+    min-height:100svh;
+    object-fit:cover;
+    object-position:top center;
+  }
+  .immersive-live-search{left:16%;top:2.05%;width:48%;height:6.25%;padding:0 11px}
+  .immersive-search-results{left:4.5%;right:4.5%;top:8.8%;max-height:42%;padding:10px}
+  .immersive-search-groups{grid-template-columns:1fr}
+  .immersive-hotspot{box-shadow:none}
+  .immersive-live-layer{
+    margin-top:0!important;
+    padding-top:24px!important;
+    background-attachment:scroll!important;
+  }
+}
