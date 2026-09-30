@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { BellRing, Bot, Info, PlugZap, Settings2 } from "lucide-react";
+import { Activity, BellRing, Bot, Info, PlugZap, Settings2 } from "lucide-react";
 import { APP_VERSION } from "@/lib/release";
 
 const settings = [
   { href: "/settings/assistant", title: "Zoro preferences", description: "Voice, wake word, assistant and local model preferences.", Icon: Bot },
   { href: "/notifications", title: "Notifications & alerts", description: "Push notifications, alert categories, quiet hours and watches.", Icon: BellRing },
   { href: "/connections", title: "Connections", description: "Manage Google, Gmail, Calendar and connected data.", Icon: PlugZap },
+  { href: "/settings/system", title: "System Health", description: "Check database, authentication, Google, push, scheduler and deployment health.", Icon: Activity },
   { href: "/about", title: "About & release", description: "About Zoro Nexus, capabilities, latest release notes and build information.", Icon: Info },
 ];
 
