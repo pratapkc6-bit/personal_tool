@@ -1,0 +1,37 @@
+import { createRequire } from "node:module";
+import { getServerSession } from "next-auth";
+import { NextRequest, NextResponse } from "next/server";
+import { authOptions } from "@/lib/auth";
+
+export const runtime="nodejs";
+export const dynamic="force-dynamic";
+
+const require=createRequire(import.meta.url);
+const patro:any=require("@namlo/nepali-calendar");
+const DARWIN={lat:-12.4634,long:130.8456,timezone:"Australia/Darwin"};
+
+const NT_HOLIDAYS:Record<number,Array<[string,string,string?]>>={
+  2026:[["2026-01-01","New Year's Day"],["2026-01-26","Australia Day"],["2026-04-03","Good Friday"],["2026-04-04","Easter Saturday"],["2026-04-05","Easter Sunday"],["2026-04-06","Easter Monday"],["2026-04-25","Anzac Day"],["2026-05-04","May Day"],["2026-06-08","King's Birthday"],["2026-07-24","Darwin Show Day","regional"],["2026-08-03","Picnic Day"],["2026-12-24","Christmas Eve","part-day"],["2026-12-25","Christmas Day"],["2026-12-26","Boxing Day"],["2026-12-28","Additional public holiday for Boxing Day"],["2026-12-31","New Year's Eve","part-day"]],
+  2027:[["2027-01-01","New Year's Day"],["2027-01-26","Australia Day"],["2027-03-26","Good Friday"],["2027-03-27","Easter Saturday"],["2027-03-28","Easter Sunday"],["2027-03-29","Easter Monday"],["2027-04-26","Anzac Day"],["2027-05-03","May Day"],["2027-06-14","King's Birthday"],["2027-07-23","Darwin Show Day","regional"],["2027-08-02","Picnic Day"],["2027-12-24","Christmas Eve","part-day"],["2027-12-25","Christmas Day"],["2027-12-27","Additional public holiday for Christmas Day"],["2027-12-26","Boxing Day"],["2027-12-28","Additional public holiday for Boxing Day"],["2027-12-31","New Year's Eve","part-day"]],
+  2028:[["2028-01-01","New Year's Day"],["2028-01-03","Additional public holiday for New Year's Day"],["2028-01-26","Australia Day"],["2028-04-14","Good Friday"],["2028-04-15","Easter Saturday"],["2028-04-16","Easter Sunday"],["2028-04-17","Easter Monday"],["2028-04-25","Anzac Day"],["2028-05-01","May Day"],["2028-06-12","King's Birthday"],["2028-07-28","Darwin Show Day","regional"],["2028-08-07","Picnic Day"],["2028-12-24","Christmas Eve","part-day"],["2028-12-25","Christmas Day"],["2028-12-26","Boxing Day"],["2028-12-31","New Year's Eve","part-day"]]
+};
+
+function mapDay(day:any){return{year:day.year,month:day.month,day:day.gatey,dayNp:patro.toDevanagari(day.gatey),ad:day.ad,weekday:day.weekday,weekdayEn:patro.WEEKDAYS_EN?.[day.weekday]||"",weekdayNp:patro.WEEKDAYS_NP?.[day.weekday]||"",paksha:day.paksha,tithi:day.tithi,tithiName:day.panchang?.tithiName||"",tithiNameNp:day.panchang?.tithiNameNp||"",nakshatraName:day.panchang?.nakshatraName||"",nakshatraNameNp:day.panchang?.nakshatraNameNp||"",yogaName:day.panchang?.yogaName||"",yogaNameNp:day.panchang?.yogaNameNp||"",karanaName:day.panchang?.karanaName||"",karanaNameNp:day.panchang?.karanaNameNp||"",isHoliday:Boolean(day.isHoliday),holidays:Array.isArray(day.holidays)?day.holidays:[],events:Array.isArray(day.events)?day.events:[]}}
+function weatherIcon(code:number){if(code===0)return"☀️";if([1,2].includes(code))return"🌤️";if(code===3)return"☁️";if([45,48].includes(code))return"🌫️";if((code>=51&&code<=67)||(code>=80&&code<=82))return"🌧️";if(code>=71&&code<=77)return"❄️";if(code>=95)return"⛈️";return"🌦️"}
+async function weather(){try{const u=new URL("https://api.open-meteo.com/v1/forecast");u.searchParams.set("latitude",String(Number(process.env.APP_WEATHER_LAT||DARWIN.lat)));u.searchParams.set("longitude",String(Number(process.env.APP_WEATHER_LONG||DARWIN.long)));u.searchParams.set("timezone",process.env.APP_TIMEZONE||DARWIN.timezone);u.searchParams.set("daily","weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,wind_speed_10m_max");u.searchParams.set("forecast_days","16");u.searchParams.set("past_days","7");const res=await fetch(u,{next:{revalidate:3600}});if(!res.ok)return{};const j=await res.json(),d=j.daily||{},out:Record<string,unknown>={};(d.time||[]).forEach((date:string,i:number)=>out[date]={icon:weatherIcon(Number(d.weather_code?.[i])),max:d.temperature_2m_max?.[i]??null,min:d.temperature_2m_min?.[i]??null,rainChance:d.precipitation_probability_max?.[i]??null,rainMm:d.precipitation_sum?.[i]??null,windMax:d.wind_speed_10m_max?.[i]??null});return out}catch{return{}}}
+function ntHolidays(days:any[]){const out:Record<string,Array<{title:string;kind:string}>>={};for(const day of days){const y=Number(String(day.ad).slice(0,4));for(const [date,title,kind="public"]of NT_HOLIDAYS[y]||[])if(date===day.ad)(out[date]||=[]).push({title,kind})}return out}
+async function bizzDay(year:number,month:number,day:number){try{const base=(process.env.BIZZPATRO_BASE_URL||"https://www.bizzpatro.com").replace(/\/$/,"");const u=new URL(base+"/api/v1/calendar/date");u.searchParams.set("bs_year",String(year));u.searchParams.set("bs_month",String(month));u.searchParams.set("bs_day",String(day));const headers:Record<string,string>={accept:"application/json"};if(process.env.BIZZPATRO_API_KEY)headers[process.env.BIZZPATRO_API_KEY_HEADER||"x-api-key"]=process.env.BIZZPATRO_API_KEY;const res=await fetch(u,{headers,next:{revalidate:86400}});if(!res.ok)return null;const j=await res.json();if(j?.status&&String(j.status).toLowerCase()!=="success")return null;return j.data||null}catch{return null}}
+function textArray(value:any){const raw=Array.isArray(value)?value:value?[value]:[];return raw.map((x:any)=>typeof x==="string"?x:(x?.name_np||x?.name||x?.title_np||x?.title||"")).filter(Boolean)}
+
+export async function GET(request:NextRequest){
+  const session=await getServerSession(authOptions);if(!session?.user?.id)return NextResponse.json({error:"Unauthorized"},{status:401});
+  try{
+    const url=new URL(request.url),today=patro.getToday(new Date());const year=Number(url.searchParams.get("year")||today.year),month=Number(url.searchParams.get("month")||today.month),dayParam=Number(url.searchParams.get("day")||0);
+    const data=patro.getBsMonth(year,month),days=data.days.map(mapDay),forecast=await weather();
+    const calendar={year,yearNp:patro.toDevanagari(year),month,monthNameNp:patro.BS_MONTHS_NP?.[month-1]||"",monthNameEn:patro.BS_MONTHS_EN?.[month-1]||"",totalDays:data.totalDays,startWeekday:data.startWeekday,minYear:patro.MIN_BS_YEAR,maxYear:patro.MAX_BS_YEAR,today,days,weather:forecast,ntHolidays:ntHolidays(days),source:"Local Panchang + BizzPatro"};
+    if(!dayParam)return NextResponse.json({calendar});
+    const local=mapDay(patro.getBsDay(year,month,dayParam)),remote=await bizzDay(year,month,dayParam),detail={...local};
+    if(remote){detail.tithiName=remote.tithi||remote.panchang?.tithiName||detail.tithiName;detail.tithiNameNp=remote.tithi_np||remote.panchang?.tithiNameNp||detail.tithiNameNp;detail.paksha=remote.paksha||remote.panchang?.paksha||detail.paksha;detail.nakshatraName=remote.nakshatra||remote.panchang?.nakshatraName||detail.nakshatraName;detail.yogaName=remote.yoga||remote.panchang?.yogaName||detail.yogaName;detail.karanaName=remote.karana||remote.karan||remote.panchang?.karanaName||detail.karanaName;detail.holidays=[...new Set([...detail.holidays,...textArray(remote.holidays||remote.holiday)])];detail.events=[...new Set([...detail.events,...textArray(remote.festivals||remote.events)])];detail.isHoliday=detail.isHoliday||detail.holidays.length>0}
+    return NextResponse.json({calendar,detail,verified:Boolean(remote)});
+  }catch(error){return NextResponse.json({error:error instanceof Error?error.message:"Patro unavailable"},{status:500})}
+}

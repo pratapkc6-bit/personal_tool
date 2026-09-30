@@ -7,9 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Personal Chief of Staff with voice mode, Gmail and Calendar intelligence.",
     start_url: "/",
     display: "standalone",
-    background_color: "#090909",
-    theme_color: "#ff9900",
+    background_color: "#05070a",
+    theme_color: "#071018",
     orientation: "portrait",
   };
 }
-

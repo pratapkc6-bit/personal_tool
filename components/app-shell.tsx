@@ -8,6 +8,7 @@ import { ZoroLauncher } from "@/components/zoro-launcher";
 import { NexusCommand } from "@/components/nexus-command";
 import { SystemClock } from "@/components/system-clock";
 import { ZoroPresence } from "@/components/zoro-presence";
+import { HouseFiveChrome } from "@/components/house-five-chrome";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
@@ -26,7 +27,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <span className="nexus-version-pill">v{APP_VERSION}</span>
         </div>
 
-        <div className="nexus-rail-caption">PERSONAL OPERATING SYSTEM</div>
+        <div className="nexus-rail-caption">निजी सचिव · PERSONAL OPERATING SYSTEM</div>
         <WorkspaceNav />
 
         <div className="nexus-rail-bottom">
@@ -49,6 +50,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </Link>
           <NexusCommand />
           <div className="nexus-topbar-actions">
+            <HouseFiveChrome />
             <SystemClock />
             <QuickCapture />
           </div>
@@ -62,6 +64,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </footer>
       </section>
 
+      <div className="hf-snow" aria-hidden="true" />
       <ZoroPresence />
       <ZoroLauncher />
       <BottomNav />

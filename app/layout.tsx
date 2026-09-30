@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "./hub.css";
 import "./nexus.css";
+import "./house-five-skin.css";
 import { AppShell } from "@/components/app-shell";
 
 export const metadata: Metadata = {
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="dark">
       <body>
         <AppShell>{children}</AppShell>
       </body>
