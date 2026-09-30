@@ -10,5 +10,13 @@ export default function manifest(): MetadataRoute.Manifest {
     background_color: "#05070a",
     theme_color: "#071018",
     orientation: "portrait",
+    icons: [
+      {
+        src: "/zoro-nexus-icon.png",
+        sizes: "180x180",
+        type: "image/png",
+        purpose: "any",
+      },
+    ],
   };
 }
