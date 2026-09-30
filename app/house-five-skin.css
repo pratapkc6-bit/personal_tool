@@ -901,3 +901,181 @@ html[data-theme="dark"] .approved-home-surface .demonic-status{display:none!impo
     bottom:calc(18px + env(safe-area-inset-bottom))!important;
   }
 }
+
+
+/* ========================================================================
+   ZORO v4.5 · UNIFIED DARK REALM LIGHTING
+   Makes every workspace inherit the approved blood-red / ice-cyan visual language.
+   ======================================================================== */
+html[data-theme="dark"]{
+  --zoro-bg:#030508;
+  --zoro-bg-2:#080d13;
+  --zoro-panel:rgba(8,13,19,.92);
+  --zoro-panel-strong:rgba(4,8,12,.97);
+  --zoro-red:#ff294b;
+  --zoro-red-soft:rgba(255,41,75,.12);
+  --zoro-red-glow:rgba(255,41,75,.28);
+  --zoro-cyan:#9fe2ff;
+  --zoro-cyan-soft:rgba(159,226,255,.10);
+  --zoro-cyan-glow:rgba(159,226,255,.18);
+  --zoro-text:#f3f8fc;
+  --zoro-muted:#96a8b7;
+  --zoro-line:rgba(121,147,167,.25);
+  --zoro-line-hot:rgba(255,48,77,.34);
+}
+html[data-theme="dark"] .nexus-content{
+  color:var(--zoro-text)!important;
+  background:
+    radial-gradient(circle at 88% 4%,rgba(255,35,67,.065),transparent 24rem),
+    radial-gradient(circle at 8% 30%,rgba(126,218,255,.045),transparent 22rem),
+    linear-gradient(180deg,rgba(2,4,7,.3),rgba(2,4,7,.64))!important;
+}
+html[data-theme="dark"] .nexus-content :is(.bg-white,.bg-slate-50,.bg-slate-100){
+  background:
+    radial-gradient(circle at 100% 0,rgba(255,39,70,.055),transparent 42%),
+    radial-gradient(circle at 0 100%,rgba(159,226,255,.035),transparent 42%),
+    linear-gradient(180deg,rgba(10,15,22,.94),rgba(5,9,14,.96))!important;
+  color:var(--zoro-text)!important;
+}
+html[data-theme="dark"] .nexus-content :is(.border-slate-200,.border-slate-300,.border){
+  border-color:var(--zoro-line)!important;
+}
+html[data-theme="dark"] .nexus-content :is(.shadow-card,.shadow-lg){
+  box-shadow:
+    0 18px 46px rgba(0,0,0,.38),
+    0 0 0 1px rgba(255,41,75,.025),
+    inset 0 0 28px rgba(255,41,75,.025),
+    inset 0 0 18px rgba(159,226,255,.018)!important;
+}
+html[data-theme="dark"] .nexus-content :is(.text-slate-900,.text-slate-800,.text-slate-700){
+  color:var(--zoro-text)!important;
+}
+html[data-theme="dark"] .nexus-content :is(.text-slate-600,.text-slate-500,.text-slate-400){
+  color:var(--zoro-muted)!important;
+}
+html[data-theme="dark"] .nexus-content :is(.text-cyan-700,.text-cyan-600){
+  color:var(--zoro-cyan)!important;
+  text-shadow:0 0 12px rgba(159,226,255,.12);
+}
+html[data-theme="dark"] .nexus-content :is(input,textarea,select){
+  background:linear-gradient(180deg,rgba(5,9,14,.96),rgba(2,5,8,.97))!important;
+  color:var(--zoro-text)!important;
+  border-color:rgba(121,147,167,.32)!important;
+  box-shadow:inset 0 0 18px rgba(255,41,75,.018)!important;
+}
+html[data-theme="dark"] .nexus-content :is(input,textarea,select):focus{
+  outline:none!important;
+  border-color:rgba(255,48,77,.52)!important;
+  box-shadow:
+    0 0 0 1px rgba(255,48,77,.13),
+    0 0 24px rgba(255,41,75,.12),
+    inset 0 0 18px rgba(159,226,255,.025)!important;
+}
+html[data-theme="dark"] .nexus-content :is(button,a).bg-slate-900,
+html[data-theme="dark"] .nexus-content .bg-slate-900{
+  background:linear-gradient(180deg,#3a0913,#160408)!important;
+  color:white!important;
+  border-color:rgba(255,48,77,.48)!important;
+  box-shadow:0 0 20px rgba(255,41,75,.14),inset 0 0 18px rgba(255,41,75,.08)!important;
+}
+html[data-theme="dark"] .nexus-content :is(button,a).bg-slate-900:hover{
+  box-shadow:0 0 28px rgba(255,41,75,.24),inset 0 0 20px rgba(255,41,75,.11)!important;
+}
+html[data-theme="dark"] .nexus-content .rounded-full{
+  border-color:rgba(121,147,167,.24)!important;
+}
+html[data-theme="dark"] .nexus-content :is(section,article,div)[class*="rounded-3xl"][class*="border"]{
+  position:relative;
+  overflow:hidden;
+}
+html[data-theme="dark"] .nexus-content :is(section,article,div)[class*="rounded-3xl"][class*="border"]::before{
+  content:"";position:absolute;left:18px;right:18px;top:0;height:1px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(255,45,74,.34),rgba(159,226,255,.12),transparent);
+}
+html[data-theme="dark"] .nexus-content h1,
+html[data-theme="dark"] .nexus-content h2,
+html[data-theme="dark"] .nexus-content h3{
+  color:#f6f9fc!important;
+  text-shadow:0 2px 18px rgba(0,0,0,.42);
+}
+html[data-theme="dark"] .nexus-content hr,
+html[data-theme="dark"] .nexus-content .divide-y>*+*{
+  border-color:rgba(121,147,167,.18)!important;
+}
+
+/* Calendar becomes a cold time-shrine instead of default plugin chrome. */
+html[data-theme="dark"] .fc{
+  --fc-border-color:rgba(121,147,167,.22);
+  --fc-page-bg-color:transparent;
+  --fc-neutral-bg-color:rgba(8,13,19,.86);
+  --fc-today-bg-color:rgba(255,41,75,.08);
+  --fc-event-bg-color:#33101a;
+  --fc-event-border-color:#ff294b;
+  --fc-event-text-color:#f6fbff;
+  color:var(--zoro-text)!important;
+}
+html[data-theme="dark"] .fc .fc-scrollgrid,
+html[data-theme="dark"] .fc-theme-standard td,
+html[data-theme="dark"] .fc-theme-standard th{
+  border-color:rgba(121,147,167,.2)!important;
+}
+html[data-theme="dark"] .fc .fc-col-header-cell,
+html[data-theme="dark"] .fc .fc-timegrid-axis,
+html[data-theme="dark"] .fc .fc-daygrid-day{
+  background:rgba(4,8,12,.72)!important;
+}
+html[data-theme="dark"] .fc .fc-day-today{
+  background:radial-gradient(circle at top,rgba(255,41,75,.12),rgba(4,8,12,.82) 55%)!important;
+}
+html[data-theme="dark"] .fc .fc-timegrid-now-indicator-line{
+  border-color:#ff294b!important;
+  box-shadow:0 0 12px rgba(255,41,75,.45);
+}
+
+/* Notifications / reminder controls inherit the same realm. */
+html[data-theme="dark"] :is(.notification-panel,.notification-category,.reminder-row,.notification-history-row){
+  background:
+    radial-gradient(circle at 100% 0,rgba(255,41,75,.05),transparent 45%),
+    linear-gradient(180deg,rgba(9,14,20,.96),rgba(4,8,12,.96))!important;
+  border-color:rgba(121,147,167,.24)!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.32),inset 0 0 22px rgba(255,41,75,.025)!important;
+}
+html[data-theme="dark"] :is(.notification-category-icon,.notification-status-orb){
+  background:radial-gradient(circle,rgba(255,41,75,.12),rgba(5,9,14,.96))!important;
+  border-color:rgba(255,48,77,.34)!important;
+  color:var(--zoro-cyan)!important;
+  box-shadow:0 0 18px rgba(255,41,75,.11)!important;
+}
+
+/* Dialogs / sheets / command palette stay in the same atmosphere. */
+html[data-theme="dark"] :is(dialog,.nexus-palette-shell,.hf-patro-modal){
+  background:
+    radial-gradient(circle at 88% 5%,rgba(255,41,75,.075),transparent 20rem),
+    linear-gradient(180deg,#080d13,#030609)!important;
+  color:var(--zoro-text)!important;
+  border-color:rgba(255,48,77,.28)!important;
+  box-shadow:0 34px 100px rgba(0,0,0,.62),0 0 38px rgba(255,41,75,.08)!important;
+}
+html[data-theme="dark"] .nexus-command-item{
+  border-color:transparent!important;
+}
+html[data-theme="dark"] .nexus-command-item:hover{
+  background:linear-gradient(90deg,rgba(255,41,75,.08),rgba(159,226,255,.035))!important;
+  border-color:rgba(255,48,77,.22)!important;
+}
+
+/* Desktop rail / mobile dock use the approved artwork lighting. */
+html[data-theme="dark"] .nexus-rail,
+html[data-theme="dark"] .nexus-mobile-dock-inner{
+  background:
+    linear-gradient(180deg,rgba(5,8,12,.985),rgba(2,4,7,.99)),
+    radial-gradient(circle at top,rgba(255,41,75,.06),transparent 42%)!important;
+  border-color:rgba(255,48,77,.18)!important;
+  box-shadow:inset -1px 0 rgba(159,226,255,.035),0 0 30px rgba(0,0,0,.36)!important;
+}
+html[data-theme="dark"] .nexus-nav-link[aria-current="page"]{
+  background:linear-gradient(90deg,rgba(255,41,75,.11),rgba(159,226,255,.035))!important;
+  border-color:rgba(255,48,77,.28)!important;
+  color:#fff!important;
+  box-shadow:inset 3px 0 #ff294b,0 0 18px rgba(255,41,75,.06)!important;
+}
