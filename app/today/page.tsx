@@ -1,8 +1,50 @@
-import Link from "next/link";import { getServerSession } from "next-auth";import { ArrowRight,BrainCircuit,Clock3,Inbox,ShieldCheck,Sparkles } from "lucide-react";import { authOptions } from "@/lib/auth";import { buildActionInbox,contextGraph,ZORO_TOOLS } from "@/lib/zoro-platform";import { APP_VERSION } from "@/lib/release";import { ImmersiveSectionArt } from "@/components/immersive-section-art";
+import Link from "next/link";
+import { getServerSession } from "next-auth";
+import { ArrowRight, BrainCircuit, Clock3, Inbox, ShieldCheck, Sparkles } from "lucide-react";
+import { authOptions } from "@/lib/auth";
+import { buildActionInbox, contextGraph, ZORO_TOOLS } from "@/lib/zoro-platform";
+import { APP_VERSION } from "@/lib/release";
+
 export const dynamic="force-dynamic";
-export default async function TodayPage(){const s=await getServerSession(authOptions);if(!s?.user?.id)return <div className="mx-auto max-w-4xl p-6"><h1 className="text-3xl font-black">Today</h1><p className="mt-2">Connect your account to build your personal command brief.</p><Link href="/connections" className="mt-4 inline-block rounded-2xl bg-slate-900 px-4 py-3 text-white">Connect your world</Link></div>;const [items,graph]=await Promise.all([buildActionInbox(s.user.id),contextGraph(s.user.id)]);const urgent=items.filter(x=>x.priority<=1);return <div className="mx-auto max-w-5xl space-y-5 pb-12 immersive-page immersive-page-today"><ImmersiveSectionArt src="/assets/zoro-today-approved.png" alt="Zoro Today Dark Realm" kind="today" hotspots={[
-{href:"/search",label:"Search",className:"hs-top-search"},{href:"/settings",label:"Settings",className:"hs-top-settings"},{href:"/tasks",label:"Top priorities",className:"hs-today-priorities"},{href:"/calendar",label:"Schedule",className:"hs-today-schedule"},{href:"/reminders",label:"Reminders",className:"hs-today-reminders"},{href:"/notifications",label:"Notifications",className:"hs-today-notifications"},{href:"/core",label:"Next actions",className:"hs-today-actions"},{href:"/",label:"Home",className:"hs-nav-home"},{href:"/today",label:"Today",className:"hs-nav-timeline"},{href:"/assistant",label:"Zoro",className:"hs-nav-zoro"},{href:"/intelligence",label:"Intel",className:"hs-nav-intel"},{href:"/settings",label:"More",className:"hs-nav-more"}]}/><div className="immersive-live-layer">
-<header><p className="text-xs font-black uppercase tracking-[.22em] text-cyan-700">Zoro Today · v{APP_VERSION}</p><h1 className="mt-1 text-4xl font-black">What matters now.</h1><p className="mt-2 text-sm text-slate-600">One queue across approvals, tasks, email, follow-ups and reminders.</p></header>
-<section className="grid gap-3 sm:grid-cols-3"><div className="rounded-3xl border bg-white p-5 shadow-card"><ShieldCheck/><b className="mt-3 block text-2xl">{urgent.length}</b><span className="text-sm text-slate-500">Needs attention</span></div><div className="rounded-3xl border bg-white p-5 shadow-card"><BrainCircuit/><b className="mt-3 block text-2xl">{graph.total}</b><span className="text-sm text-slate-500">Context nodes</span></div><div className="rounded-3xl border bg-white p-5 shadow-card"><Sparkles/><b className="mt-3 block text-2xl">{ZORO_TOOLS.length}</b><span className="text-sm text-slate-500">Registered tools</span></div></section>
-<section className="rounded-3xl border bg-white p-5 shadow-card"><div className="flex items-center gap-2"><Inbox/><h2 className="text-xl font-black">Action Inbox</h2></div><div className="mt-3 divide-y">{items.slice(0,12).map((x,i)=><Link key={i} href={x.href} className="flex items-center gap-3 py-4"><span className="rounded-xl bg-slate-100 px-2 py-1 text-[10px] font-black">{x.kind.replaceAll("_"," ")}</span><div className="min-w-0 flex-1"><b className="block truncate text-sm">{x.title}</b>{x.when&&<span className="text-xs text-slate-500"><Clock3 className="mr-1 inline" size={12}/>{new Date(x.when).toLocaleString("en-AU",{timeZone:"Australia/Darwin"})}</span>}</div><ArrowRight size={17}/></Link>)}{!items.length&&<p className="py-6 text-sm text-slate-500">Nothing needs attention right now. A suspiciously civilized state of affairs.</p>}</div></section>
-<section className="flex gap-3"><Link href="/core" className="rounded-2xl bg-slate-900 px-4 py-3 text-sm font-bold text-white">Core Control</Link><Link href="/assistant" className="rounded-2xl border bg-white px-4 py-3 text-sm font-bold">Ask Zoro</Link></section></div></div>}
+
+export default async function TodayPage(){
+  const s=await getServerSession(authOptions);
+  if(!s?.user?.id) return <div className="professional-page"><div className="professional-page-surface"><h1>Today</h1><p>Connect your account to build your personal command brief.</p><Link href="/connections" className="professional-primary">Connect your world</Link></div></div>;
+
+  const [items,graph]=await Promise.all([buildActionInbox(s.user.id),contextGraph(s.user.id)]);
+  const urgent=items.filter(x=>x.priority<=1);
+
+  return <div className="professional-page">
+    <header className="professional-page-header">
+      <div>
+        <p className="professional-kicker">Zoro Today · v{APP_VERSION}</p>
+        <h1>What matters now</h1>
+        <p>One priority view across approvals, tasks, email, follow-ups and reminders.</p>
+      </div>
+      <Link href="/assistant" className="professional-primary"><Sparkles size={16}/> Ask Zoro</Link>
+    </header>
+
+    <section className="professional-stat-grid">
+      <div className="professional-stat-card"><ShieldCheck/><strong>{urgent.length}</strong><span>Needs attention</span></div>
+      <div className="professional-stat-card"><BrainCircuit/><strong>{graph.total}</strong><span>Context nodes</span></div>
+      <div className="professional-stat-card"><Sparkles/><strong>{ZORO_TOOLS.length}</strong><span>Registered tools</span></div>
+    </section>
+
+    <section className="professional-card">
+      <div className="professional-section-heading"><div><p className="professional-kicker">ACTION INBOX</p><h2>Prioritized work</h2></div><Inbox size={19}/></div>
+      <div className="professional-list">
+        {items.slice(0,12).map((x,i)=><Link key={i} href={x.href} className="professional-list-row">
+          <span className="professional-chip">{x.kind.replaceAll("_"," ")}</span>
+          <div className="professional-list-copy"><strong>{x.title}</strong>{x.when&&<small><Clock3 size={12}/>{new Date(x.when).toLocaleString("en-AU",{timeZone:"Australia/Darwin"})}</small>}</div>
+          <ArrowRight size={17}/>
+        </Link>)}
+        {!items.length&&<p className="professional-empty">Nothing needs attention right now.</p>}
+      </div>
+    </section>
+
+    <div className="professional-action-row">
+      <Link href="/core" className="professional-secondary">Core Control</Link>
+      <Link href="/tasks" className="professional-secondary">Missions</Link>
+    </div>
+  </div>;
+}
