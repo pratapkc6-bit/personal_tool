@@ -727,3 +727,81 @@ html[data-theme="dark"] .zoro-dock-core img{
  .demonic-portal{width:118px!important;height:118px!important}
  .demonic-portal-art{width:84px!important;height:84px!important}
 }
+
+
+/* ========================================================================
+   ZORO v4.3 · EXACT APPROVED ART HOME
+   The Drive-approved reference is the visual surface. Real controls sit above it.
+   ======================================================================== */
+html[data-theme="dark"] .approved-home-surface{
+  position:relative!important;
+  min-height:0!important;
+  margin:0 auto 28px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:none!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+  isolation:isolate;
+  width:min(100%,540px);
+}
+html[data-theme="dark"] .approved-home-surface::before,
+html[data-theme="dark"] .approved-home-surface::after,
+html[data-theme="dark"] .approved-home-surface .demonic-sky,
+html[data-theme="dark"] .approved-home-surface .demonic-portal-grid,
+html[data-theme="dark"] .approved-home-surface .demonic-ritual-line,
+html[data-theme="dark"] .approved-home-surface .demonic-status{display:none!important}
+
+.approved-home-art{
+  position:relative;
+  width:100%;
+  aspect-ratio:9/16;
+  background:#020306 url('/assets/zoro-approved-home.jpg') center top/100% 100% no-repeat;
+  overflow:hidden;
+  border-radius:26px;
+  box-shadow:0 28px 90px rgba(0,0,0,.58),0 0 34px rgba(255,30,58,.13);
+}
+.approved-home-art::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  box-shadow:inset 0 0 0 1px rgba(255,60,83,.18),inset 0 0 42px rgba(0,0,0,.24);
+}
+.approved-meta{position:absolute;inset:auto auto 14.5% 50%;transform:translateX(-50%);font-size:0;opacity:0;pointer-events:none}
+.approved-hotspot{position:absolute;z-index:5;display:block;border-radius:999px;text-decoration:none;outline:none;-webkit-tap-highlight-color:transparent}
+.approved-hotspot>span{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.approved-hotspot:focus-visible{outline:2px solid #9fe2ff;outline-offset:2px;box-shadow:0 0 0 5px rgba(159,226,255,.22)}
+.approved-hotspot:active{background:rgba(255,255,255,.035);box-shadow:inset 0 0 24px rgba(255,54,81,.16)}
+.hot-home-mark{left:2.8%;top:1.7%;width:13.6%;height:8.1%}
+.hot-search{left:18%;top:2%;width:48%;height:7.3%}
+.hot-notifications{left:69.3%;top:2%;width:9.7%;height:7.3%}
+.hot-settings{left:81.3%;top:2%;width:9.6%;height:7.3%}
+.hot-profile{left:91%;top:1.4%;width:8.5%;height:8.1%}
+.hot-zoro-core{left:27.8%;top:33.8%;width:44.7%;height:27%}
+.hot-missions{left:4%;top:37.2%;width:27.5%;height:21.5%}
+.hot-timeline{right:3.8%;top:37.2%;width:27.5%;height:21.5%}
+.hot-intel{left:6.3%;top:57.3%;width:29%;height:19.3%}
+.hot-today{right:5.3%;top:57.3%;width:29%;height:19.3%}
+.hot-ritual{left:37%;top:66.3%;width:26%;height:13.5%}
+.approved-art-nav{position:absolute;z-index:6;left:1.3%;right:1.3%;bottom:1.4%;height:10.9%}
+.approved-art-nav .approved-hotspot{top:0;height:100%;border-radius:24px}
+.nav-home{left:0;width:20%}.nav-timeline{left:20%;width:19%}.nav-zoro{left:39%;width:22%}.nav-intel{left:61%;width:19%}.nav-more{left:80%;width:20%}
+
+@media(max-width:640px){
+  body:has(.approved-home-surface) .nexus-topbar{display:none!important}
+  body:has(.approved-home-surface) .nexus-mobile-dock{display:none!important}
+  body:has(.approved-home-surface) .nexus-footer{display:none!important}
+  body:has(.approved-home-surface) .nexus-content{padding:0!important;margin:0!important;max-width:none!important}
+  body:has(.approved-home-surface) .nexus-stage{background:#020306!important}
+  body:has(.approved-home-surface) .hf-snow{display:none!important}
+  html[data-theme="dark"] .approved-home-surface{width:100vw!important;margin:0 0 34px!important}
+  .approved-home-art{border-radius:0!important;width:100vw!important;max-width:540px;margin:0 auto}
+  .demonic-command-center{margin:0!important;padding:0!important}
+  .demonic-command-center>.cc-section-heading,
+  .demonic-command-center>.cc-freshness,
+  .demonic-command-center>.cc-metrics,
+  .demonic-command-center>.cc-grid,
+  .demonic-command-center>.cc-panel,
+  .demonic-command-center>.cc-timeline{margin-left:14px!important;margin-right:14px!important}
+}
+@media(min-width:641px){
+  .approved-home-art{border:1px solid rgba(255,49,77,.28)}
+}
