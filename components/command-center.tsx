@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { SavedFocusPlan } from "@/components/saved-focus-plan";
-import { APP_VERSION } from "@/lib/release";
+import { DemonicCommandSurface } from "@/components/demonic-command-surface";
 import { useEffect, useRef, useState } from "react";
-import { ArrowUpRight, AudioLines, CalendarDays, ChevronRight, ClipboardPlus, Command, FileText, Focus, Radio, RefreshCw, Sparkles, Zap } from "lucide-react";
+import { ArrowUpRight, CalendarDays, ChevronRight, Focus, Radio, RefreshCw, Sparkles, Zap } from "lucide-react";
 import { fitFocusSessions, type buildCommandCenter } from "@/lib/intelligence/command-center";
 
 type Snapshot = ReturnType<typeof buildCommandCenter>;
@@ -59,20 +59,7 @@ export function CommandCenter({ name }: { name: string }) {
   const stamp = data ? new Date(data.generatedAt).toLocaleDateString("en-AU", { timeZone: data.timezone, weekday: "long", month: "long", day: "numeric" }) : "Your personal command center";
   const routes = [{ title: "Talk to Zoro", description: "Voice, conversation and action previews", href: "/assistant" }, { title: "Calendar", description: "Review or create an event", href: "/calendar" }, { title: "Tasks", description: "Capture and complete your work", href: "/tasks" }, { title: "Inbox", description: "Scan messages and see email actions", href: "/inbox" }, { title: "Search everything", description: "Find saved work and messages", href: "/search" }, { title: "Connections", description: "Check Google access and sign in", href: "/connections" }, { title: "Assistant settings", description: "Choose voice and wake word", href: "/settings/assistant" }];
 
-  return <div className="command-center">
-    <div className="cc-topline"><span><span className="cc-status-dot" /> ZORO HUB / YOUR DAILY FEED</span><span>v{APP_VERSION}</span></div>
-    <section className="cc-hero">
-      <div className="cc-hero-copy">
-        <p className="cc-eyebrow">{stamp}</p>
-        <h1>Less noise.<br /><span>More action.</span></h1>
-        <p className="cc-intro">Your personal feed, {name}. Priorities first. Everything else in its place.</p>
-        <div className="cc-actions cc-reference-actions"><Link href="/assistant" className="cc-button cc-primary"><AudioLines size={18} /> Talk to Zoro <ArrowUpRight size={17} /></Link><Link href="/tasks" className="cc-button cc-secondary"><ClipboardPlus size={16}/> Add Task</Link><Link href="/activity" className="cc-button cc-secondary"><FileText size={16}/> New Note</Link><button className="cc-button cc-secondary" onClick={() => dialog.current?.showModal()}><Command size={16} /> Quick</button></div>
-      </div>
-      <div className="cc-orbit" aria-hidden="true"><div className="cc-orbit-ring cc-ring-one" /><div className="cc-orbit-ring cc-ring-two" /><div className="cc-orbit-core"><Sparkles size={38} /></div><span className="cc-orbit-label">FOCUS MODE</span></div>
-    </section>
-
-    <div className="hub-modules cc-reference-modules">{[{href:"/tasks", title:"Mission control", caption:"Capture, prioritise, finish", number:"01",art:"mission"},{href:"/inbox",title:"Intelligence feed",caption:"Turn messages into next steps",number:"02",art:"intel"},{href:"/calendar",title:"Your timeline",caption:"Calendar, rosters, reminders",number:"03",art:"timeline"},{href:"/settings",title:"System setup",caption:"Connect, customise, control",number:"04",art:"system"}].map(module => <Link className={`hub-module cc-art-card cc-art-${module.art}`} href={module.href} key={module.href}><span>MODULE {module.number}</span><strong>{module.title}</strong><small>{module.caption}</small><b aria-hidden="true">→</b></Link>)}</div>
-    <div className="cc-section-heading"><div><p className="cc-eyebrow">RECOMMENDED FOR YOU</p><h2>Clarity before action.</h2></div><button className="cc-icon-button" onClick={() => setRevision(value => value + 1)} disabled={loading} aria-label="Refresh command center"><RefreshCw size={18} className={loading ? "cc-spin" : ""} /></button></div>
+  return <div className="command-center demonic-command-center">\n    <DemonicCommandSurface stamp={stamp} name={name} />\n    <div className="cc-section-heading"><div><p className="cc-eyebrow">RECOMMENDED FOR YOU</p><h2>Clarity before action.</h2></div><button className="cc-icon-button" onClick={() => setRevision(value => value + 1)} disabled={loading} aria-label="Refresh command center"><RefreshCw size={18} className={loading ? "cc-spin" : ""} /></button></div>
     <div role="status" className="cc-freshness">{loading ? "Reading your priorities and calendar…" : error || (data ? `Snapshot ${clock(data.generatedAt)} · ${data.timezone}${stale ? " · Refresh to verify available time" : ""}` : "No data loaded")}</div>
     <div className="cc-metrics">
       {[{ label: "Open tasks loaded", value: data?.taskCount, icon: Focus }, { label: "Due today", value: data?.dueToday, icon: CalendarDays }, { label: "Overdue items", value: data?.overdue, icon: Zap }, { label: "Email actions loaded", value: data?.emailCount, icon: Radio }].map(({ label, value, icon: Icon }) => <div className="cc-metric" key={label}><Icon size={17} /><strong>{value ?? "—"}</strong><span>{label}</span></div>)}
