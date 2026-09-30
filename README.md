@@ -32,7 +32,6 @@ Planned after the testing build is verified:
 
 - Google Pub/Sub Gmail push subscription
 - richer email reply selection/context flow
-- browser/mobile push delivery for stored notifications
 - realtime cross-device updates
 - production deployment and scheduler configuration
 
@@ -72,7 +71,7 @@ Send:
 Authorization: Bearer <CRON_SECRET>
 ```
 
-The endpoint processes only new Gmail messages, runs MYOB roster reconciliation, and records meaningful changes.
+The endpoint processes new Gmail messages, runs MYOB roster reconciliation, evaluates proactive alerts, and records meaningful changes. Vercel Hobby currently schedules this endpoint once daily; foreground reminders are checked by the PWA while it is open.
 
 ## Architecture
 
