@@ -81,7 +81,11 @@ export async function runAlertEngine(userId:string){
       body:"Your reminder is due now.",dedupeKey:`reminder:${reminder.id}:${effective.toISOString()}`,
       source:"Reminder",sourceRef:reminder.id,url:"/notifications",alarmSeconds:settings.alarmEnabled?Math.min(reminder.ringSeconds||settings.alarmSeconds,10):0
     });
-    await db.reminder.update({where:{id:reminder.id},data:{status:"FIRED",snoozedUntil:null}});
+    if(reminder.recurrence==="DAILY"){
+      const next=new Date(reminder.remindAt); next.setUTCDate(next.getUTCDate()+1);
+      while(next<=now)next.setUTCDate(next.getUTCDate()+1);
+      await db.reminder.update({where:{id:reminder.id},data:{status:"OPEN",remindAt:next,snoozedUntil:null}});
+    } else await db.reminder.update({where:{id:reminder.id},data:{status:"FIRED",snoozedUntil:null}});
   }
 
   const next24=new Date(now.getTime()+24*3600_000);
