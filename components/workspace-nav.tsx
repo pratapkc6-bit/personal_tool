@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Activity,
+  SunMedium,
   DatabaseZap,
   BellRing,
   BrainCircuit,
@@ -19,6 +20,7 @@ import {
 } from "lucide-react";
 
 const routes = [
+  { href: "/today", label: "Today", hint: "What matters now", Icon: SunMedium },
   { href: "/", label: "Command", hint: "Daily intelligence", Icon: LayoutDashboard },
   { href: "/assistant", label: "Zoro AI", hint: "Reason & act", Icon: Sparkles },
   { href: "/core", label: "Core Control", hint: "Approvals & autonomy", Icon: BrainCircuit },
