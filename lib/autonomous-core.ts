@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import { audit, activity } from "@/lib/audit";
 
@@ -6,12 +7,12 @@ export type ActionType=(typeof ACTION_TYPES)[number];
 type ProposalInput={userId:string;eventId?:string;actionType:ActionType;title:string;rationale?:string;payload:Record<string,unknown>;risk?:"LOW"|"MEDIUM"|"HIGH"};
 
 export async function observe(input:{userId:string;type:string;source:string;sourceRef?:string;payload?:Record<string,unknown>;dedupeKey?:string}){
- const event=await db.autonomousEvent.create({data:{...input,payload:input.payload}});
+ const event=await db.autonomousEvent.create({data:{...input,payload:input.payload as Prisma.InputJsonValue}});
  await activity({userId:input.userId,type:"AUTONOMOUS_EVENT",summary:`Observed: ${input.type}`,details:{eventId:event.id,source:input.source}});
  return event;
 }
 export async function propose(input:ProposalInput){
- const proposal=await db.actionProposal.create({data:{userId:input.userId,eventId:input.eventId,actionType:input.actionType,title:input.title,rationale:input.rationale,payload:input.payload,risk:input.risk||"LOW",approvalPolicy:"REQUIRE_APPROVAL"}});
+ const proposal=await db.actionProposal.create({data:{userId:input.userId,eventId:input.eventId,actionType:input.actionType,title:input.title,rationale:input.rationale,payload:input.payload as Prisma.InputJsonValue,risk:input.risk||"LOW",approvalPolicy:"REQUIRE_APPROVAL"}});
  await audit({userId:input.userId,action:"ACTION_PROPOSED",source:"Zoro Core",sourceRef:proposal.id,newState:{actionType:proposal.actionType,status:proposal.status},result:"SUCCESS"});
  return proposal;
 }
