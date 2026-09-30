@@ -15,6 +15,7 @@ const capabilities = [
 ];
 
 const releaseHighlights = [
+  "Zoro Core System Health dashboard for database, authentication, Google, push, scheduler and deployment checks.",
   "Zoro notification and alert engine with Normal, Important and Critical priorities.",
   "Reminder Center with snooze, completion and a three-second foreground alarm.",
   "Darwin/NT public-holiday intelligence and Nepali calendar special-day alerts.",
