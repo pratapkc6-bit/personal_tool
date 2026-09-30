@@ -5,5 +5,11 @@
   "env": {
     "NEXTAUTH_URL": "https://pratap-personal-secretary-ksuyanpks-projects.vercel.app",
     "APP_TIMEZONE": "Australia/Darwin"
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/secretary",
+      "schedule": "0 * * * *"
+    }
+  ]
 }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { scanGmail } from "@/lib/gmail-scan";
 import { syncLatestMyobRoster } from "@/lib/roster-sync";
+import { runAlertEngine } from "@/lib/alert-engine";
 
 export async function GET(request: NextRequest) {
   const secret = request.headers.get("authorization");
@@ -25,7 +26,8 @@ export async function GET(request: NextRequest) {
       } catch (error) {
         roster = { error: error instanceof Error ? error.message : "Roster sync failed" };
       }
-      results.push({ userId: account.userId, gmail, roster });
+      const alerts = await runAlertEngine(account.userId);
+      results.push({ userId: account.userId, gmail, roster, alerts });
     } catch (error) {
       results.push({ userId: account.userId, error: error instanceof Error ? error.message : "Secretary scan failed" });
     }

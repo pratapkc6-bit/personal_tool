@@ -55,6 +55,7 @@ model User {
   rosterImports       RosterImport[]
   reminders           Reminder[]
   notifications       Notification[]
+  pushSubscriptions   PushSubscription[]
   assistantActivity   AssistantActivity[]
   settings            Setting[]
   auditLogs           AuditLog[]
@@ -200,28 +201,52 @@ model RosterImport {
 }
 
 model Reminder {
-  id        String   @id @default(cuid())
-  userId    String
-  title     String
-  remindAt  DateTime
-  status    String   @default("OPEN")
-  source    String
-  sourceRef String?
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          String   @id @default(cuid())
+  userId      String
+  title       String
+  remindAt    DateTime
+  status      String   @default("OPEN")
+  source      String
+  sourceRef   String?
+  ringSeconds Int      @default(3)
+  snoozedUntil DateTime?
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId, status, remindAt])
 }
 
 model Notification {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String
+  category    String   @default("system")
+  priority    String   @default("NORMAL")
+  title       String
+  body        String   @db.Text
+  source      String?
+  sourceRef   String?
+  metadata    Json?
+  dedupeKey   String?
+  deliveredAt DateTime?
+  readAt      DateTime?
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([userId, dedupeKey])
+  @@index([userId, readAt, createdAt])
+}
+
+model PushSubscription {
   id        String   @id @default(cuid())
   userId    String
-  type      String
-  title     String
-  body      String   @db.Text
-  dedupeKey String?
-  readAt    DateTime?
+  endpoint  String   @unique @db.Text
+  p256dh    String   @db.Text
+  auth      String   @db.Text
+  userAgent String?  @db.Text
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  @@unique([userId, dedupeKey])
+  @@index([userId, updatedAt])
 }
 
 model AssistantActivity {
