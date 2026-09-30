@@ -15,6 +15,9 @@ const capabilities = [
 ];
 
 const releaseHighlights = [
+  "Zoro Intelligence and Intel are now both full immersive Dark Realm sections using the approved Intel artwork.",
+  "Zoro Intelligence / Data Hub now carries the same illustrated shell, live inline search, source cards and interactive controls as the rest of the app.",
+  "Intel artwork navigation now exposes Inbox, Insights, Actions, Watch and Archive hotspots directly from the image.",
   "Immersive section redesign: Timeline, Intel, Today and Settings now use their approved generated artwork as the primary visual shell.",
   "Each illustrated section now has live inline search, interactive hotspots and live data panels styled from the same artwork instead of generic cards.",
   "Approved section images are committed under public/assets and preserved as the visual source for the coded UI.",
