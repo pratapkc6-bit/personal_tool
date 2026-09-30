@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Activity,
+  DatabaseZap,
   BellRing,
   AlarmClock,
   CalendarDays,
@@ -23,6 +24,7 @@ const routes = [
   { href: "/calendar", label: "Timeline", hint: "Time & commitments", Icon: CalendarDays },
   { href: "/inbox", label: "Intel", hint: "Gmail intelligence", Icon: Inbox },
   { href: "/search", label: "Search", hint: "Find anything", Icon: Search },
+  { href: "/intelligence", label: "Data Hub", hint: "Weather, rates & local data", Icon: DatabaseZap },
   { href: "/activity", label: "Activity", hint: "System history", Icon: Activity },
   { href: "/reminders", label: "Reminders", hint: "Set, snooze & complete", Icon: AlarmClock },
   { href: "/notifications", label: "Alerts", hint: "Push, reminders & watches", Icon: BellRing },
