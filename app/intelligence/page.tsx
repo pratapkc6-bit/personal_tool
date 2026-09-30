@@ -1,92 +1,62 @@
 import Link from "next/link";
-import { CloudSun, DatabaseZap, Landmark, MapPin, RefreshCw, Radar } from "lucide-react";
+import { CloudSun, DatabaseZap, Landmark, MapPin, RefreshCw, ServerCog } from "lucide-react";
 import { getDataHub } from "@/lib/data-hub";
-import { ImmersiveSectionArt } from "@/components/immersive-section-art";
 
 export const dynamic="force-dynamic";
 function rateRows(data:unknown){return Array.isArray(data)?data as Array<{quote?:string;rate?:number;date?:string}>:[]}
 
 export default async function DataHubPage(){
- const hub=await getDataHub();
- const w=hub.sources.weather.data as any;
- const rates=rateRows(hub.sources.exchange.data);
+  const hub=await getDataHub();
+  const w=hub.sources.weather.data as any;
+  const rates=rateRows(hub.sources.exchange.data);
 
- return <div className="nexus-page immersive-page immersive-page-intelligence">
-   <ImmersiveSectionArt
-     src="/assets/zoro-intel-approved.png"
-     alt="Zoro Intelligence Dark Realm"
-     kind="intel"
-     hotspots={[
-       {href:"/search",label:"Search",className:"hs-top-search"},
-       {href:"/settings",label:"Settings",className:"hs-top-settings"},
-       {href:"/inbox",label:"Inbox",className:"hs-intel-inbox"},
-       {href:"/intelligence",label:"Insights",className:"hs-intel-insights"},
-       {href:"/core",label:"Actions",className:"hs-intel-actions"},
-       {href:"/notifications",label:"Watch",className:"hs-intel-watch"},
-       {href:"/activity",label:"Archive",className:"hs-intel-archive"},
-       {href:"/",label:"Home",className:"hs-nav-home"},
-       {href:"/calendar",label:"Timeline",className:"hs-nav-timeline"},
-       {href:"/assistant",label:"Zoro",className:"hs-nav-zoro"},
-       {href:"/intelligence",label:"Intel",className:"hs-nav-intel"},
-       {href:"/settings",label:"More",className:"hs-nav-more"},
-     ]}
-   />
+  return <div className="professional-page">
+    <header className="professional-page-header">
+      <div>
+        <p className="professional-kicker">ZORO INTELLIGENCE</p>
+        <h1>Data Hub</h1>
+        <p>External signals normalized into a clear operational view with source and health information.</p>
+      </div>
+      <Link href="/intelligence" className="professional-secondary"><RefreshCw size={15}/> Refresh</Link>
+    </header>
 
-   <div className="immersive-live-layer intelligence-live-layer">
-     <header className="nexus-page-heading">
-       <div className="nexus-page-icon"><Radar size={22}/></div>
-       <div className="nexus-page-title">
-         <p className="nexus-kicker">ZORO INTELLIGENCE</p>
-         <h1>Intelligence Nexus</h1>
-         <p>Live external signals, local context and source health gathered into one operational view.</p>
-       </div>
-       <div className="nexus-page-actions">
-         <Link href="/inbox" className="nexus-secondary-action">Open Intel Inbox</Link>
-         <Link href="/intelligence" className="hub-primary"><RefreshCw className="mr-2 inline" size={15}/>Refresh</Link>
-       </div>
-     </header>
+    <section className="professional-stat-grid professional-data-grid">
+      <article className="professional-stat-card">
+        <CloudSun/>
+        <span>Darwin weather</span>
+        <strong>{w?.current?.temperature_2m??"—"}°C</strong>
+        <small>Feels {w?.current?.apparent_temperature??"—"}° · Wind {w?.current?.wind_speed_10m??"—"} km/h</small>
+        <em>{hub.sources.weather.source} · {hub.sources.weather.status}</em>
+      </article>
 
-     <section className="intelligence-realm-grid">
-       <article className="zoro-intelligence-card intelligence-weather">
-         <CloudSun/>
-         <p className="zoro-intelligence-kicker">DARWIN WEATHER</p>
-         <h2>{w?.current?.temperature_2m??"—"}°C</h2>
-         <p>Feels {w?.current?.apparent_temperature??"—"}° · Wind {w?.current?.wind_speed_10m??"—"} km/h</p>
-         <small>{hub.sources.weather.source} · {hub.sources.weather.status}</small>
-       </article>
+      <article className="professional-card">
+        <div className="professional-section-heading"><div><p className="professional-kicker">AUD REFERENCE RATES</p><h2>Exchange rates</h2></div><Landmark size={19}/></div>
+        <div className="professional-rate-grid">
+          {rates.slice(0,6).map(x=><div key={x.quote}><span>{x.quote}</span><strong>{x.rate??"—"}</strong></div>)}
+        </div>
+        <small className="professional-source">{hub.sources.exchange.source} · daily reference data</small>
+      </article>
 
-       <article className="zoro-intelligence-card intelligence-rates">
-         <Landmark/>
-         <p className="zoro-intelligence-kicker">AUD REFERENCE RATES</p>
-         <div className="intelligence-rate-grid">
-           {rates.slice(0,6).map(x=><div key={x.quote}><b>{x.quote}</b><span>{x.rate??"—"}</span></div>)}
-         </div>
-         <small>{hub.sources.exchange.source} · daily reference data</small>
-       </article>
+      <article className="professional-card">
+        <div className="professional-section-heading"><div><p className="professional-kicker">LOCAL CONTEXT</p><h2>Darwin / NT</h2></div><MapPin size={19}/></div>
+        <p className="professional-body-copy">Holiday context and local signals are available to Zoro reminders, briefings and alerts.</p>
+        <small className="professional-source">{hub.sources.holidays.source}</small>
+      </article>
+    </section>
 
-       <article className="zoro-intelligence-card intelligence-local">
-         <MapPin/>
-         <p className="zoro-intelligence-kicker">LOCAL INTELLIGENCE</p>
-         <h2>Darwin / NT</h2>
-         <p>Holiday context and local signals are available to Zoro reminders, briefings and alerts.</p>
-         <small>{hub.sources.holidays.source}</small>
-       </article>
-     </section>
+    <section className="professional-card professional-policy-card">
+      <ServerCog size={20}/>
+      <div>
+        <p className="professional-kicker">SOURCE POLICY</p>
+        <h2>Transparent data sources</h2>
+        <p className="professional-body-copy">Zoro keeps source identity and health visible. Weather data supports planning while official BOM warnings remain authoritative. Currency values are reference rates, not live trading quotes.</p>
+      </div>
+    </section>
 
-     <section className="zoro-intelligence-card intelligence-policy">
-       <DatabaseZap/>
-       <div>
-         <p className="zoro-intelligence-kicker">SOURCE POLICY</p>
-         <h2>Signals with provenance.</h2>
-         <p>Zoro keeps source identity and health visible. Forecast data supports planning; official BOM warnings remain authoritative for Australian weather emergencies. Currency values are reference rates, not trading quotes.</p>
-       </div>
-     </section>
-
-     <div className="intelligence-actions">
-       <Link href="/inbox" className="hub-primary">Intel Inbox</Link>
-       <Link href="/core" className="nexus-secondary-action">Core Actions</Link>
-       <Link href="/settings/system" className="nexus-secondary-action">System Health</Link>
-     </div>
-   </div>
- </div>;
+    <div className="professional-action-row">
+      <Link href="/inbox" className="professional-primary">Open Intel Inbox</Link>
+      <Link href="/core" className="professional-secondary">Core Actions</Link>
+      <Link href="/settings/system" className="professional-secondary"><DatabaseZap size={15}/> System Health</Link>
+    </div>
+  </div>;
 }
