@@ -15,6 +15,9 @@ const capabilities = [
 ];
 
 const releaseHighlights = [
+  "Demonic Ritual UI: approved pattern-first home with a central Oni/Zoro core instead of oversized headline typography.",
+  "New ritual portal navigation, demonic frame vectors, Oni identity in the mobile header and central bottom dock.",
+  "Approved concept and source art archived in Google Drive under Zoro Nexus / Design Assets / Demonic UI v1.",
   "Zoro OS 4.0: unified Today Action Inbox across approvals, tasks, actionable email, follow-ups and reminders.",
   "Personal Context Graph foundation for durable structured context instead of isolated records.",
   "Tool Registry and autonomy policy levels establish one controlled action architecture across Zoro.",
