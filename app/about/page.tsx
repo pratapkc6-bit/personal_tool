@@ -15,6 +15,8 @@ const capabilities = [
 ];
 
 const releaseHighlights = [
+  "Approved Demonic Fidelity pass: rebuilt the mobile home to match the approved dense fantasy composition instead of the simplified geometric version.",
+  "Detailed demon core, layered warrior/dragon/spirit scenery, ornamental ritual portals and stronger black/red mobile chrome.",
   "Demonic Ritual UI: approved pattern-first home with a central Oni/Zoro core instead of oversized headline typography.",
   "New ritual portal navigation, demonic frame vectors, Oni identity in the mobile header and central bottom dock.",
   "Approved concept and source art archived in Google Drive under Zoro Nexus / Design Assets / Demonic UI v1.",
