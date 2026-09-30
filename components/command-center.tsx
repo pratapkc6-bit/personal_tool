@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { SavedFocusPlan } from "@/components/saved-focus-plan";
-import { DemonicCommandSurface } from "@/components/demonic-command-surface";
 import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, CalendarDays, ChevronRight, Focus, Radio, RefreshCw, Sparkles, Zap } from "lucide-react";
 import { fitFocusSessions, type buildCommandCenter } from "@/lib/intelligence/command-center";
@@ -59,7 +58,19 @@ export function CommandCenter({ name }: { name: string }) {
   const stamp = data ? new Date(data.generatedAt).toLocaleDateString("en-AU", { timeZone: data.timezone, weekday: "long", month: "long", day: "numeric" }) : "Your personal command center";
   const routes = [{ title: "Talk to Zoro", description: "Voice, conversation and action previews", href: "/assistant" }, { title: "Calendar", description: "Review or create an event", href: "/calendar" }, { title: "Tasks", description: "Capture and complete your work", href: "/tasks" }, { title: "Inbox", description: "Scan messages and see email actions", href: "/inbox" }, { title: "Search everything", description: "Find saved work and messages", href: "/search" }, { title: "Connections", description: "Check Google access and sign in", href: "/connections" }, { title: "Assistant settings", description: "Choose voice and wake word", href: "/settings/assistant" }];
 
-  return <div className="command-center demonic-command-center">\n    <DemonicCommandSurface stamp={stamp} name={name} />\n    <div className="cc-section-heading"><div><p className="cc-eyebrow">RECOMMENDED FOR YOU</p><h2>Clarity before action.</h2></div><button className="cc-icon-button" onClick={() => setRevision(value => value + 1)} disabled={loading} aria-label="Refresh command center"><RefreshCw size={18} className={loading ? "cc-spin" : ""} /></button></div>
+  return <div className="command-center professional-command-center">
+    <section className="professional-home-hero">
+      <div>
+        <p className="professional-kicker">{stamp}</p>
+        <h1>Good to see you, {name}.</h1>
+        <p>Priorities, calendar, messages and focus planning in one clear workspace.</p>
+      </div>
+      <div className="professional-home-actions">
+        <Link href="/assistant" className="professional-primary"><Sparkles size={17}/> Ask Zoro</Link>
+        <Link href="/today" className="professional-secondary">Open Today</Link>
+      </div>
+    </section>
+    <div className="cc-section-heading"><div><p className="cc-eyebrow">RECOMMENDED FOR YOU</p><h2>Clarity before action.</h2></div><button className="cc-icon-button" onClick={() => setRevision(value => value + 1)} disabled={loading} aria-label="Refresh command center"><RefreshCw size={18} className={loading ? "cc-spin" : ""} /></button></div>
     <div role="status" className="cc-freshness">{loading ? "Reading your priorities and calendar…" : error || (data ? `Snapshot ${clock(data.generatedAt)} · ${data.timezone}${stale ? " · Refresh to verify available time" : ""}` : "No data loaded")}</div>
     <div className="cc-metrics">
       {[{ label: "Open tasks loaded", value: data?.taskCount, icon: Focus }, { label: "Due today", value: data?.dueToday, icon: CalendarDays }, { label: "Overdue items", value: data?.overdue, icon: Zap }, { label: "Email actions loaded", value: data?.emailCount, icon: Radio }].map(({ label, value, icon: Icon }) => <div className="cc-metric" key={label}><Icon size={17} /><strong>{value ?? "—"}</strong><span>{label}</span></div>)}
