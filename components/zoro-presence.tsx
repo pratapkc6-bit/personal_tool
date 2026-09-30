@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Sparkles } from "lucide-react";
+import { Sparkles, X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import type { AssistantSettings } from "@/lib/assistant-settings";
 
@@ -53,7 +53,13 @@ export function ZoroPresence() {
   const activeRef = useRef(false);
   const ambientWantedRef = useRef(false);
   const [needsGesture, setNeedsGesture] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
   const [status, setStatus] = useState("Voice needs one tap to activate.");
+
+  function dismissVoicePrompt() {
+    setDismissed(true);
+    window.localStorage.setItem("zoro:voice-prompt-dismissed", "1");
+  }
 
   function stopAmbient(disableRestart = true) {
     if (disableRestart) ambientWantedRef.current = false;
@@ -157,6 +163,7 @@ export function ZoroPresence() {
   }
 
   useEffect(() => {
+    setDismissed(window.localStorage.getItem("zoro:voice-prompt-dismissed") === "1");
     let cancelled = false;
     Promise.all([
       fetch("/api/assistant/settings", { cache: "no-store" }).then(async (res) => res.ok ? res.json() : null),
@@ -229,12 +236,14 @@ export function ZoroPresence() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
-  if (!needsGesture) return null;
+  if (!needsGesture || dismissed) return null;
+  const compact = pathname === "/";
   return (
-    <div className="zoro-presence-toast" role="status">
+    <div className={compact ? "zoro-presence-toast zoro-presence-compact" : "zoro-presence-toast"} role="status">
       <span className="zoro-presence-orb"><Sparkles size={17} /></span>
-      <span className="zoro-presence-copy"><strong>Zoro voice</strong><span>{status}</span></span>
-      <button onClick={() => void activateFromGesture()}>Enable</button>
+      {!compact && <span className="zoro-presence-copy"><strong>Zoro voice</strong><span>{status}</span></span>}
+      <button className="zoro-presence-enable" onClick={() => void activateFromGesture()}>{compact ? "Voice" : "Enable"}</button>
+      <button className="zoro-presence-dismiss" onClick={dismissVoicePrompt} aria-label="Dismiss Zoro voice prompt"><X size={15}/></button>
     </div>
   );
 }
