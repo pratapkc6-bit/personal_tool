@@ -15,6 +15,9 @@ const capabilities = [
 ];
 
 const releaseHighlights = [
+  "Immersive Home interactions: the approved artwork now contains a real inline search field instead of redirecting to Search.",
+  "Home search queries Gmail intelligence, missions, follow-ups and Calendar in-place with Dark Realm result panels.",
+  "Artwork hotspots now provide active feedback while preserving the exact approved visual composition.",
   "Exact Approved Art Home: the Google Drive-approved demonic reference now renders directly as the mobile Home visual surface.",
   "Real accessible tap zones sit over Search, Notifications, Settings, Zoro, Missions, Timeline, Intel, Today and the bottom navigation.",
   "Home removes duplicate app chrome on mobile so the approved artwork is no longer diluted by a second header or dock.",
