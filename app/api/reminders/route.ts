@@ -62,3 +62,20 @@ export async function PATCH(request:NextRequest){
     return NextResponse.json({error:error instanceof Error?error.message:"Could not update reminder."},{status:400});
   }
 }
+
+
+export async function DELETE(request:NextRequest){
+  const session=await getServerSession(authOptions);
+  if(!session?.user?.id)return NextResponse.json({error:"Unauthorized"},{status:401});
+  try{
+    const {id}=z.object({id:z.string().min(1)}).parse(await request.json());
+    const existing=await db.reminder.findFirst({where:{id,userId:session.user.id}});
+    if(!existing)return NextResponse.json({error:"Reminder not found."},{status:404});
+    await db.reminder.delete({where:{id:existing.id}});
+    await audit({userId:session.user.id,action:"REMINDER_DELETED",source:"Zoro",sourceRef:existing.id,previousState:existing,result:"SUCCESS"});
+    await activity({userId:session.user.id,type:"REMINDER",summary:`Reminder deleted: ${existing.title}`,details:{reminderId:existing.id}});
+    return NextResponse.json({ok:true});
+  }catch(error){
+    return NextResponse.json({error:error instanceof Error?error.message:"Could not delete reminder."},{status:400});
+  }
+}
