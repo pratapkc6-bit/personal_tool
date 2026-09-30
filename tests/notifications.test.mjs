@@ -20,5 +20,5 @@ assert.ok(ui.includes("Test 3-sec alarm"));
 assert.ok(ui.includes("What may notify me?"));
 assert.ok(runtime.includes("playZoroAlarm"));
 assert.ok(sw.includes('addEventListener("push"'));
-assert.deepEqual(vercel.crons,[{path:"/api/cron/secretary",schedule:"0 * * * *"}]);
+assert.deepEqual(vercel.crons,[{path:"/api/cron/secretary",schedule:"0 21 * * *"}]);
 console.log("PASS Zoro notification and alert engine contracts");
