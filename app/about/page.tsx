@@ -1,69 +1,120 @@
 import Link from "next/link";
-import { deploymentMetadata, GOOGLE_CALLBACK_URL, PRODUCTION_URL } from "@/lib/release";
+import { deploymentMetadata, PRODUCTION_URL } from "@/lib/release";
 
 export const dynamic = "force-dynamic";
+
+const capabilities = [
+  ["Command Center", "Ranks what needs attention across your day instead of making you hunt through separate apps."],
+  ["Zoro Assistant", "Turns natural-language requests into plans and confirmation-gated actions for tasks, email and calendar."],
+  ["Gmail Intelligence", "Surfaces action-required messages, deadlines, follow-ups and important communication."],
+  ["Calendar & Time", "Shows commitments, detects conflicts and supports focus planning around real calendar events."],
+  ["Missions & Follow-ups", "Tracks tasks, next actions, waiting items and overdue work."],
+  ["Alerts & Reminders", "Supports personal reminders, priority alerts, NT holidays, Nepali calendar events and weather watches."],
+  ["Voice & PWA", "Designed for mobile use with voice controls, Home Screen installation and notification infrastructure."],
+  ["Dark Realm", "A cold Himalayan/Newari-inspired alternate interface for people who apparently found normal dark mode insufficient."],
+];
+
+const releaseHighlights = [
+  "Zoro notification and alert engine with Normal, Important and Critical priorities.",
+  "Reminder Center with snooze, completion and a three-second foreground alarm.",
+  "Darwin/NT public-holiday intelligence and Nepali calendar special-day alerts.",
+  "Important Gmail, task deadline, follow-up, calendar and Darwin weather watchers.",
+  "Notification history, per-category controls, quiet hours and Web Push infrastructure.",
+  "House Five Dark Realm visual system with Himalayan environment, snowfall and Newari guardian artwork.",
+  "Zoro Nexus Home Screen icon and improved installable PWA metadata.",
+  "Core security hardening including safer Google account linking and stronger response headers.",
+];
 
 export default function AboutPage() {
   const meta = deploymentMetadata();
   const shortCommit = meta.commit === "unavailable" ? meta.commit : meta.commit.slice(0, 12);
 
   return (
-    <div className="mx-auto max-w-2xl space-y-4">
-      <div>
-        <p className="text-sm font-semibold text-slate-500">ABOUT APP</p>
-        <h1 className="text-2xl font-bold tracking-tight">Pratap Personal Secretary</h1>
-        <p className="mt-1 text-sm text-slate-600">
-          Use this page to confirm exactly which release and deployment you are testing.
-        </p>
-      </div>
+    <div className="mx-auto max-w-5xl space-y-5 pb-10">
+      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-card">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+          <img src="/zoro-nexus-icon.png" alt="Zoro Nexus" className="h-24 w-24 rounded-[26px] shadow-lg" />
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.24em] text-cyan-700">About Zoro Nexus</p>
+            <h1 className="mt-1 text-3xl font-black tracking-tight">Your personal operating system.</h1>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+              Zoro Nexus is a private personal secretary built to observe your connected information, identify what matters,
+              help you decide what to do next, carry out approved actions and keep track of the follow-up.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold">
+              <span className="rounded-full bg-slate-100 px-3 py-1.5">v{meta.version}</span>
+              <span className="rounded-full bg-slate-100 px-3 py-1.5">{meta.environment}</span>
+              <span className="rounded-full bg-slate-100 px-3 py-1.5">Australia/Darwin</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
-      <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-card">
-        <div className="grid gap-3 sm:grid-cols-2">
-          <Info label="Release version" value={`v${meta.version}`} />
+      <section className="grid gap-4 lg:grid-cols-[1.15fr_.85fr]">
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-card">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">How it works</p>
+          <h2 className="mt-1 text-xl font-bold">Observe → Understand → Prioritise → Act → Record → Follow up</h2>
+          <p className="mt-3 text-sm leading-6 text-slate-600">
+            Gmail, Google Calendar, tasks, reminders and local intelligence feed one command system. Sensitive write actions
+            are designed to require confirmation, while the activity trail records what Zoro has done.
+          </p>
+        </div>
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-card">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Product principles</p>
+          <div className="mt-3 space-y-3 text-sm text-slate-600">
+            <p><strong className="text-slate-900">Private by design.</strong> Your connected data is used to run your secretary workflows.</p>
+            <p><strong className="text-slate-900">Human in control.</strong> Important external actions stay confirmation-gated.</p>
+            <p><strong className="text-slate-900">Useful before flashy.</strong> The goal is fewer things forgotten, not another dashboard to babysit.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-card">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Capabilities</p>
+        <h2 className="mt-1 text-xl font-bold">One secretary, connected systems</h2>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          {capabilities.map(([title, description]) => (
+            <div key={title} className="rounded-2xl bg-slate-50 p-4">
+              <h3 className="font-bold text-slate-900">{title}</h3>
+              <p className="mt-1 text-sm leading-5 text-slate-600">{description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-card">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-700">Latest release</p>
+            <h2 className="mt-1 text-2xl font-black">Zoro Nexus v{meta.version}</h2>
+          </div>
+          <span className="rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-500">30 Sep 2026</span>
+        </div>
+        <ul className="mt-4 grid gap-2 text-sm text-slate-600 sm:grid-cols-2">
+          {releaseHighlights.map((item) => <li key={item} className="rounded-2xl bg-slate-50 p-3">✓ {item}</li>)}
+        </ul>
+      </section>
+
+      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-card">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Build information</p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <Info label="Release" value={`v${meta.version}`} />
           <Info label="Environment" value={meta.environment} />
           <Info label="Git branch" value={meta.branch} />
           <Info label="Git commit" value={shortCommit} mono />
           <Info label="Deployment ID" value={meta.deploymentId} mono />
           <Info label="Deployment URL" value={meta.deploymentUrl} mono />
         </div>
+        <p className="mt-4 text-xs text-slate-500">
+          Production: <span className="font-mono">{PRODUCTION_URL}</span>
+        </p>
       </section>
 
-      <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-card">
-        <h2 className="font-bold">What's new in v0.10.0</h2>
-        <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-600">
-          <li>Black-and-orange Zoro Hub design across Home, Assistant, Calendar, Missions, Intelligence and Setup.</li><li>Capture a task from any screen, search and filter missions, edit next actions, and reopen completed work.</li><li>Save a focus plan to your account after a fresh calendar check. Plans are suggestions, not calendar reservations.</li><li>Filter email intelligence by action, urgency, deadline, sender or subject.</li><li>New Zoro command center with attention radar, ranked priorities and today's remaining schedule.</li><li>Interactive focus planning with adjustable duration and recovery buffers, plus a pauseable session timer.</li><li>Quick commands, mobile layouts and a refreshed visual identity.</li><li>Optional browser model download with WebGPU checks, progress, a generation test, and cache removal. No Mac or paid AI API required.</li>
-          <li>Experimental on-device conversation. Compatibility and performance must be tested on your phone.</li>
-          <li>Daily command briefing with priorities, focus windows, overdue items and conflicts.</li>
-          <li>Local secretary intelligence with no paid AI service, API key, or model subscription.</li>
-          <li>Day planning and follow-up questions using your existing tasks, email summaries and calendar.</li>
-          <li>Task and event previews with expiring, single-use confirmations.</li>
-        </ul>
-        <Link href="/assistant" className="mt-4 inline-block font-semibold text-cyan-800">Open Zoro →</Link>
-      </section>
-
-      <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-card">
-        <h2 className="font-bold">OAuth configuration</h2>
-        <p className="mt-2 text-sm text-slate-600">Production URL</p>
-        <code className="mt-1 block break-all rounded-xl bg-slate-100 p-3 text-xs">{PRODUCTION_URL}</code>
-        <p className="mt-4 text-sm text-slate-600">Google authorized redirect URI must exactly match</p>
-        <code className="mt-1 block break-all rounded-xl bg-slate-100 p-3 text-xs">{GOOGLE_CALLBACK_URL}</code>
-
-        <div className="mt-5 rounded-2xl border border-slate-200 p-4">
-          <p className="font-semibold">Running OAuth diagnostics</p>
-          <div className="mt-3 grid gap-3 sm:grid-cols-2">
-            <Info label="Effective NEXTAUTH_URL" value={meta.effectiveNextAuthUrl} mono />
-            <Info label="Actual callback base" value={meta.effectiveGoogleCallback} mono />
-            <Info label="Google Client ID hint" value={meta.googleClientIdHint} mono />
-          </div>
-          <p className="mt-3 text-xs text-slate-500">
-            The Client ID hint lets you confirm that Vercel is using the same Google OAuth client that you edited in Google Cloud, without exposing the full credential.
-          </p>
-        </div>
-      </section>
-
-      <Link href="/connections" className="inline-flex rounded-xl bg-slate-900 px-4 py-3 font-semibold text-white">
-        Open Connections
-      </Link>
+      <div className="flex flex-wrap gap-3">
+        <Link href="/assistant" className="rounded-xl bg-slate-900 px-4 py-3 text-sm font-bold text-white">Open Zoro</Link>
+        <Link href="/connections" className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-800">Connections</Link>
+        <Link href="/activity" className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-800">Activity</Link>
+      </div>
     </div>
   );
 }
