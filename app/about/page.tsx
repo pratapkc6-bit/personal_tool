@@ -15,6 +15,9 @@ const capabilities = [
 ];
 
 const releaseHighlights = [
+  "Zoro Nexus 5.0: complete professional UI redesign with image-heavy fantasy surfaces removed from the active product experience.",
+  "Home, Today, Timeline, Intel, Intelligence and Settings now share one clean graphite/navy design system with restrained blue accents.",
+  "Mobile navigation, cards, forms, calendar controls and voice prompts were rebuilt for consistency, readability and professional use.",
   "Zoro Intelligence and Intel are now both full immersive Dark Realm sections using the approved Intel artwork.",
   "Zoro Intelligence / Data Hub now carries the same illustrated shell, live inline search, source cards and interactive controls as the rest of the app.",
   "Intel artwork navigation now exposes Inbox, Insights, Actions, Watch and Archive hotspots directly from the image.",
