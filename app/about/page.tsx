@@ -15,6 +15,9 @@ const capabilities = [
 ];
 
 const releaseHighlights = [
+  "Immersive section redesign: Timeline, Intel, Today and Settings now use their approved generated artwork as the primary visual shell.",
+  "Each illustrated section now has live inline search, interactive hotspots and live data panels styled from the same artwork instead of generic cards.",
+  "Approved section images are committed under public/assets and preserved as the visual source for the coded UI.",
   "Immersive section redesign: Timeline, Intel, Today and Settings now use their approved generated Dark Realm artwork as the actual visual shell.",
   "Real hotspots sit over the illustrated controls while live calendar, inbox, briefing and settings data continue underneath in the same red/cyan lighting system.",
   "Approved section artwork is archived in Google Drive under Zoro Nexus / Design Assets / Demonic UI v2 and committed into the app assets.",
