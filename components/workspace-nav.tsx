@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Activity,
+  Info,
   BellRing,
   CalendarDays,
   Inbox,
@@ -25,6 +26,7 @@ const routes = [
   { href: "/activity", label: "Activity", hint: "System history", Icon: Activity },
   { href: "/notifications", label: "Alerts", hint: "Push, reminders & watches", Icon: BellRing },
   { href: "/connections", label: "Connections", hint: "Google & data", Icon: PlugZap },
+  { href: "/about", label: "About", hint: "App & release", Icon: Info },
   { href: "/settings/assistant", label: "Preferences", hint: "Voice & model", Icon: Settings2 },
 ];
 
