@@ -3,7 +3,7 @@
 import { AlarmClock, Check, Clock3, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
-type Reminder={id:string;title:string;remindAt:string;status:string;ringSeconds:number;snoozedUntil?:string|null};
+type Reminder={id:string;title:string;remindAt:string;status:string;ringSeconds:number;recurrence?:string;recurrenceTime?:string|null;snoozedUntil?:string|null};
 
 function localInputValue(date=new Date(Date.now()+60*60_000)){
   const offset=date.getTimezoneOffset()*60_000;
@@ -19,6 +19,7 @@ export function ReminderManager(){
   const [title,setTitle]=useState("");
   const [when,setWhen]=useState(localInputValue());
   const [ring,setRing]=useState(true);
+  const [daily,setDaily]=useState(false);
   const [busy,setBusy]=useState(false);
   const [status,setStatus]=useState("");
 
@@ -34,7 +35,7 @@ export function ReminderManager(){
     try{
       const date=new Date(when);
       if(Number.isNaN(date.getTime()))throw new Error("Choose a valid date and time.");
-      const res=await fetch("/api/reminders",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({title:title.trim(),remindAt:date.toISOString(),ringSeconds:ring?3:0})});
+      const res=await fetch("/api/reminders",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({title:title.trim(),remindAt:date.toISOString(),ringSeconds:ring?3:0,recurrence:daily?"DAILY":"NONE",recurrenceTime:daily?when.slice(11,16):undefined,timezone:"Australia/Darwin"})});
       const body=await res.json().catch(()=>({}));
       if(!res.ok)throw new Error(body.error||"Could not create reminder.");
       setTitle("");setWhen(localInputValue());setStatus("Reminder set. Zoro has it.");await load();
@@ -69,6 +70,7 @@ export function ReminderManager(){
         <div className="reminder-form">
           <label><span>Remind me to</span><input value={title} onChange={e=>setTitle(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")void create()}} placeholder="Take medicine, call someone, submit a form…"/></label>
           <label><span>Date & time</span><input type="datetime-local" value={when} onChange={e=>setWhen(e.target.value)}/></label>
+          <label className="notify-switch compact"><span><b>Repeat every day</b><small>Zoro schedules the next occurrence after you complete it.</small></span><input type="checkbox" checked={daily} onChange={()=>setDaily(!daily)}/></label>
           <label className="notify-switch compact"><span><b>Ring for 3 seconds</b><small>Plays while Zoro is active. Push notification settings control background alerts.</small></span><input type="checkbox" checked={ring} onChange={()=>setRing(!ring)}/></label>
           <button onClick={create} disabled={busy}><Clock3 size={15}/>{busy?"Setting…":"Set reminder"}</button>
         </div>
@@ -78,7 +80,7 @@ export function ReminderManager(){
         <div className="notification-section-title"><div><Clock3 size={18}/><span><b>Upcoming</b><small>{reminders.length} active reminder{reminders.length===1?"":"s"}</small></span></div></div>
         <div className="reminder-list">
           {reminders.length?reminders.map(item=><div className={"reminder-row "+(item.status==="FIRED"?"fired":"")} key={item.id}>
-            <div><b>{item.title}</b><small>{item.status==="FIRED"?"Waiting for you · ":""}{pretty(item.snoozedUntil||item.remindAt)}</small></div>
+            <div><b>{item.title}</b><small>{item.status==="FIRED"?"Waiting for you · ":""}{pretty(item.snoozedUntil||item.remindAt)}{item.recurrence==="DAILY"?" · Every day":""}</small></div>
             <div>
               <button title="Snooze 10 minutes" onClick={()=>action(item.id,"snooze",10)}>10m</button>
               <button title="Snooze 30 minutes" onClick={()=>action(item.id,"snooze",30)}>30m</button>
