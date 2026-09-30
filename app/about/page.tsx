@@ -15,6 +15,9 @@ const capabilities = [
 ];
 
 const releaseHighlights = [
+  "Cinematic mobile Command home inspired by the Himalayan Dark Realm reference, with red/cyan neon hierarchy.",
+  "Rebuilt five-slot mobile dock with a large central Zoro action button and direct More/Settings access.",
+  "Visual Mission Control, Intelligence Feed, Timeline and System Setup command cards.",
   "Zoro Data Hub: normalized external intelligence API with source health and attribution.",
   "Darwin weather intelligence through Open-Meteo plus AUD reference rates through Frankfurter.",
   "New Data Hub workspace and authenticated /api/data-hub endpoint for future Zoro tools.",
