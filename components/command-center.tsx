@@ -4,7 +4,7 @@ import Link from "next/link";
 import { SavedFocusPlan } from "@/components/saved-focus-plan";
 import { APP_VERSION } from "@/lib/release";
 import { useEffect, useRef, useState } from "react";
-import { ArrowUpRight, AudioLines, CalendarDays, ChevronRight, Command, Focus, Radio, RefreshCw, Sparkles, Zap } from "lucide-react";
+import { ArrowUpRight, AudioLines, CalendarDays, ChevronRight, ClipboardPlus, Command, FileText, Focus, Radio, RefreshCw, Sparkles, Zap } from "lucide-react";
 import { fitFocusSessions, type buildCommandCenter } from "@/lib/intelligence/command-center";
 
 type Snapshot = ReturnType<typeof buildCommandCenter>;
@@ -66,12 +66,12 @@ export function CommandCenter({ name }: { name: string }) {
         <p className="cc-eyebrow">{stamp}</p>
         <h1>Less noise.<br /><span>More action.</span></h1>
         <p className="cc-intro">Your personal feed, {name}. Priorities first. Everything else in its place.</p>
-        <div className="cc-actions"><Link href="/assistant" className="cc-button cc-primary"><AudioLines size={18} /> Talk to Zoro <ArrowUpRight size={17} /></Link><button className="cc-button cc-secondary" onClick={() => dialog.current?.showModal()}><Command size={16} /> Quick commands</button></div>
+        <div className="cc-actions cc-reference-actions"><Link href="/assistant" className="cc-button cc-primary"><AudioLines size={18} /> Talk to Zoro <ArrowUpRight size={17} /></Link><Link href="/tasks" className="cc-button cc-secondary"><ClipboardPlus size={16}/> Add Task</Link><Link href="/activity" className="cc-button cc-secondary"><FileText size={16}/> New Note</Link><button className="cc-button cc-secondary" onClick={() => dialog.current?.showModal()}><Command size={16} /> Quick</button></div>
       </div>
       <div className="cc-orbit" aria-hidden="true"><div className="cc-orbit-ring cc-ring-one" /><div className="cc-orbit-ring cc-ring-two" /><div className="cc-orbit-core"><Sparkles size={38} /></div><span className="cc-orbit-label">FOCUS MODE</span></div>
     </section>
 
-    <div className="hub-modules">{[{href:"/tasks", title:"Mission control", caption:"Capture, prioritise, finish", number:"01"},{href:"/inbox",title:"Intelligence feed",caption:"Turn messages into next steps",number:"02"},{href:"/calendar",title:"Your timeline",caption:"Review your real commitments",number:"03"},{href:"/connections",title:"System setup",caption:"Connect your data and AI mode",number:"04"}].map(module => <Link className="hub-module" href={module.href} key={module.href}><span>MODULE {module.number} ↗</span><strong>{module.title}</strong><small>{module.caption}</small></Link>)}</div>
+    <div className="hub-modules cc-reference-modules">{[{href:"/tasks", title:"Mission control", caption:"Capture, prioritise, finish", number:"01",art:"mission"},{href:"/inbox",title:"Intelligence feed",caption:"Turn messages into next steps",number:"02",art:"intel"},{href:"/calendar",title:"Your timeline",caption:"Calendar, rosters, reminders",number:"03",art:"timeline"},{href:"/settings",title:"System setup",caption:"Connect, customise, control",number:"04",art:"system"}].map(module => <Link className={`hub-module cc-art-card cc-art-${module.art}`} href={module.href} key={module.href}><span>MODULE {module.number}</span><strong>{module.title}</strong><small>{module.caption}</small><b aria-hidden="true">→</b></Link>)}</div>
     <div className="cc-section-heading"><div><p className="cc-eyebrow">RECOMMENDED FOR YOU</p><h2>Clarity before action.</h2></div><button className="cc-icon-button" onClick={() => setRevision(value => value + 1)} disabled={loading} aria-label="Refresh command center"><RefreshCw size={18} className={loading ? "cc-spin" : ""} /></button></div>
     <div role="status" className="cc-freshness">{loading ? "Reading your priorities and calendar…" : error || (data ? `Snapshot ${clock(data.generatedAt)} · ${data.timezone}${stale ? " · Refresh to verify available time" : ""}` : "No data loaded")}</div>
     <div className="cc-metrics">
