@@ -15,6 +15,9 @@ const capabilities = [
 ];
 
 const releaseHighlights = [
+  "Immersive section redesign: Timeline, Intel, Today and Settings now use their approved generated Dark Realm artwork as the actual visual shell.",
+  "Real hotspots sit over the illustrated controls while live calendar, inbox, briefing and settings data continue underneath in the same red/cyan lighting system.",
+  "Approved section artwork is archived in Google Drive under Zoro Nexus / Design Assets / Demonic UI v2 and committed into the app assets.",
   "Unified Dark Realm Theme: Today, Timeline, Intel, Tasks, Settings, Notifications, Calendar, Reminders, About and dialogs now inherit the same black/red/ice-cyan lighting as the approved Home artwork.",
   "Shared panel, input, button, navigation and calendar styling replaces mismatched page-by-page colors.",
   "Compact Zoro voice permission chip replaces the intrusive full-width Enable banner on Home.",
