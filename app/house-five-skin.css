@@ -377,3 +377,44 @@ html[data-theme="dark"] .hf-notification-toggle{background:linear-gradient(145de
 html[data-theme="normal"] .notification-hero{background:linear-gradient(110deg,rgba(110,20,28,.96),rgba(76,25,22,.94)),url('/assets/himalaya-line.svg') center bottom/cover no-repeat;border-color:#8d4a42}.notification-hero h1,.notification-hero b{color:#fff!important}
 html[data-theme="normal"] .notification-panel,html[data-theme="normal"] .notification-category,html[data-theme="normal"] .reminder-row,html[data-theme="normal"] .notification-history-row{background:#fffdf8;color:#2b241f;border-color:#decfbe;box-shadow:none}html[data-theme="normal"] .notification-panel small,html[data-theme="normal"] .notification-category small,html[data-theme="normal"] .reminder-row small,html[data-theme="normal"] .notification-history-row p,html[data-theme="normal"] .notification-history-row small{color:#796e64}html[data-theme="normal"] .notification-category-icon{background:#f1e7da;border-color:#decfbe}.notification-panel input{color:inherit}
 @media(max-width:820px){.notification-grid,.notification-category-grid{grid-template-columns:1fr}.notification-hero{grid-template-columns:1fr}.notification-status-orb{width:92px;height:92px;border-radius:26px}.notification-history-row>div>div{display:grid}.notification-panel{padding:14px}.notification-hero{min-height:190px;padding:22px}.hf-notification-toggle{width:38px;height:38px;min-height:38px;border-radius:11px}}
+
+
+/* Zoro v2.2 cinematic command home */
+html[data-theme="dark"] .command-center{position:relative;overflow:hidden;background:linear-gradient(180deg,rgba(2,5,9,.16),rgba(2,5,9,.86) 36%,rgba(2,5,9,.96)),url('/assets/dark-mountain-v2.svg') center top/cover no-repeat!important;border-color:rgba(93,196,255,.25)!important}
+html[data-theme="dark"] .cc-hero{min-height:430px;position:relative;align-items:flex-end;background:radial-gradient(circle at 76% 18%,rgba(255,30,62,.38),transparent 14rem),linear-gradient(90deg,rgba(1,4,8,.78),rgba(1,4,8,.08));border-radius:24px;padding:38px 30px;overflow:hidden}
+html[data-theme="dark"] .cc-hero::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,transparent 55%,rgba(2,5,9,.92));z-index:0}
+html[data-theme="dark"] .cc-hero-copy{position:relative;z-index:1;max-width:720px}
+html[data-theme="dark"] .cc-hero h1{font-size:clamp(3.5rem,8vw,6.6rem);line-height:.88;letter-spacing:-.055em;text-shadow:0 4px 28px #000}
+html[data-theme="dark"] .cc-hero h1>span{color:#ff334e!important;text-shadow:0 0 28px rgba(255,38,67,.32)}
+html[data-theme="dark"] .cc-reference-actions{flex-wrap:wrap}
+html[data-theme="dark"] .cc-reference-actions .cc-primary{border-color:#ff2949!important;color:#fff!important;background:linear-gradient(135deg,rgba(92,5,18,.94),rgba(13,8,15,.96))!important;box-shadow:0 0 0 2px rgba(255,35,69,.18),0 0 28px rgba(255,35,69,.26)!important}
+html[data-theme="dark"] .cc-reference-actions .cc-secondary{backdrop-filter:blur(12px);background:rgba(7,13,20,.72)!important}
+html[data-theme="dark"] .cc-reference-modules{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+html[data-theme="dark"] .cc-art-card{position:relative;min-height:230px;padding:118px 22px 22px!important;overflow:hidden;background:#061019!important;border-width:1px!important;isolation:isolate}
+html[data-theme="dark"] .cc-art-card::before{content:"";position:absolute;inset:0 0 auto;height:118px;background-size:cover;background-position:center;z-index:-2;filter:saturate(1.18) contrast(1.08)}
+html[data-theme="dark"] .cc-art-card::after{content:"";position:absolute;inset:65px 0 0;background:linear-gradient(180deg,transparent,#061019 58%);z-index:-1}
+html[data-theme="dark"] .cc-art-mission{border-color:rgba(255,44,69,.65)!important;box-shadow:inset 0 0 25px rgba(255,35,65,.04),0 0 18px rgba(255,35,65,.08)!important}.cc-art-mission::before{background-image:linear-gradient(rgba(60,0,10,.2),rgba(20,0,5,.35)),url('/assets/chat-demon-king-v1.svg')}
+html[data-theme="dark"] .cc-art-intel{border-color:rgba(68,188,255,.65)!important}.cc-art-intel::before{background-image:linear-gradient(rgba(0,35,60,.12),rgba(0,20,40,.3)),url('/assets/dark-mountain-v2.svg')}
+html[data-theme="dark"] .cc-art-timeline{border-color:rgba(54,235,218,.55)!important}.cc-art-timeline::before{background-image:linear-gradient(rgba(0,50,48,.15),rgba(0,20,24,.35)),url('/assets/newari-guardian-v2.svg')}
+html[data-theme="dark"] .cc-art-system{border-color:rgba(190,75,255,.62)!important}.cc-art-system::before{background-image:linear-gradient(rgba(70,0,95,.22),rgba(20,0,35,.42)),url('/assets/dark-demon-realm-v3.svg')}
+html[data-theme="dark"] .cc-art-card>span{font-size:10px;letter-spacing:.16em;color:var(--nx-cyan);font-weight:900;text-transform:uppercase}.cc-art-card>strong{font-size:20px;text-transform:uppercase;letter-spacing:.05em}.cc-art-card>small{font-size:13px}.cc-art-card>b{position:absolute;right:20px;bottom:26px;font-size:25px;color:var(--nx-cyan)}
+.zoro-reference-dock .nexus-mobile-dock-inner{grid-template-columns:1fr 1fr 1.25fr 1fr 1fr;overflow:visible!important}
+.zoro-dock-core{width:72px;height:72px;justify-self:center;align-self:center;margin-top:-30px;border-radius:50%;display:grid;place-items:center;text-decoration:none;background:radial-gradient(circle,#152231 0 37%,#05080d 40% 55%,#a51228 58% 61%,#07090d 64%);border:1px solid #ff2e4c;box-shadow:0 0 25px rgba(255,35,65,.38),inset 0 0 18px rgba(117,213,255,.2);transform:rotate(-4deg)}
+.zoro-dock-core span{font-size:35px;font-weight:950;font-style:italic;color:white;text-shadow:0 0 10px #7bdcff}
+@media(max-width:640px){
+ html[data-theme="dark"] .command-center{margin:-10px -8px 0;border-radius:0!important;border-left:0!important;border-right:0!important}
+ html[data-theme="dark"] .cc-topline{padding:12px 18px}
+ html[data-theme="dark"] .cc-hero{min-height:510px;border-radius:0;padding:40px 22px 30px;background:radial-gradient(circle at 79% 17%,rgba(255,22,54,.44),transparent 10rem),linear-gradient(180deg,rgba(1,4,8,.12),rgba(1,4,8,.74) 64%,#020509)}
+ html[data-theme="dark"] .cc-hero h1{font-size:clamp(3.4rem,17vw,5.3rem)}
+ html[data-theme="dark"] .cc-intro{max-width:300px;font-size:17px}
+ html[data-theme="dark"] .cc-orbit{display:none}
+ html[data-theme="dark"] .cc-reference-actions{display:grid;grid-template-columns:1.45fr 1fr;gap:9px}
+ html[data-theme="dark"] .cc-reference-actions .cc-button{min-height:50px;padding:0 13px;font-size:12px}
+ html[data-theme="dark"] .cc-reference-actions .cc-primary{grid-column:1/-1;font-size:15px}
+ html[data-theme="dark"] .cc-reference-modules{grid-template-columns:1fr 1fr;gap:10px;padding:0 10px}
+ html[data-theme="dark"] .cc-art-card{min-height:205px;padding:104px 14px 14px!important;border-radius:18px!important}
+ html[data-theme="dark"] .cc-art-card::before{height:105px}.cc-art-card>strong{font-size:15px}.cc-art-card>small{font-size:10px}.cc-art-card>b{right:13px;bottom:15px}
+ .zoro-reference-dock{padding-bottom:max(8px,env(safe-area-inset-bottom))!important}
+ .zoro-reference-dock .nexus-mobile-dock-inner{min-height:76px}
+ .zoro-dock-core{width:66px;height:66px;margin-top:-25px}.zoro-dock-core span{font-size:31px}
+}
