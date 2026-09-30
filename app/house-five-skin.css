@@ -859,3 +859,45 @@ html[data-theme="dark"] .approved-home-surface .demonic-status{display:none!impo
   .approved-search-groups section{padding:8px}
   .approved-search-groups section>a{padding:7px}
 }
+
+
+/* Zoro v4.4.1 compact voice permission prompt */
+.zoro-presence-toast.zoro-presence-compact{
+  position:fixed!important;
+  right:14px!important;
+  bottom:104px!important;
+  left:auto!important;
+  width:auto!important;
+  max-width:none!important;
+  min-height:46px!important;
+  padding:6px 7px 6px 6px!important;
+  gap:6px!important;
+  border-radius:999px!important;
+  background:rgba(4,8,12,.92)!important;
+  border:1px solid rgba(122,211,255,.26)!important;
+  box-shadow:0 12px 34px rgba(0,0,0,.42),0 0 18px rgba(117,213,255,.08)!important;
+  backdrop-filter:blur(14px)!important;
+  z-index:80!important;
+}
+.zoro-presence-compact .zoro-presence-orb{width:34px!important;height:34px!important;min-width:34px!important;border-radius:50%!important}
+.zoro-presence-compact .zoro-presence-enable{
+  min-height:34px!important;
+  padding:0 11px!important;
+  border-radius:999px!important;
+  font-size:11px!important;
+  font-weight:850!important;
+}
+.zoro-presence-dismiss{
+  width:30px!important;height:30px!important;min-width:30px!important;
+  display:grid!important;place-items:center!important;
+  padding:0!important;border-radius:50%!important;
+  background:transparent!important;border:1px solid rgba(255,255,255,.1)!important;
+  color:#9fb0bd!important;
+}
+.zoro-presence-dismiss:hover{color:#fff!important;border-color:rgba(255,255,255,.22)!important}
+@media(max-width:640px){
+  .zoro-presence-toast.zoro-presence-compact{
+    right:10px!important;
+    bottom:calc(18px + env(safe-area-inset-bottom))!important;
+  }
+}
