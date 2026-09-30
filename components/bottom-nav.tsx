@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarDays, Home, Inbox, ListTodo, Sparkles } from "lucide-react";
+import { AlarmClock, CalendarDays, Home, Inbox, Sparkles } from "lucide-react";
 
 const items = [
   { href: "/", label: "Command", icon: Home },
   { href: "/calendar", label: "Timeline", icon: CalendarDays },
   { href: "/assistant", label: "Zoro", icon: Sparkles },
   { href: "/inbox", label: "Intel", icon: Inbox },
-  { href: "/tasks", label: "Missions", icon: ListTodo },
+  { href: "/reminders", label: "Remind", icon: AlarmClock },
 ];
 
 export function BottomNav() {
