@@ -80,6 +80,7 @@ export function HouseFiveChrome(){
       <div className="realm-transition-art"/><div className="realm-transition-copy"><small>ZORO NEXUS</small><b>ENTERING DARK REALM</b><span>हिमरात्रि · THE MOUNTAIN IS AWAKE</span></div>
     </div>
     <div className="hf-shell-controls">
+      <Link href="/notifications" className="hf-notification-toggle" aria-label="Open Zoro alerts" title="Alerts"><Bell size={17}/></Link>
       <button className="hf-patro-toggle" onClick={openPatro} aria-label="Open Nepali Patro" title="नेपाली पात्रो"><span>पात्रो</span><b>ने</b></button>
       <button className="hf-theme-toggle" onClick={toggleTheme} aria-label={theme==="dark"?"Switch to normal mode":"Enter Dark Realm"} title={theme==="dark"?"Normal mode":"Dark Realm"}>{theme==="dark"?<Sun size={17}/>:<Moon size={17}/>}</button>
     </div>

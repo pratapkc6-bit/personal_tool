@@ -9,6 +9,7 @@ import { NexusCommand } from "@/components/nexus-command";
 import { SystemClock } from "@/components/system-clock";
 import { ZoroPresence } from "@/components/zoro-presence";
 import { HouseFiveChrome } from "@/components/house-five-chrome";
+import { NotificationRuntime } from "@/components/notification-runtime";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
@@ -65,6 +66,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </section>
 
       <div className="hf-snow" aria-hidden="true" />
+      <NotificationRuntime />
       <ZoroPresence />
       <ZoroLauncher />
       <BottomNav />
