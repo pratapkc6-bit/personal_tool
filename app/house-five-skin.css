@@ -1079,3 +1079,114 @@ html[data-theme="dark"] .nexus-nav-link[aria-current="page"]{
   color:#fff!important;
   box-shadow:inset 3px 0 #ff294b,0 0 18px rgba(255,41,75,.06)!important;
 }
+
+
+/* ========================================================================
+   ZORO v4.5 · IMMERSIVE SECTION ART SYSTEM
+   Timeline / Intel / Today / Settings use their approved generated art as
+   the visual shell, with real navigation hotspots and live app data below.
+   ======================================================================== */
+.immersive-page{position:relative}
+.immersive-section-art{
+  position:relative;
+  width:min(100%,560px);
+  margin:0 auto 24px;
+  overflow:hidden;
+  border-radius:28px;
+  box-shadow:0 30px 90px rgba(0,0,0,.58),0 0 34px rgba(255,35,65,.13);
+  background:#020306;
+}
+.immersive-section-image{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none}
+.immersive-hotspots{position:absolute;inset:0;z-index:4;pointer-events:none}
+.immersive-hotspot{position:absolute;display:block;pointer-events:auto;border-radius:22px;text-decoration:none;-webkit-tap-highlight-color:transparent;transition:.14s ease}
+.immersive-hotspot>span{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.immersive-hotspot:hover{background:rgba(255,45,74,.035);box-shadow:0 0 25px rgba(255,36,66,.1)}
+.immersive-hotspot:active{transform:scale(.975);background:rgba(255,45,74,.06)}
+.immersive-hotspot:focus-visible{outline:2px solid #9fe2ff;outline-offset:3px;box-shadow:0 0 0 5px rgba(159,226,255,.18)}
+/* shared top chrome */
+.immersive-hotspot.hs-top-search{left:16%;top:2.3%;width:48%;height:6.2%;border-radius:999px}
+.immersive-hotspot.hs-top-settings{left:70.5%;top:2.1%;width:8.5%;height:6.4%;border-radius:50%}
+/* shared bottom dock */
+.immersive-hotspot.hs-nav-home{left:4%;bottom:1.5%;width:17.5%;height:8.5%;border-radius:28px}
+.immersive-hotspot.hs-nav-timeline{left:22%;bottom:1.5%;width:18.5%;height:8.5%;border-radius:28px}
+.immersive-hotspot.hs-nav-zoro{left:40.2%;bottom:.6%;width:20%;height:10.8%;border-radius:50%}
+.immersive-hotspot.hs-nav-intel{left:60.8%;bottom:1.5%;width:17.5%;height:8.5%;border-radius:28px}
+.immersive-hotspot.hs-nav-more{right:3.7%;bottom:1.5%;width:17.5%;height:8.5%;border-radius:28px}
+/* timeline */
+.immersive-timeline .hs-timeline-add{left:58%;top:27.1%;width:33%;height:7.2%}
+.immersive-timeline .hs-timeline-today{left:31%;top:43.7%;width:37%;height:4.8%}
+/* intel */
+.immersive-intel .hs-intel-inbox{left:7.2%;top:32.1%;width:17%;height:7.2%}
+.immersive-intel .hs-intel-actions{left:39%;top:32.1%;width:17%;height:7.2%}
+.immersive-intel .hs-intel-urgent{left:7%;top:40.5%;width:86%;height:15.2%;border-radius:18px}
+/* today */
+.immersive-today .hs-today-priorities{left:5%;top:43%;width:45%;height:18%}
+.immersive-today .hs-today-schedule{right:5%;top:43%;width:44%;height:23%}
+.immersive-today .hs-today-reminders{left:5%;top:61%;width:45%;height:15%}
+.immersive-today .hs-today-notifications{right:5%;top:67%;width:44%;height:12%}
+.immersive-today .hs-today-actions{right:5%;top:79%;width:44%;height:11%}
+/* settings */
+.immersive-settings .hs-settings-voice{left:7%;top:31.8%;width:86%;height:9.6%}
+.immersive-settings .hs-settings-notifications{left:7%;top:41.4%;width:86%;height:9.4%}
+.immersive-settings .hs-settings-connections{left:7%;top:59.8%;width:86%;height:9.2%}
+.immersive-settings .hs-settings-reminders{left:7%;top:69%;width:43%;height:9.5%}
+.immersive-settings .hs-settings-calendar{right:7%;top:69%;width:43%;height:9.5%}
+.immersive-settings .hs-settings-about{left:7%;top:78.8%;width:43%;height:9.5%}
+.immersive-settings .hs-settings-system{right:7%;top:78.8%;width:43%;height:9.5%}
+
+/* Live data continues the same realm instead of snapping back to generic cards */
+html[data-theme="dark"] .immersive-live-layer{
+  position:relative;
+  margin-top:10px;
+  padding:18px;
+  border:1px solid rgba(255,43,72,.22);
+  border-radius:24px;
+  background:
+    radial-gradient(circle at 90% 0,rgba(255,34,65,.08),transparent 22rem),
+    radial-gradient(circle at 0 100%,rgba(132,220,255,.055),transparent 20rem),
+    linear-gradient(180deg,rgba(6,10,15,.96),rgba(2,5,8,.98));
+  box-shadow:0 22px 60px rgba(0,0,0,.38),inset 0 0 36px rgba(255,35,65,.025);
+}
+html[data-theme="dark"] .immersive-live-layer::before{
+  content:"";position:absolute;inset:0;pointer-events:none;border-radius:24px;
+  background:url('/assets/zoro-demonic-frame.svg') center/100% 100% no-repeat;opacity:.08;
+}
+html[data-theme="dark"] .immersive-live-layer .bg-white,
+html[data-theme="dark"] .immersive-live-layer .nexus-intel-card,
+html[data-theme="dark"] .immersive-live-layer .nexus-metric-card,
+html[data-theme="dark"] .immersive-live-layer .cc-panel,
+html[data-theme="dark"] .immersive-live-layer .cc-metric{
+  background:linear-gradient(180deg,rgba(10,15,21,.95),rgba(5,8,12,.96))!important;
+  border-color:rgba(102,130,149,.28)!important;
+  color:#f4f8fc!important;
+  box-shadow:inset 0 0 24px rgba(255,35,65,.025),0 12px 30px rgba(0,0,0,.24)!important;
+}
+html[data-theme="dark"] .immersive-live-layer .text-slate-900,
+html[data-theme="dark"] .immersive-live-layer .text-slate-800,
+html[data-theme="dark"] .immersive-live-layer .text-slate-700{color:#f4f8fc!important}
+html[data-theme="dark"] .immersive-live-layer .text-slate-600,
+html[data-theme="dark"] .immersive-live-layer .text-slate-500,
+html[data-theme="dark"] .immersive-live-layer .text-slate-400{color:#9eb0be!important}
+html[data-theme="dark"] .immersive-live-layer input,
+html[data-theme="dark"] .immersive-live-layer select,
+html[data-theme="dark"] .immersive-live-layer textarea{
+  background:#05090e!important;color:#edf7ff!important;border-color:rgba(107,137,158,.38)!important;
+}
+html[data-theme="dark"] .immersive-live-layer button,
+html[data-theme="dark"] .immersive-live-layer a{transition:.14s ease}
+html[data-theme="dark"] .immersive-live-layer .hub-primary,
+html[data-theme="dark"] .immersive-live-layer .bg-slate-900{
+  background:linear-gradient(180deg,#4e0715,#21040a)!important;border:1px solid rgba(255,50,78,.48)!important;color:#fff!important;
+  box-shadow:0 0 18px rgba(255,35,65,.12)!important;
+}
+@media(max-width:640px){
+  body:has(.immersive-section-art) .nexus-topbar{display:none!important}
+  body:has(.immersive-section-art) .nexus-mobile-dock{display:none!important}
+  body:has(.immersive-section-art) .nexus-footer{display:none!important}
+  body:has(.immersive-section-art) .nexus-content{padding:0!important;margin:0!important;max-width:none!important}
+  body:has(.immersive-section-art) .nexus-stage{background:#020306!important}
+  body:has(.immersive-section-art) .hf-snow{display:none!important}
+  .immersive-section-art{width:100vw!important;margin:0 auto 0!important;border-radius:0!important;box-shadow:none!important}
+  .immersive-live-layer{margin:0!important;border-radius:0!important;border-left:0!important;border-right:0!important;padding:16px 14px 34px!important}
+  .immersive-live-layer>.nexus-page-heading{margin-top:0}
+}
