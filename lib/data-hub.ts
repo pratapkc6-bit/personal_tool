@@ -1,4 +1,4 @@
-import { getNtHolidays } from "@/lib/nt-holidays";
+import { listNtHolidays } from "@/lib/nt-holidays";
 
 const TZ=process.env.APP_TIMEZONE||"Australia/Darwin";
 const LAT=Number(process.env.APP_WEATHER_LAT||-12.4634);
@@ -32,7 +32,7 @@ export async function getExchangeRates():Promise<DataSourceState>{
 
 export function getNtHolidayFeed():DataSourceState{
   const year=Number(new Intl.DateTimeFormat("en-AU",{timeZone:TZ,year:"numeric"}).format(new Date()));
-  return {source:"Zoro NT calendar",status:"ok",updatedAt:new Date().toISOString(),data:{year,holidays:getNtHolidays(year)},note:"Curated NT/Darwin holiday calendar used by Zoro alerts."};
+  return {source:"Zoro NT calendar",status:"ok",updatedAt:new Date().toISOString(),data:{year,holidays:listNtHolidays(year)},note:"Curated NT/Darwin holiday calendar used by Zoro alerts."};
 }
 
 export async function getDataHub(){
