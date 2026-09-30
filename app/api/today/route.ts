@@ -1,0 +1,3 @@
+import { getServerSession } from "next-auth";import { NextResponse } from "next/server";import { authOptions } from "@/lib/auth";import { buildActionInbox,contextGraph,ZORO_TOOLS } from "@/lib/zoro-platform";
+export const dynamic="force-dynamic";
+export async function GET(){const s=await getServerSession(authOptions);if(!s?.user?.id)return NextResponse.json({error:"Unauthorized"},{status:401});const [inbox,context]=await Promise.all([buildActionInbox(s.user.id),contextGraph(s.user.id)]);return NextResponse.json({generatedAt:new Date().toISOString(),inbox,context:{total:context.total,byKind:Object.fromEntries(Object.entries(context.byKind).map(([k,v])=>[k,v.length]))},tools:ZORO_TOOLS})}
