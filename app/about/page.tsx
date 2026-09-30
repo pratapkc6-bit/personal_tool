@@ -15,6 +15,9 @@ const capabilities = [
 ];
 
 const releaseHighlights = [
+  "Zoro OS 4.0: unified Today Action Inbox across approvals, tasks, actionable email, follow-ups and reminders.",
+  "Personal Context Graph foundation for durable structured context instead of isolated records.",
+  "Tool Registry and autonomy policy levels establish one controlled action architecture across Zoro.",
   "Autonomous Core 3.0: persistent observation ledger, action proposals, human approval policy and audited execution.",
   "Core Control workspace for reviewing and approving Zoro actions before execution.",
   "Initial safe executor allowlist supports task and reminder creation while consequential integrations remain approval-gated.",
