@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { GmailScanButton } from "@/components/gmail-scan-button";
 import { RosterSyncButton } from "@/components/roster-sync-button";
+import { ImmersiveSectionArt } from "@/components/immersive-section-art";
 
 export const dynamic = "force-dynamic";
 
@@ -41,7 +42,20 @@ export default async function InboxPage({
   const urgentCount = items.filter((item) => item.importance === "URGENT").length;
 
   return (
-    <div className="nexus-page">
+    <div className="nexus-page immersive-page immersive-page-intel">
+      <ImmersiveSectionArt src="/assets/zoro-intel-approved.png" alt="Zoro Intel Dark Realm" kind="intel" hotspots={[
+        {href:"/search",label:"Search",className:"hs-top-search"},
+        {href:"/settings",label:"Settings",className:"hs-top-settings"},
+        {href:"/inbox",label:"Inbox",className:"hs-intel-inbox"},
+        {href:"/inbox?view=action",label:"Actions",className:"hs-intel-actions"},
+        {href:"/inbox?view=urgent",label:"Urgent",className:"hs-intel-urgent"},
+        {href:"/",label:"Home",className:"hs-nav-home"},
+        {href:"/calendar",label:"Timeline",className:"hs-nav-timeline"},
+        {href:"/assistant",label:"Zoro",className:"hs-nav-zoro"},
+        {href:"/inbox",label:"Intel",className:"hs-nav-intel"},
+        {href:"/settings",label:"More",className:"hs-nav-more"},
+      ]}/>
+      <div className="immersive-live-layer">
       <div className="nexus-page-heading">
         <div className="nexus-page-icon"><Radar size={22} /></div>
         <div className="nexus-page-title">
@@ -102,6 +116,7 @@ export default async function InboxPage({
             )}
           </article>
         ))}
+      </div>
       </div>
     </div>
   );
