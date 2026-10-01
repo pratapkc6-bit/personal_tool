@@ -93,6 +93,7 @@ export function QuickCapture() {
       reset();
       setMessage(isTask?"Captured. Your task is ready in Tasks.":daily?"Daily reminder created.":"Reminder created.");
       window.dispatchEvent(new Event(isTask?"zoro:task-created":"zoro:reminder-created"));
+      window.dispatchEvent(new Event("zoro:data-changed"));
       router.refresh();
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Connection interrupted. Please retry.");
