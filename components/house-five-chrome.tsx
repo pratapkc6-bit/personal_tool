@@ -29,7 +29,7 @@ function weatherLabel(w?:Weather){if(!w)return "";const hi=Number.isFinite(Numbe
 function selectedTitle(day:PatroDay|null,month:PatroMonth|null){if(!day)return "Calendar reminder";const nt=month?.ntHolidays?.[day.ad]?.[0]?.title;return nt||day.holidays?.[0]||day.events?.[0]||`Nepali calendar · ${day.dayNp} ${month?.monthNameNp||""}`}
 
 export function HouseFiveChrome(){
-  const [theme,setTheme]=useState<"normal"|"dark">("dark");
+  const [theme,setTheme]=useState<"normal"|"dark">("normal");
   const [open,setOpen]=useState(false);
   const [loading,setLoading]=useState(false);
   const [month,setMonth]=useState<PatroMonth|null>(null);
@@ -38,7 +38,7 @@ export function HouseFiveChrome(){
   const [status,setStatus]=useState("");
   const [realmFlash,setRealmFlash]=useState(false);
 
-  useEffect(()=>{const stored=localStorage.getItem("zoro-house-five-theme");const next=stored==="normal"?"normal":"dark";setTheme(next);document.documentElement.dataset.theme=next},[]);
+  useEffect(()=>{const stored=localStorage.getItem("zoro-house-five-theme");const next=stored==="dark"?"dark":"normal";setTheme(next);document.documentElement.dataset.theme=next},[]);
   function toggleTheme(){
     const next=theme==="dark"?"normal":"dark";
     setTheme(next);localStorage.setItem("zoro-house-five-theme",next);document.documentElement.dataset.theme=next;
