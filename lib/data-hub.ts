@@ -1,4 +1,5 @@
 import { listNtHolidays } from "@/lib/nt-holidays";
+import { getAirQuality, getGatewayCapabilities } from "@/lib/intelligence-gateway";
 
 const TZ=process.env.APP_TIMEZONE||"Australia/Darwin";
 const LAT=Number(process.env.APP_WEATHER_LAT||-12.4634);
@@ -36,7 +37,7 @@ export function getNtHolidayFeed():DataSourceState{
 }
 
 export async function getDataHub(){
-  const [weather,exchange]=await Promise.all([getDarwinWeather(),getExchangeRates()]);
+  const [weather,exchange,airQuality]=await Promise.all([getDarwinWeather(),getExchangeRates(),getAirQuality()]);
   const holidays=getNtHolidayFeed();
-  return {location:"Darwin, NT",timezone:TZ,generatedAt:new Date().toISOString(),sources:{weather,exchange,holidays}};
+  return {location:"Darwin, NT",timezone:TZ,generatedAt:new Date().toISOString(),capabilities:getGatewayCapabilities(),sources:{weather,airQuality,exchange,holidays}};
 }
