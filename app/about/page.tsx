@@ -15,6 +15,8 @@ const capabilities = [
 ];
 
 const releaseHighlights = [
+  "Zoro Now: Home now surfaces one decisive next action plus the next calendar event and its timing.",
+  "Smart Capture: the global + button can now create either a task or a one-time/daily reminder from the same dialog.",
   "Home simplified: removed the focus-session planner and the 25-minute focus timer that were cluttering the Command Center.",
   "Priority, calendar, messages and timeline remain unchanged; only the two unused Home sections were removed.",
   "Zoro Intelligence Gateway: new air-quality, location-resolution and optional Google Places integrations behind one provider layer.",
