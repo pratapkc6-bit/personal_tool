@@ -73,6 +73,7 @@ const QUICK_PROMPTS = [
   "What changed since yesterday?",
   "Show what I'm waiting for",
   "Check my next appointment",
+  "Summarize my urgent email",
   "Plan my day",
 ];
 
