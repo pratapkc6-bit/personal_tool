@@ -70,8 +70,10 @@ type VoiceState =
 const QUICK_PROMPTS = [
   "What should I do now?",
   "What's important today?",
+  "What changed since yesterday?",
+  "Show what I'm waiting for",
+  "Check my next appointment",
   "Plan my day",
-  "Find 45 minutes tomorrow",
 ];
 
 const CHAT_STORAGE = "zoro:nexus:conversation:v1";
@@ -124,6 +126,7 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
   const [voiceState, setVoiceState] = useState<VoiceState>("off");
   const [lastHeard, setLastHeard] = useState("");
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [copiedConversation, setCopiedConversation] = useState(false);
 
   const messagesRef = useRef(messages);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
@@ -224,6 +227,19 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
       window.setTimeout(() => setCopiedIndex((current) => current === index ? null : current), 1400);
     } catch {
       setCopiedIndex(null);
+    }
+  }
+
+  async function copyConversation() {
+    try {
+      const transcript = messagesRef.current
+        .map((message) => (message.role === "user" ? "You: " : "Zoro: ") + message.text)
+        .join("\n\n");
+      await navigator.clipboard.writeText(transcript);
+      setCopiedConversation(true);
+      window.setTimeout(() => setCopiedConversation(false), 1400);
+    } catch {
+      setCopiedConversation(false);
     }
   }
 
