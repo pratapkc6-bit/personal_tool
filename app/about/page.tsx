@@ -15,6 +15,9 @@ const capabilities = [
 ];
 
 const releaseHighlights = [
+  "Zoro Intelligence Gateway: new air-quality, location-resolution and optional Google Places integrations behind one provider layer.",
+  "Data Hub now shows AQI, PM2.5, PM10 and UV alongside weather, exchange rates and source capability health.",
+  "New authenticated location and place-search endpoints plus an in-app Location Intelligence search.",
   "Zoro AI chat now fully matches the House Five bright theme with ivory conversation surfaces, burgundy user messages and readable dark text.",
   "Voice controls, quick prompts, composer, action confirmations and assistant context panels were restyled without changing chat behavior.",
   "Bright-theme contrast fix: Timeline and Data Hub now use readable dark text on ivory surfaces instead of leftover dark-theme colours.",
