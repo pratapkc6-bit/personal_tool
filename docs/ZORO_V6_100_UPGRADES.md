@@ -101,14 +101,14 @@ This manifest records the 100 concrete changes shipped in the v6.0 Command OS re
 ## 9. Home & Assistant (81–90)
 81. Added a time-aware morning/afternoon/evening Home greeting.
 82. Added a stale-snapshot warning pill.
-83. Home still refreshes when a task is captured.
-84. Home now also refreshes when a reminder is captured.
+83. Added a unified `zoro:data-changed` event for secretary-wide refreshes.
+84. Smart Capture now broadcasts the unified refresh event after successful writes.
 85. Added whole-conversation copy in Zoro AI.
 86. Added a visible copy-chat state after copying.
 87. Added “What changed since yesterday?” quick prompt.
 88. Added “Show what I’m waiting for” quick prompt.
 89. Added “Check my next appointment” quick prompt.
-90. Kept message-level copy alongside whole-chat copy.
+90. Added “Summarize my urgent email” as a new assistant quick prompt.
 
 ## 10. Accessibility, Mobile & Resilience (91–100)
 91. Added global reduced-motion handling.
