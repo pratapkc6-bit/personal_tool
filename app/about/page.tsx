@@ -15,6 +15,11 @@ const capabilities = [
 ];
 
 const releaseHighlights = [
+  "Zoro Nexus 7.0: 50 major changes across Daily Briefing 2.0, Waiting Radar, Calendar Intelligence, Intel Triage and resilience.",
+  "Daily Briefing now combines tasks, follow-ups, reminders, approvals, urgent email, calendar pressure and freshness into one decision-ready view.",
+  "Waiting Radar adds overdue/due/upcoming/unscheduled follow-up buckets with one-tap completion and postponing.",
+  "Timeline now calculates load, overlaps and free blocks; Intel adds due-24h, security, waiting, aging and sender-hotspot triage.",
+  "See docs/ZORO_V7_50_UPGRADES.md for the exact 50-change release manifest.",
   "Zoro Nexus 6.0 Command OS: 100 concrete upgrades across Smart Capture, commands, universal search, diagnostics, PWA, Home, AI and accessibility.",
   "Natural-language Smart Capture now understands dates, reminders, recurrence, priority and categories before you save.",
   "Global Search now spans seven Zoro data groups, while System Health verifies Core storage and Intelligence Gateway capabilities.",
