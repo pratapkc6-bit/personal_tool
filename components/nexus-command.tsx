@@ -3,7 +3,7 @@
 import { useEffect,useMemo,useRef,useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-  Activity,BellRing,BrainCircuit,CalendarDays,Command,DatabaseZap,Info,Inbox,ListTodo,
+  Activity,BellRing,BrainCircuit,CalendarDays,Command,DatabaseZap,FileText,Hourglass,Info,Inbox,ListTodo,
   Mic2,PlusCircle,PlugZap,Search,Settings2,ShieldCheck,Sparkles,SunMedium,X
 } from "lucide-react";
 
@@ -14,7 +14,9 @@ type PaletteCommand={
 
 const commands:PaletteCommand[]=[
   {id:"zoro",href:"/assistant",title:"Open Zoro",detail:"Voice, reasoning and action previews",Icon:Mic2,group:"AI",keywords:"chat assistant ask"},
-  {id:"today",href:"/today",title:"Today",detail:"Your prioritized action inbox",Icon:SunMedium,group:"Workspace",keywords:"brief priority now"},
+  {id:"today",href:"/today",title:"Today",detail:"Your prioritized action inbox",Icon:SunMedium,group:"Workspace",keywords:"priority now"},
+  {id:"briefing",href:"/briefing",title:"Daily Briefing",detail:"Decision-ready view across tasks, email, waiting and calendar",Icon:FileText,group:"Workspace",keywords:"brief summary morning day"},
+  {id:"waiting",href:"/waiting",title:"Waiting Radar",detail:"Track overdue and upcoming follow-ups",Icon:Hourglass,group:"Workspace",keywords:"followup follow-up waiting response"},
   {id:"home",href:"/",title:"Command Center",detail:"Zoro Now, priorities and daily signals",Icon:Sparkles,group:"Workspace",keywords:"home dashboard"},
   {id:"capture-task",capture:"task",title:"Capture task",detail:"Create a mission without leaving this screen",Icon:PlusCircle,group:"Create",keywords:"todo add mission"},
   {id:"capture-reminder",capture:"reminder",title:"Create reminder",detail:"One-time or daily reminder",Icon:BellRing,group:"Create",keywords:"alarm notify remember"},
