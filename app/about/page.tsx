@@ -15,6 +15,8 @@ const capabilities = [
 ];
 
 const releaseHighlights = [
+  "Zoro AI chat now fully matches the House Five bright theme with ivory conversation surfaces, burgundy user messages and readable dark text.",
+  "Voice controls, quick prompts, composer, action confirmations and assistant context panels were restyled without changing chat behavior.",
   "Bright-theme contrast fix: Timeline and Data Hub now use readable dark text on ivory surfaces instead of leftover dark-theme colours.",
   "Calendar command deck, summary cards, FullCalendar grid, event sheet and weather/data values were corrected for House Five bright mode.",
   "House Five Bright UI: warm ivory default theme, burgundy brand accents, premium paper-like cards and softer Nepali-inspired detailing.",
