@@ -1,6 +1,6 @@
 # Pratap Personal Secretary
 
-Current release: **v5.2.0 — Zoro Intelligence Gateway** with air-quality intelligence, location resolution, optional Google Places search, and the House Five bright default UI.
+Current release: **v6.0.0 — Zoro Command OS**, a 100-point upgrade with natural-language Smart Capture, expanded commands/search, deeper diagnostics, PWA improvements and accessibility hardening.
 
 A private, mobile-first AI personal secretary that connects Gmail, Google Calendar, tasks, MYOB work rosters, follow-ups, reminders, activity history and natural-language assistance.
 
@@ -23,7 +23,7 @@ Implemented:
 - follow-up data model and API
 - AI secretary chat with read-only Gmail scans and confirmed task/calendar actions
 - structured daily briefing data
-- global search across email intelligence, tasks, follow-ups and Google Calendar
+- universal search across email intelligence, tasks, follow-ups, reminders, approvals, context memory and Google Calendar
 - meaningful activity feed, audit logs and deduplicated notifications
 - scheduled secretary endpoint ready for a deployment scheduler
 - Neon PostgreSQL / Prisma data model
@@ -86,4 +86,4 @@ The endpoint processes new Gmail messages, runs MYOB roster reconciliation, eval
 - Local secretary logic for planning, priorities and follow-up questions
 - Zod validation
 
-See `docs/ARCHITECTURE.md` and `docs/SECURITY.md` for implementation details.
+See `docs/ZORO_V6_100_UPGRADES.md` for the exact v6 release manifest. See `docs/ARCHITECTURE.md` and `docs/SECURITY.md` for implementation details.
