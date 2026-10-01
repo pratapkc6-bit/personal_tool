@@ -89,7 +89,7 @@ export default async function InboxPage({
       {triage.senderHotspots.length>0&&<section className="intel-hotspots professional-card">
         <div className="professional-section-heading"><div><p className="professional-kicker">SENDER HOTSPOTS</p><h2>Who is generating action?</h2></div></div>
         <div className="intel-hotspot-list">{triage.senderHotspots.map(item=><span key={item.sender}><strong>{item.count}</strong>{item.sender}</span>)}</div>
-      </section>
+      </section>}
 
       <form className="intelligence-filter" method="get">
         <label htmlFor="intel-search" className="sr-only">Search loaded email intelligence</label>
