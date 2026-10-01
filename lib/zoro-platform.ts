@@ -10,6 +10,9 @@ export const ZORO_TOOLS=[
  {id:"gmail.send",risk:"HIGH",mode:"approval",description:"Send email externally"},
  {id:"calendar.create",risk:"MEDIUM",mode:"approval",description:"Create calendar event"},
  {id:"calendar.update",risk:"MEDIUM",mode:"approval",description:"Change calendar event"},
+ {id:"environment.air_quality",risk:"LOW",mode:"read",description:"Read current AQI, particulates, ozone and UV"},
+ {id:"location.search",risk:"LOW",mode:"read",description:"Resolve cities and postcodes to coordinates and timezones"},
+ {id:"places.search",risk:"LOW",mode:"read",description:"Search real places and businesses when Google Places is configured"},
 ] as const;
 
 export type AutonomyLevel=0|1|2|3|4;
