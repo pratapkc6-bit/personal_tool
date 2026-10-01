@@ -49,7 +49,7 @@ export function CommandCenter({ name }: { name: string }) {
   const activeEvent = data?.timeline.find(item => Date.parse(item.start) <= now && Date.parse(item.end) > now);
   const nextEvent = data?.timeline.find(item => Date.parse(item.start) > now);
   const topPriority = data?.priorities[0];
-  const nowHref = topPriority?.href || activeEvent ? "/calendar" : nextEvent ? "/calendar" : "/today";
+  const nowHref = topPriority?.href || (activeEvent || nextEvent ? "/calendar" : "/today");
   const nowTitle = topPriority?.title || activeEvent?.title || nextEvent?.title || "Your day is clear";
   const nowDetail = topPriority?.nextAction || (activeEvent ? `In progress until ${clock(activeEvent.end)}` : nextEvent ? `Starts at ${clock(nextEvent.start)}` : "No urgent action is loaded right now.");
   const nextEventMinutes = nextEvent ? Math.max(0, Math.round((Date.parse(nextEvent.start)-now)/60000)) : null;
