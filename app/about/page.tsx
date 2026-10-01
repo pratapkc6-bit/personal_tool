@@ -15,6 +15,10 @@ const capabilities = [
 ];
 
 const releaseHighlights = [
+  "Zoro Nexus 6.0 Command OS: 100 concrete upgrades across Smart Capture, commands, universal search, diagnostics, PWA, Home, AI and accessibility.",
+  "Natural-language Smart Capture now understands dates, reminders, recurrence, priority and categories before you save.",
+  "Global Search now spans seven Zoro data groups, while System Health verifies Core storage and Intelligence Gateway capabilities.",
+  "See docs/ZORO_V6_100_UPGRADES.md for the exact 100-change release manifest.",
   "Zoro Now: Home now surfaces one decisive next action plus the next calendar event and its timing.",
   "Smart Capture: the global + button can now create either a task or a one-time/daily reminder from the same dialog.",
   "Home simplified: removed the focus-session planner and the 25-minute focus timer that were cluttering the Command Center.",
