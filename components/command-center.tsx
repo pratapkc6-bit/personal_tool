@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { SavedFocusPlan } from "@/components/saved-focus-plan";
 import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, CalendarDays, Focus, Radio, RefreshCw, Sparkles, Zap } from "lucide-react";
 import { type buildCommandCenter } from "@/lib/intelligence/command-center";
