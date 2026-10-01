@@ -30,29 +30,31 @@ const categoryFrom=(text:string)=>{
   return "PERSONAL";
 };
 const cleanTitle=(text:string,match?:chrono.ParsedResult)=>{
-  let title=text
-    .replace(/^\s*(remind me(?: to)?|reminder(?: to)?|remember to|task(?: to)?|todo(?: to)?)\s+/i,"")
-    .replace(/\b(every day|daily)\b/ig,"")
-    .replace(/\b(urgent|asap|high priority|low priority)\b/ig,"")
-    .trim();
+  let title=text;
   if(match){
-    const before=title.slice(0,match.index).trim();
-    const after=title.slice(match.index+match.text.length).trim();
-    title=`${before} ${after}`.replace(/\s+/g," ").trim();
+    title=(text.slice(0,match.index)+" "+text.slice(match.index+match.text.length)).replace(/\s+/g," ").trim();
   }
+  title=title
+    .replace(/^\s*(remind me(?: to)?|reminder(?: to)?|remember to|task(?: to)?|todo(?: to)?)\s+/i,"")
+    .replace(/\b(every day|daily|each day)\b/ig,"")
+    .replace(/\b(urgent|asap|immediately|right away|high priority|low priority)\b/ig,"")
+    .replace(/\s+/g," ")
+    .trim();
   return title.replace(/[,.\-–]+$/,"").trim()||"Untitled";
 };
 
 export function interpretCapture(text:string,now=new Date()):CaptureInterpretation{
   const raw=text.trim();
-  const lower=raw.toLowerCase();
-  const parsed=chrono.parse(raw,now,{forwardDate:true})[0];
-  const parsedDate=parsed?.start?.date();
+  const DARWIN_OFFSET_MINUTES=570;
+  const darwinWallClock=new Date(now.getTime()+DARWIN_OFFSET_MINUTES*60_000);
+  const parsed=chrono.parse(raw,darwinWallClock,{forwardDate:true})[0];
+  const parsedWallDate=parsed?.start?.date();
+  const parsedDate=parsedWallDate?new Date(parsedWallDate.getTime()-DARWIN_OFFSET_MINUTES*60_000):undefined;
   const daily=/\b(every day|daily|each day)\b/i.test(raw);
   const reminderIntent=/\b(remind|reminder|remember)\b/i.test(raw)||daily;
   const mode:CaptureInterpretation["mode"]=reminderIntent?"reminder":"task";
   const iso=parsedDate&&Number.isFinite(parsedDate.getTime())?parsedDate.toISOString():null;
-  const recurrenceTime=daily&&parsedDate?`${String(parsedDate.getHours()).padStart(2,"0")}:${String(parsedDate.getMinutes()).padStart(2,"0")}`:null;
+  const recurrenceTime=daily&&parsedWallDate?`${String(parsedWallDate.getHours()).padStart(2,"0")}:${String(parsedWallDate.getMinutes()).padStart(2,"0")}`:null;
   const notes:string[]=[];
   if(parsedDate)notes.push("Detected a date/time.");
   if(daily)notes.push("Detected a daily recurrence.");
