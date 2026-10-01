@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CloudSun, DatabaseZap, Landmark, MapPin, RefreshCw, ServerCog } from "lucide-react";
+import { CloudSun, DatabaseZap, Landmark, MapPin, RefreshCw, ServerCog, Wind, PlugZap } from "lucide-react";
 import { getDataHub } from "@/lib/data-hub";
 
 export const dynamic="force-dynamic";
@@ -9,6 +9,7 @@ export default async function DataHubPage(){
   const hub=await getDataHub();
   const w=hub.sources.weather.data as any;
   const rates=rateRows(hub.sources.exchange.data);
+  const air=(hub.sources.airQuality.data as any)?.current;
 
   return <div className="professional-page">
     <header className="professional-page-header">
@@ -29,6 +30,14 @@ export default async function DataHubPage(){
         <em>{hub.sources.weather.source} · {hub.sources.weather.status}</em>
       </article>
 
+      <article className="professional-stat-card">
+        <Wind/>
+        <span>Air quality</span>
+        <strong>{air?.us_aqi??"—"} AQI</strong>
+        <small>PM2.5 {air?.pm2_5??"—"} · PM10 {air?.pm10??"—"} · UV {air?.uv_index??"—"}</small>
+        <em>{hub.sources.airQuality.source} · {hub.sources.airQuality.status}</em>
+      </article>
+
       <article className="professional-card">
         <div className="professional-section-heading"><div><p className="professional-kicker">AUD REFERENCE RATES</p><h2>Exchange rates</h2></div><Landmark size={19}/></div>
         <div className="professional-rate-grid">
@@ -42,6 +51,17 @@ export default async function DataHubPage(){
         <p className="professional-body-copy">Holiday context and local signals are available to Zoro reminders, briefings and alerts.</p>
         <small className="professional-source">{hub.sources.holidays.source}</small>
       </article>
+    </section>
+
+    <section className="professional-card">
+      <div className="professional-section-heading"><div><p className="professional-kicker">INTELLIGENCE GATEWAY</p><h2>Connected capabilities</h2></div><PlugZap size={19}/></div>
+      <div className="professional-capability-grid">
+        {hub.capabilities.map(cap=><div key={cap.id} className="professional-capability">
+          <div><strong>{cap.id}</strong><span>{cap.provider}</span></div>
+          <span className={"professional-provider-state state-"+cap.status}>{cap.status.replace("_"," ")}</span>
+          <p>{cap.description}</p>
+        </div>)}
+      </div>
     </section>
 
     <section className="professional-card professional-policy-card">
