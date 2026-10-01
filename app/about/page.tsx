@@ -15,6 +15,9 @@ const capabilities = [
 ];
 
 const releaseHighlights = [
+  "House Five Bright UI: warm ivory default theme, burgundy brand accents, premium paper-like cards and softer Nepali-inspired detailing.",
+  "Bright mode now loads by default for users without a saved preference, while an explicitly saved dark preference remains respected.",
+  "Mobile navigation, forms, calendar, Today, Intel, Settings and shared controls now follow the same House Five bright visual language.",
   "Zoro Nexus 5.0: complete professional UI redesign with image-heavy fantasy surfaces removed from the active product experience.",
   "Home, Today, Timeline, Intel, Intelligence and Settings now share one clean graphite/navy design system with restrained blue accents.",
   "Mobile navigation, cards, forms, calendar controls and voice prompts were rebuilt for consistency, readability and professional use.",
