@@ -46,6 +46,8 @@ export function CommandCenter({ name }: { name: string }) {
   const stale = Boolean(data && now - Date.parse(data.generatedAt) > 5 * 60_000);
   const clock = (stamp: string) => new Date(stamp).toLocaleTimeString("en-AU", { timeZone: data?.timezone, hour: "numeric", minute: "2-digit" });
   const stamp = data ? new Date(data.generatedAt).toLocaleDateString("en-AU", { timeZone: data.timezone, weekday: "long", month: "long", day: "numeric" }) : "Your personal command center";
+  const hour = Number(new Intl.DateTimeFormat("en-AU",{timeZone:data?.timezone||"Australia/Darwin",hour:"2-digit",hourCycle:"h23"}).format(new Date(now||Date.now())));
+  const greeting = hour<12?"Good morning":hour<18?"Good afternoon":"Good evening";
   const activeEvent = data?.timeline.find(item => Date.parse(item.start) <= now && Date.parse(item.end) > now);
   const nextEvent = data?.timeline.find(item => Date.parse(item.start) > now);
   const topPriority = data?.priorities[0];
@@ -59,8 +61,8 @@ export function CommandCenter({ name }: { name: string }) {
     <section className="professional-home-hero">
       <div>
         <p className="professional-kicker">{stamp}</p>
-        <h1>Good to see you, {name}.</h1>
-        <p>Priorities, calendar and important messages in one clear workspace.</p>
+        <h1>{greeting}, {name}.</h1>
+        <p>Priorities, calendar and important messages in one clear workspace.</p>{stale&&<span className="professional-freshness-pill">Snapshot needs refresh</span>}
       </div>
       <div className="professional-home-actions">
         <Link href="/assistant" className="professional-primary"><Sparkles size={17}/> Ask Zoro</Link>
