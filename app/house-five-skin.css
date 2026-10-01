@@ -2289,3 +2289,254 @@ html[data-theme="normal"] .calendar-event-sheet{
 html[data-theme="normal"] .calendar-event-sheet h2{color:#34261f!important}
 html[data-theme="normal"] .calendar-event-meta span{color:#8b796b!important}
 html[data-theme="normal"] .calendar-event-meta strong{color:#3c2e26!important}
+
+
+/* ========================================================================
+   ZORO v5.1.2 · HOUSE FIVE BRIGHT AI CHAT
+   Bright, readable assistant surfaces. Chat behaviour is unchanged.
+   ======================================================================== */
+html[data-theme="normal"] .zoro-ai-workspace{color:#342820!important}
+
+html[data-theme="normal"] .zoro-chat-console{
+  border:1px solid #decfbe!important;
+  background:
+    radial-gradient(circle at 100% 0,rgba(183,136,66,.055),transparent 20rem),
+    linear-gradient(180deg,#fffdf8,#fff8ef)!important;
+  box-shadow:0 14px 36px rgba(84,54,33,.065)!important;
+}
+
+html[data-theme="normal"] .zoro-chat-header{
+  background:#fffaf2!important;
+  border-bottom-color:#e4d6c8!important;
+}
+html[data-theme="normal"] .zoro-voice-core{
+  color:#8f1f2a!important;
+  background:#f3e2df!important;
+  border-color:#dcbfba!important;
+  box-shadow:none!important;
+}
+html[data-theme="normal"] .zoro-core-ring{border-color:#d9b6b2!important}
+html[data-theme="normal"] .zoro-core-ring.core-ring-two{border-color:#dec8ae!important}
+html[data-theme="normal"] .zoro-voice-core.is-live{
+  color:#fff!important;
+  background:#8f1f2a!important;
+  border-color:#8f1f2a!important;
+  box-shadow:0 0 0 4px rgba(143,31,42,.07)!important;
+}
+html[data-theme="normal"] .zoro-voice-core.state-thinking,
+html[data-theme="normal"] .zoro-voice-core.state-speaking{
+  color:#8f1f2a!important;border-color:#c99c93!important;background:#f5e4e0!important;
+}
+html[data-theme="normal"] .zoro-voice-core.state-permission,
+html[data-theme="normal"] .zoro-voice-core.state-unsupported{
+  color:#a83b46!important;border-color:#d7aaa9!important;background:#f4dfdf!important;
+}
+
+html[data-theme="normal"] .zoro-chat-identity strong{color:#3b2d26!important}
+html[data-theme="normal"] .zoro-chat-identity p{color:#89796d!important}
+html[data-theme="normal"] .zoro-runtime-badge{
+  color:#78675a!important;background:#f7ecdf!important;border-color:#ddcbbb!important;
+}
+
+html[data-theme="normal"] .zoro-chat-tools button,
+html[data-theme="normal"] .zoro-chat-tools a{
+  color:#665347!important;
+  background:#f8eee2!important;
+  border-color:#ddcbbb!important;
+}
+html[data-theme="normal"] .zoro-chat-tools button:hover,
+html[data-theme="normal"] .zoro-chat-tools a:hover{
+  color:#761821!important;background:#f1dfda!important;border-color:#d3aaa6!important;
+}
+html[data-theme="normal"] .zoro-chat-tools .voice-enabled{
+  color:#fff!important;background:#8f1f2a!important;border-color:#8f1f2a!important;
+}
+
+/* Voice status */
+html[data-theme="normal"] .zoro-voice-strip{
+  color:#77685c!important;
+  background:#fbf1e6!important;
+  border-bottom-color:#e4d6c8!important;
+}
+html[data-theme="normal"] .zoro-voice-strip strong{color:#8f1f2a!important}
+html[data-theme="normal"] .zoro-last-heard{color:#8c7b6e!important}
+html[data-theme="normal"] .zoro-wave i{background:#8f1f2a!important}
+html[data-theme="normal"] .zoro-voice-warning{
+  color:#8f652b!important;background:#f7ead5!important;border-bottom-color:#e4d1b4!important;
+}
+
+/* Conversation area */
+html[data-theme="normal"] .zoro-message-stream{
+  background:#fcf6ed!important;
+  scrollbar-color:#d0bbaa transparent!important;
+}
+html[data-theme="normal"] .zoro-message-avatar{
+  color:#8f1f2a!important;background:#f2dfdc!important;border-color:#ddbfba!important;
+}
+html[data-theme="normal"] .zoro-message-body{
+  background:#fffdf8!important;
+  border-color:#dfcfbe!important;
+  box-shadow:0 5px 16px rgba(84,54,33,.035)!important;
+}
+html[data-theme="normal"] .zoro-message.is-user .zoro-message-body{
+  background:#8f1f2a!important;
+  border-color:#8f1f2a!important;
+  box-shadow:none!important;
+}
+html[data-theme="normal"] .zoro-message-meta{color:#99887b!important}
+html[data-theme="normal"] .zoro-message-meta button{color:#8d7b6e!important}
+html[data-theme="normal"] .zoro-message-text{
+  color:#3d3028!important;
+  font-size:13px!important;
+}
+html[data-theme="normal"] .zoro-message.is-user .zoro-message-text{color:#fff!important}
+html[data-theme="normal"] .zoro-message.is-user .zoro-message-meta{color:#edd5d8!important}
+html[data-theme="normal"] .zoro-message.is-user .zoro-message-meta button{color:#f5e7e8!important}
+html[data-theme="normal"] .zoro-message-notice{
+  border-top-color:#eadfd4!important;color:#8a672f!important;
+}
+html[data-theme="normal"] .zoro-source-row a{
+  color:#705d50!important;background:#f7ecdf!important;border-color:#dcc9b8!important;
+}
+html[data-theme="normal"] .zoro-thinking{color:#88776b!important}
+html[data-theme="normal"] .zoro-thinking i{background:#8f1f2a!important}
+
+/* Pending action confirmation */
+html[data-theme="normal"] .zoro-action-card{
+  background:#f9efdf!important;border-color:#dfc28f!important;
+}
+html[data-theme="normal"] .zoro-action-head span{color:#926322!important}
+html[data-theme="normal"] .zoro-action-head strong{color:#5e4938!important}
+html[data-theme="normal"] .zoro-action-preview{
+  background:#fffaf2!important;border-color:#dfcfbe!important;
+}
+html[data-theme="normal"] .zoro-action-preview strong{color:#3b2d25!important}
+html[data-theme="normal"] .zoro-action-preview p{color:#827166!important}
+html[data-theme="normal"] .zoro-action-buttons button{
+  color:#665347!important;background:#fffaf2!important;border-color:#dbc9b8!important;
+}
+html[data-theme="normal"] .zoro-action-buttons button:last-child{
+  color:#fff!important;background:#8f1f2a!important;border-color:#8f1f2a!important;
+}
+
+/* Composer */
+html[data-theme="normal"] .zoro-composer-zone{
+  background:rgba(255,250,242,.97)!important;
+  border-top-color:#e0d2c3!important;
+  backdrop-filter:blur(18px)!important;
+}
+html[data-theme="normal"] .zoro-prompt-rail button{
+  color:#705e51!important;background:#f8eee2!important;border-color:#decbbb!important;
+}
+html[data-theme="normal"] .zoro-prompt-rail button:hover{
+  color:#781821!important;background:#f1dfda!important;border-color:#d5aca8!important;
+}
+html[data-theme="normal"] .zoro-composer{
+  background:#fffdf8!important;border-color:#d9c6b4!important;
+  box-shadow:none!important;
+}
+html[data-theme="normal"] .zoro-composer:focus-within{
+  border-color:#a45b62!important;
+  box-shadow:0 0 0 3px rgba(143,31,42,.07)!important;
+}
+html[data-theme="normal"] .zoro-composer textarea{
+  color:#342820!important;
+  background:transparent!important;
+}
+html[data-theme="normal"] .zoro-composer textarea::placeholder{color:#a08f82!important}
+html[data-theme="normal"] .zoro-composer-mic{
+  color:#79675a!important;background:#f7ecdf!important;border-color:#ddcbbb!important;
+}
+html[data-theme="normal"] .zoro-composer-mic.is-live{
+  color:#8f1f2a!important;background:#f1dfdc!important;border-color:#cfa8a4!important;
+}
+html[data-theme="normal"] .zoro-send-button{
+  color:#fff!important;background:#8f1f2a!important;border-color:#8f1f2a!important;
+}
+html[data-theme="normal"] .zoro-composer-note{color:#968579!important}
+
+/* Assistant intelligence column */
+html[data-theme="normal"] .zoro-context-card,
+html[data-theme="normal"] .zoro-engine-card{
+  background:linear-gradient(180deg,#fffdf8,#fff8ef)!important;
+  border-color:#decfbe!important;
+  box-shadow:0 10px 26px rgba(84,54,33,.045)!important;
+}
+html[data-theme="normal"] .zoro-context-head h2,
+html[data-theme="normal"] .zoro-engine-copy strong{color:#3a2d26!important}
+html[data-theme="normal"] .zoro-context-head>button{
+  color:#776458!important;border-color:#ddcbbb!important;background:#f7ecdf!important;
+}
+html[data-theme="normal"] .zoro-context-focus{
+  background:#f9eee3!important;border-color:#e2d1c1!important;
+}
+html[data-theme="normal"] .zoro-context-icon{
+  color:#8f1f2a!important;background:#f1dfdc!important;
+}
+html[data-theme="normal"] .zoro-context-focus strong{color:#43342b!important}
+html[data-theme="normal"] .zoro-context-focus p{color:#837267!important}
+html[data-theme="normal"] .zoro-context-metrics>div{
+  background:#fbf2e7!important;border-color:#e1d1c1!important;
+}
+html[data-theme="normal"] .zoro-context-metrics strong{color:#382b24!important}
+html[data-theme="normal"] .zoro-context-metrics span{color:#8e7d70!important}
+html[data-theme="normal"] .zoro-next-window{
+  color:#8f1f2a!important;background:#f3e2df!important;
+}
+html[data-theme="normal"] .zoro-next-window span{color:#827165!important}
+html[data-theme="normal"] .zoro-next-window strong{color:#5c473b!important}
+html[data-theme="normal"] .zoro-context-warning,
+html[data-theme="normal"] .zoro-context-error{color:#946b2f!important}
+html[data-theme="normal"] .zoro-context-actions button{
+  color:#665448!important;background:#f8eee2!important;border-color:#decbbb!important;
+}
+html[data-theme="normal"] .zoro-context-actions button:first-child{
+  color:#fff!important;background:#8f1f2a!important;border-color:#8f1f2a!important;
+}
+html[data-theme="normal"] .zoro-context-updated,
+html[data-theme="normal"] .zoro-context-loading{color:#948377!important}
+
+html[data-theme="normal"] .zoro-engine-icon{
+  color:#8f1f2a!important;background:#f1dfdc!important;
+}
+html[data-theme="normal"] .zoro-engine-copy small{color:#8c7b6e!important}
+html[data-theme="normal"] .zoro-engine-state{
+  color:#746256!important;background:#f8eee2!important;border-color:#decbbb!important;
+}
+html[data-theme="normal"] .zoro-engine-state.state-ready{
+  color:#52705b!important;border-color:#b9cdbd!important;background:#e8f0e9!important;
+}
+html[data-theme="normal"] .zoro-engine-chevron{color:#8e7b6d!important}
+html[data-theme="normal"] .zoro-engine-body{
+  border-top-color:#eadfd4!important;
+}
+html[data-theme="normal"] .zoro-engine-body>p:first-child,
+html[data-theme="normal"] .zoro-engine-note,
+html[data-theme="normal"] .zoro-engine-detail{color:#827166!important}
+html[data-theme="normal"] .zoro-engine-body progress{accent-color:#8f1f2a!important}
+html[data-theme="normal"] .zoro-engine-actions button{
+  color:#665448!important;background:#f8eee2!important;border-color:#decbbb!important;
+}
+
+/* Assistant page itself */
+html[data-theme="normal"] .nexus-page:has(.zoro-ai-workspace) .nexus-page-heading{
+  background:
+    radial-gradient(circle at 100% 0,rgba(183,136,66,.06),transparent 18rem),
+    linear-gradient(180deg,#fffdf8,#fbf4ea)!important;
+  border-top:3px solid #8f1f2a!important;
+}
+html[data-theme="normal"] .nexus-page:has(.zoro-ai-workspace) .nexus-page-icon{
+  color:#8f1f2a!important;background:#f1dfdc!important;border-color:#ddbfba!important;
+}
+
+/* Mobile chat */
+@media(max-width:760px){
+  html[data-theme="normal"] .zoro-chat-console{
+    min-height:calc(100dvh - 210px)!important;
+    height:calc(100dvh - 210px)!important;
+    border-radius:18px!important;
+  }
+  html[data-theme="normal"] .zoro-message{width:min(92%,720px)!important}
+  html[data-theme="normal"] .zoro-chat-header{padding:10px!important}
+  html[data-theme="normal"] .zoro-composer-zone{padding-bottom:calc(12px + env(safe-area-inset-bottom))!important}
+}
