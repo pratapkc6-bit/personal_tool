@@ -2120,3 +2120,172 @@ html[data-theme="normal"] .zoro-presence-enable{background:#8f1f2a!important;col
     border-radius:18px!important;
   }
 }
+
+
+/* ========================================================================
+   ZORO v5.1.1 · BRIGHT THEME CONTRAST FIX
+   Timeline and Data Hub were still inheriting hard-coded dark-theme colours.
+   ======================================================================== */
+
+/* Data Hub / Intelligence readability */
+html[data-theme="normal"] .professional-stat-card{
+  background:linear-gradient(180deg,#fffdf8,#fff8ef)!important;
+  border-color:#decfbe!important;
+  color:#382b24!important;
+}
+html[data-theme="normal"] .professional-stat-card>svg{color:#8f1f2a!important}
+html[data-theme="normal"] .professional-stat-card>span{
+  color:#77675b!important;
+  font-weight:650!important;
+}
+html[data-theme="normal"] .professional-stat-card>strong{
+  color:#34261f!important;
+  text-shadow:none!important;
+}
+html[data-theme="normal"] .professional-stat-card>small{
+  color:#77685d!important;
+}
+html[data-theme="normal"] .professional-stat-card>em{
+  color:#948276!important;
+}
+html[data-theme="normal"] .professional-data-grid .professional-card h2{
+  color:#352820!important;
+}
+html[data-theme="normal"] .professional-rate-grid>div{
+  background:#fbf1e5!important;
+  border-color:#dfcdbc!important;
+}
+html[data-theme="normal"] .professional-rate-grid span{color:#766458!important}
+html[data-theme="normal"] .professional-rate-grid strong{color:#332720!important}
+
+/* Timeline command deck */
+html[data-theme="normal"] .calendar-command-deck{
+  background:linear-gradient(180deg,#fffdf8,#fbf3e8)!important;
+  border-color:#decfbe!important;
+  box-shadow:0 10px 26px rgba(84,54,33,.045)!important;
+}
+html[data-theme="normal"] .calendar-live-chip{color:#76675b!important}
+html[data-theme="normal"] .calendar-live-chip>span{
+  background:#607f69!important;
+  box-shadow:none!important;
+}
+html[data-theme="normal"] .calendar-range h2{color:#34261f!important}
+html[data-theme="normal"] .calendar-range p{color:#87786d!important}
+
+html[data-theme="normal"] .calendar-nav-cluster button,
+html[data-theme="normal"] .calendar-view-tabs button{
+  background:#fffaf2!important;
+  border-color:#ddcdbc!important;
+  color:#6c5a4d!important;
+  box-shadow:none!important;
+}
+html[data-theme="normal"] .calendar-nav-cluster .calendar-today-button{
+  color:#4c3a30!important;
+}
+html[data-theme="normal"] .calendar-nav-cluster button:hover,
+html[data-theme="normal"] .calendar-view-tabs button:hover{
+  background:#f4e7d9!important;
+  border-color:#c9aa9f!important;
+  color:#6f1720!important;
+}
+html[data-theme="normal"] .calendar-view-tabs{
+  background:#f7ecdf!important;
+  border-color:#e4d4c4!important;
+}
+html[data-theme="normal"] .calendar-view-tabs button[aria-pressed="true"]{
+  color:#fff!important;
+  border-color:#8f1f2a!important;
+  background:#8f1f2a!important;
+  box-shadow:none!important;
+}
+
+/* Timeline summary cards */
+html[data-theme="normal"] .calendar-insight{
+  background:#fffaf2!important;
+  border-color:#decfbe!important;
+  color:#8f1f2a!important;
+  box-shadow:0 8px 22px rgba(84,54,33,.04)!important;
+}
+html[data-theme="normal"] .calendar-insight span{color:#8a786b!important}
+html[data-theme="normal"] .calendar-insight strong{color:#3d3028!important}
+
+/* FullCalendar bright surface */
+html[data-theme="normal"] .nexus-calendar-shell{
+  background:#fffaf2!important;
+  border-color:#decfbe!important;
+  box-shadow:0 12px 30px rgba(84,54,33,.055)!important;
+}
+html[data-theme="normal"] .nexus-calendar-shell .fc{
+  color:#49392f!important;
+  --fc-border-color:#ddcdbc!important;
+  --fc-page-bg-color:#fffaf2!important;
+  --fc-neutral-bg-color:#f7ecdf!important;
+  --fc-neutral-text-color:#6f5d50!important;
+  --fc-today-bg-color:rgba(143,31,42,.055)!important;
+  --fc-now-indicator-color:#8f1f2a!important;
+  --fc-list-event-hover-bg-color:#f3e4d6!important;
+}
+html[data-theme="normal"] .nexus-calendar-shell .fc .fc-scrollgrid{
+  background:#fffdf8!important;
+  border-color:#ddcdbc!important;
+}
+html[data-theme="normal"] .nexus-calendar-shell .fc-theme-standard td,
+html[data-theme="normal"] .nexus-calendar-shell .fc-theme-standard th{
+  border-color:#dfcfbe!important;
+  background:#fffdf8!important;
+}
+html[data-theme="normal"] .nexus-calendar-shell .fc .fc-col-header{
+  background:#f8eee2!important;
+}
+html[data-theme="normal"] .nexus-calendar-shell .fc .fc-col-header-cell-cushion{
+  color:#69564a!important;
+}
+html[data-theme="normal"] .nexus-calendar-shell .fc .fc-day-today .fc-col-header-cell-cushion{
+  color:#8f1f2a!important;
+}
+html[data-theme="normal"] .nexus-calendar-shell .fc .fc-timegrid-axis-cushion,
+html[data-theme="normal"] .nexus-calendar-shell .fc .fc-timegrid-slot-label-cushion{
+  color:#847164!important;
+}
+html[data-theme="normal"] .nexus-calendar-shell .fc .fc-timegrid-now-indicator-line{
+  border-color:#8f1f2a!important;
+  box-shadow:none!important;
+}
+html[data-theme="normal"] .nexus-calendar-shell .fc .fc-timegrid-now-indicator-arrow{
+  border-color:transparent #8f1f2a transparent transparent!important;
+}
+html[data-theme="normal"] .nexus-calendar-shell .fc .fc-list{
+  color:#49392f!important;
+}
+html[data-theme="normal"] .nexus-calendar-shell .fc .fc-list-day-cushion{
+  background:#f3e4d6!important;
+  color:#49392f!important;
+}
+html[data-theme="normal"] .calendar-footnote{color:#88776a!important}
+
+/* Keep events readable against the bright calendar */
+html[data-theme="normal"] .nexus-calendar-shell .fc .fc-event{
+  color:#fff!important;
+  border-color:#8f1f2a!important;
+  background:#8f1f2a!important;
+  box-shadow:none!important;
+}
+html[data-theme="normal"] .nexus-calendar-shell .fc .fc-event-time,
+html[data-theme="normal"] .nexus-calendar-shell .fc .fc-event-title{
+  color:#fff!important;
+  opacity:1!important;
+}
+
+/* Bright calendar event sheet */
+html[data-theme="normal"] .calendar-sheet-backdrop{
+  background:rgba(67,45,31,.28)!important;
+}
+html[data-theme="normal"] .calendar-event-sheet{
+  color:#3b2d25!important;
+  background:#fffaf2!important;
+  border-color:#dac7b5!important;
+  box-shadow:-20px 0 70px rgba(67,45,31,.16)!important;
+}
+html[data-theme="normal"] .calendar-event-sheet h2{color:#34261f!important}
+html[data-theme="normal"] .calendar-event-meta span{color:#8b796b!important}
+html[data-theme="normal"] .calendar-event-meta strong{color:#3c2e26!important}
