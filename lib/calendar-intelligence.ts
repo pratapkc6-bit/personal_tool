@@ -34,13 +34,13 @@ export function analyzeCalendar(events:CalendarSignalEvent[],now=new Date(),dayS
   const day=new Date(now);
   const start=new Date(day);start.setHours(dayStartHour,0,0,0);
   const end=new Date(day);end.setHours(dayEndHour,0,0,0);
-  const today'sTimed=timed
+  const todaysTimed=timed
     .map(e=>({event:e,start:Math.max(Date.parse(e.start),start.getTime()),end:Math.min(Date.parse(e.end),end.getTime())}))
     .filter(x=>x.end>x.start)
     .sort((a,b)=>a.start-b.start);
 
   const merged:Array<{start:number;end:number}>=[];
-  for(const x of today'sTimed){
+  for(const x of todaysTimed){
     const last=merged[merged.length-1];
     if(last&&x.start<=last.end)last.end=Math.max(last.end,x.end);
     else merged.push({start:x.start,end:x.end});
