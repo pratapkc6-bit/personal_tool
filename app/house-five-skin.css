@@ -2540,3 +2540,154 @@ html[data-theme="normal"] .nexus-page:has(.zoro-ai-workspace) .nexus-page-icon{
   html[data-theme="normal"] .zoro-chat-header{padding:10px!important}
   html[data-theme="normal"] .zoro-composer-zone{padding-bottom:calc(12px + env(safe-area-inset-bottom))!important}
 }
+
+
+/* Zoro v5.2 Intelligence Gateway */
+.professional-capability-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+}
+.professional-capability{
+  padding:14px;
+  border:1px solid var(--pro-line,#26313d);
+  border-radius:12px;
+  background:var(--pro-panel-3,#0f151d);
+}
+.professional-capability>div{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.professional-capability strong{
+  font-size:11px;
+  color:var(--pro-text,#f4f7fb);
+}
+.professional-capability>div>span{
+  font-size:9px;
+  color:var(--pro-subtle,#6f7d8c);
+}
+.professional-capability p{
+  margin-top:8px;
+  font-size:10px;
+  line-height:1.55;
+  color:var(--pro-muted,#93a1b1);
+}
+.professional-provider-state{
+  display:inline-flex;
+  width:max-content;
+  margin-top:9px;
+  padding:4px 7px;
+  border-radius:999px;
+  font-size:8px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  background:#152334;
+  color:#8fc5f3;
+}
+.professional-provider-state.state-ready{background:#183226;color:#8fd0a7}
+.professional-provider-state.state-needs_key{background:#3b2a16;color:#efc37a}
+
+.professional-location-search{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:9px;
+}
+.professional-location-search>div{
+  min-height:44px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:0 12px;
+  border:1px solid var(--pro-line,#26313d);
+  border-radius:10px;
+  background:var(--pro-panel-3,#0f151d);
+}
+.professional-location-search input{
+  width:100%;
+  min-width:0;
+  border:0!important;
+  outline:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.professional-location-results{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:14px;
+}
+.professional-location-results>div{
+  display:grid;
+  gap:7px;
+}
+.professional-location-results>div>strong{
+  font-size:10px;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+  color:var(--pro-subtle,#6f7d8c);
+}
+.professional-location-results article{
+  display:grid;
+  gap:3px;
+  padding:10px 11px;
+  border:1px solid var(--pro-line,#26313d);
+  border-radius:10px;
+  background:var(--pro-panel-3,#0f151d);
+}
+.professional-location-results article b{font-size:11px}
+.professional-location-results article span,
+.professional-location-results article small,
+.professional-location-results>div>p{
+  font-size:9px;
+  line-height:1.45;
+  color:var(--pro-muted,#93a1b1);
+}
+.professional-location-results article a{
+  margin-top:3px;
+  width:max-content;
+  font-size:9px;
+  font-weight:700;
+  text-decoration:none;
+  color:var(--pro-accent,#5ea7ff);
+}
+
+html[data-theme="normal"] .professional-capability,
+html[data-theme="normal"] .professional-location-search>div,
+html[data-theme="normal"] .professional-location-results article{
+  background:#fbf3e8!important;
+  border-color:#dfcfbe!important;
+}
+html[data-theme="normal"] .professional-capability strong,
+html[data-theme="normal"] .professional-location-results article b{
+  color:#3b2d25!important;
+}
+html[data-theme="normal"] .professional-capability>div>span,
+html[data-theme="normal"] .professional-capability p,
+html[data-theme="normal"] .professional-location-results article span,
+html[data-theme="normal"] .professional-location-results article small,
+html[data-theme="normal"] .professional-location-results>div>p{
+  color:#817166!important;
+}
+html[data-theme="normal"] .professional-provider-state{
+  background:#f0ded9!important;
+  color:#8f1f2a!important;
+}
+html[data-theme="normal"] .professional-provider-state.state-ready{
+  background:#e5efe7!important;
+  color:#4f6f58!important;
+}
+html[data-theme="normal"] .professional-provider-state.state-needs_key{
+  background:#f5ead7!important;
+  color:#986a2b!important;
+}
+html[data-theme="normal"] .professional-location-results article a{
+  color:#8f1f2a!important;
+}
+@media(max-width:760px){
+  .professional-capability-grid,
+  .professional-location-results{grid-template-columns:1fr}
+  .professional-location-search{grid-template-columns:1fr}
+}
