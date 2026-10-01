@@ -1,6 +1,6 @@
 # Pratap Personal Secretary
 
-Current release: **v6.0.0 — Zoro Command OS**, a 100-point upgrade with natural-language Smart Capture, expanded commands/search, deeper diagnostics, PWA improvements and accessibility hardening.
+Current release: **v7.0.0 — Briefing, Radar & Intelligence**, a 50-change upgrade with Daily Briefing 2.0, Waiting Radar, Calendar Intelligence, Intel Triage and global recovery UX.
 
 A private, mobile-first AI personal secretary that connects Gmail, Google Calendar, tasks, MYOB work rosters, follow-ups, reminders, activity history and natural-language assistance.
 
@@ -86,4 +86,4 @@ The endpoint processes new Gmail messages, runs MYOB roster reconciliation, eval
 - Local secretary logic for planning, priorities and follow-up questions
 - Zod validation
 
-See `docs/ZORO_V6_100_UPGRADES.md` for the exact v6 release manifest. See `docs/ARCHITECTURE.md` and `docs/SECURITY.md` for implementation details.
+See `docs/ZORO_V7_50_UPGRADES.md` for the exact v7 release manifest and `docs/ZORO_V6_100_UPGRADES.md` for v6. See `docs/ARCHITECTURE.md` and `docs/SECURITY.md` for implementation details.
