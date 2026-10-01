@@ -1,14 +1,14 @@
 import { GlobalSearch } from "@/components/global-search";
 
-export default function SearchPage() {
-  return (
-    <div className="space-y-4">
+export default function SearchPage(){
+  return <div className="professional-page">
+    <header className="professional-page-header">
       <div>
-        <p className="text-sm font-semibold text-slate-500">GLOBAL SEARCH</p>
-        <h1 className="text-2xl font-bold tracking-tight">Find anything</h1>
-        <p className="mt-1 text-sm text-slate-600">Search Gmail intelligence, tasks, follow-ups and Google Calendar together.</p>
+        <p className="professional-kicker">UNIVERSAL SEARCH</p>
+        <h1>Find anything</h1>
+        <p>Search email intelligence, tasks, follow-ups, reminders, approvals, Zoro memory and Google Calendar together.</p>
       </div>
-      <GlobalSearch />
-    </div>
-  );
+    </header>
+    <GlobalSearch/>
+  </div>;
 }
