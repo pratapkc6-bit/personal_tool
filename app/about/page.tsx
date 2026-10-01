@@ -15,6 +15,8 @@ const capabilities = [
 ];
 
 const releaseHighlights = [
+  "Home simplified: removed the focus-session planner and the 25-minute focus timer that were cluttering the Command Center.",
+  "Priority, calendar, messages and timeline remain unchanged; only the two unused Home sections were removed.",
   "Zoro Intelligence Gateway: new air-quality, location-resolution and optional Google Places integrations behind one provider layer.",
   "Data Hub now shows AQI, PM2.5, PM10 and UV alongside weather, exchange rates and source capability health.",
   "New authenticated location and place-search endpoints plus an in-app Location Intelligence search.",
