@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { ArrowUpRight, CalendarDays, Focus, Radio, RefreshCw, Sparkles, Zap } from "lucide-react";
+import { ArrowUpRight, CalendarDays, Clock3, Focus, Radio, RefreshCw, Sparkles, Zap } from "lucide-react";
 import { type buildCommandCenter } from "@/lib/intelligence/command-center";
 
 type Snapshot = ReturnType<typeof buildCommandCenter>;
@@ -46,6 +46,13 @@ export function CommandCenter({ name }: { name: string }) {
   const stale = Boolean(data && now - Date.parse(data.generatedAt) > 5 * 60_000);
   const clock = (stamp: string) => new Date(stamp).toLocaleTimeString("en-AU", { timeZone: data?.timezone, hour: "numeric", minute: "2-digit" });
   const stamp = data ? new Date(data.generatedAt).toLocaleDateString("en-AU", { timeZone: data.timezone, weekday: "long", month: "long", day: "numeric" }) : "Your personal command center";
+  const activeEvent = data?.timeline.find(item => Date.parse(item.start) <= now && Date.parse(item.end) > now);
+  const nextEvent = data?.timeline.find(item => Date.parse(item.start) > now);
+  const topPriority = data?.priorities[0];
+  const nowHref = topPriority?.href || activeEvent ? "/calendar" : nextEvent ? "/calendar" : "/today";
+  const nowTitle = topPriority?.title || activeEvent?.title || nextEvent?.title || "Your day is clear";
+  const nowDetail = topPriority?.nextAction || (activeEvent ? `In progress until ${clock(activeEvent.end)}` : nextEvent ? `Starts at ${clock(nextEvent.start)}` : "No urgent action is loaded right now.");
+  const nextEventMinutes = nextEvent ? Math.max(0, Math.round((Date.parse(nextEvent.start)-now)/60000)) : null;
   const routes = [{ title: "Talk to Zoro", description: "Voice, conversation and action previews", href: "/assistant" }, { title: "Calendar", description: "Review or create an event", href: "/calendar" }, { title: "Tasks", description: "Capture and complete your work", href: "/tasks" }, { title: "Inbox", description: "Scan messages and see email actions", href: "/inbox" }, { title: "Search everything", description: "Find saved work and messages", href: "/search" }, { title: "Connections", description: "Check Google access and sign in", href: "/connections" }, { title: "Assistant settings", description: "Choose voice and wake word", href: "/settings/assistant" }];
 
   return <div className="command-center professional-command-center">
@@ -58,6 +65,20 @@ export function CommandCenter({ name }: { name: string }) {
       <div className="professional-home-actions">
         <Link href="/assistant" className="professional-primary"><Sparkles size={17}/> Ask Zoro</Link>
         <Link href="/today" className="professional-secondary">Open Today</Link>
+      </div>
+    </section>
+    <section className="zoro-now-card">
+      <div className="zoro-now-main">
+        <p className="professional-kicker">ZORO NOW</p>
+        <h2>{nowTitle}</h2>
+        <p>{nowDetail}</p>
+        <Link href={nowHref} className="zoro-now-action">Open next step <ArrowUpRight size={15}/></Link>
+      </div>
+      <div className="zoro-now-side">
+        <Clock3 size={18}/>
+        <span>{activeEvent ? "Happening now" : nextEvent ? "Next event" : "Schedule"}</span>
+        <strong>{activeEvent ? activeEvent.title : nextEvent ? nextEvent.title : "Clear"}</strong>
+        <small>{activeEvent ? `Until ${clock(activeEvent.end)}` : nextEvent ? (nextEventMinutes!==null && nextEventMinutes<120 ? `In ${nextEventMinutes} min` : clock(nextEvent.start)) : "No upcoming event loaded"}</small>
       </div>
     </section>
     <div className="cc-section-heading"><div><p className="cc-eyebrow">RECOMMENDED FOR YOU</p><h2>Clarity before action.</h2></div><button className="cc-icon-button" onClick={() => setRevision(value => value + 1)} disabled={loading} aria-label="Refresh command center"><RefreshCw size={18} className={loading ? "cc-spin" : ""} /></button></div>
