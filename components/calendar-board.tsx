@@ -7,6 +7,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
 import interactionPlugin from "@fullcalendar/interaction";
 import type { EventApi, EventInput } from "@fullcalendar/core";
+import { analyzeCalendar } from "@/lib/calendar-intelligence";
 import {
   CalendarClock,
   ChevronLeft,
@@ -113,6 +114,19 @@ export function CalendarBoard() {
       .sort((a, b) => a.date.getTime() - b.date.getTime())[0] || null;
   }, [events]);
 
+  const calendarIntel = useMemo(() => analyzeCalendar(events.flatMap((event,index) => {
+    const startDate=parseEventDate(event.start);
+    if(!startDate)return [];
+    const endDate=parseEventDate(event.end) || new Date(startDate.getTime()+60*60_000);
+    return [{
+      id:String(event.id||index),
+      title:String(event.title||"Untitled event"),
+      start:startDate.toISOString(),
+      end:endDate.toISOString(),
+      allDay:Boolean(event.allDay)
+    }];
+  }),new Date()),[events]);
+
   function choose(event: EventApi) {
     setSelected(event);
     setEditing(false);
@@ -196,20 +210,32 @@ export function CalendarBoard() {
         </div>
       </section>
 
-      <div className="calendar-insight-row">
+      <div className="calendar-insight-row calendar-intelligence-row">
         <div className="calendar-insight">
           <CalendarClock size={17} />
           <div><span>Today</span><strong>{todayCount} scheduled</strong></div>
+        </div>
+        <div className="calendar-insight">
+          <Sparkles size={17} />
+          <div><span>Load</span><strong>{calendarIntel.loadScore}% booked</strong></div>
+        </div>
+        <div className={"calendar-insight "+(calendarIntel.conflicts.length?"calendar-insight-alert":"")}>
+          <Clock3 size={17} />
+          <div><span>Conflicts</span><strong>{calendarIntel.conflicts.length ? calendarIntel.conflicts.length+" detected" : "None"}</strong></div>
+        </div>
+        <div className="calendar-insight">
+          <Sparkles size={17} />
+          <div><span>Free block</span><strong>{calendarIntel.freeBlocks[0] ? calendarIntel.freeBlocks[0].minutes+" min" : "None"}</strong></div>
         </div>
         <div className="calendar-insight calendar-insight-wide">
           <Clock3 size={17} />
           <div><span>Next signal</span><strong>{nextLabel}</strong></div>
         </div>
-        <div className="calendar-insight">
-          <Sparkles size={17} />
-          <div><span>View</span><strong>{views.find((item) => item.id === currentView)?.label || "Calendar"}</strong></div>
-        </div>
       </div>
+      {calendarIntel.conflicts.length>0&&<div className="calendar-intelligence-warning">
+        <span>Schedule overlap detected</span>
+        <p>{calendarIntel.conflicts.slice(0,2).map(item=>item.first+" ↔ "+item.second).join(" · ")}</p>
+      </div>}
 
       <section className="nexus-calendar-shell">
         <FullCalendar
