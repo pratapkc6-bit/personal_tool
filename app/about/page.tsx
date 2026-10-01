@@ -15,6 +15,8 @@ const capabilities = [
 ];
 
 const releaseHighlights = [
+  "Bright-theme contrast fix: Timeline and Data Hub now use readable dark text on ivory surfaces instead of leftover dark-theme colours.",
+  "Calendar command deck, summary cards, FullCalendar grid, event sheet and weather/data values were corrected for House Five bright mode.",
   "House Five Bright UI: warm ivory default theme, burgundy brand accents, premium paper-like cards and softer Nepali-inspired detailing.",
   "Bright mode now loads by default for users without a saved preference, while an explicitly saved dark preference remains respected.",
   "Mobile navigation, forms, calendar, Today, Intel, Settings and shared controls now follow the same House Five bright visual language.",
