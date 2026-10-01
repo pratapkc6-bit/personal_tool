@@ -5,7 +5,7 @@ const chrome=fs.readFileSync(new URL("../components/house-five-chrome.tsx",impor
 const skin=fs.readFileSync(new URL("../app/house-five-skin.css",import.meta.url),"utf8");
 const patro=fs.readFileSync(new URL("../app/api/patro/route.ts",import.meta.url),"utf8");
 const pkg=JSON.parse(fs.readFileSync(new URL("../package.json",import.meta.url),"utf8"));
-assert.equal(pkg.version,"5.2.0");assert.ok(pkg.dependencies["@namlo/nepali-calendar"]);assert.ok(shell.includes("HouseFiveChrome"));assert.ok(!shell.includes("hf-snow"));
+assert.equal(pkg.version,"5.2.1");assert.ok(pkg.dependencies["@namlo/nepali-calendar"]);assert.ok(shell.includes("HouseFiveChrome"));assert.ok(!shell.includes("hf-snow"));
 for(const token of ["zoro-house-five-theme","नेपाली पात्रो","Day-before reminder","/api/calendar/events","Dark Realm"])assert.ok(chrome.includes(token),token);
 for(const token of ["dark-mountain-v2.svg","newari-guardian-v2.svg","chat-demon-king-v1.svg","zoro-demonic-frame.svg","zoro-approved-home.jpg","hf-patro-modal","html[data-theme=\"normal\"]","html[data-theme=\"dark\"]"])assert.ok(skin.includes(token),token);
 for(const token of ["@namlo/nepali-calendar","bizzpatro","open-meteo.com","Darwin Show Day","NT_HOLIDAYS"])assert.ok(patro.toLowerCase().includes(token.toLowerCase()),token);
