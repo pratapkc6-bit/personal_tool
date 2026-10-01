@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CloudSun, DatabaseZap, Landmark, MapPin, RefreshCw, ServerCog, Wind, PlugZap } from "lucide-react";
 import { getDataHub } from "@/lib/data-hub";
+import { IntelligenceLocationSearch } from "@/components/intelligence-location-search";
 
 export const dynamic="force-dynamic";
 function rateRows(data:unknown){return Array.isArray(data)?data as Array<{quote?:string;rate?:number;date?:string}>:[]}
@@ -63,6 +64,8 @@ export default async function DataHubPage(){
         </div>)}
       </div>
     </section>
+
+    <IntelligenceLocationSearch />
 
     <section className="professional-card professional-policy-card">
       <ServerCog size={20}/>
