@@ -1,10 +1,10 @@
 # Pratap Personal Secretary
 
-Current release: **v0.10.0 — Zoro Hub: a black-and-orange workspace with quick capture, mission filters and account-saved focus plans**. See [Zoro Hub guide](docs/ZORO_HUB.md) and [command center guide](docs/COMMAND_CENTER.md). See [on-device setup](docs/ON_DEVICE.md) and [local secretary capabilities](docs/ZORO_0_7.md).
+Current release: **v5.2.0 — Zoro Intelligence Gateway** with air-quality intelligence, location resolution, optional Google Places search, and the House Five bright default UI.
 
 A private, mobile-first AI personal secretary that connects Gmail, Google Calendar, tasks, MYOB work rosters, follow-ups, reminders, activity history and natural-language assistance.
 
-Development happens on the `testing` branch first. `main` remains the promotion target.
+Current production development target is `main`.
 
 ## Current testing build
 
@@ -27,6 +27,7 @@ Implemented:
 - meaningful activity feed, audit logs and deduplicated notifications
 - scheduled secretary endpoint ready for a deployment scheduler
 - Neon PostgreSQL / Prisma data model
+- Intelligence Gateway with Open-Meteo air quality, Open-Meteo geocoding, and optional Google Places search
 
 Planned after the testing build is verified:
 
