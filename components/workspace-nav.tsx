@@ -11,6 +11,8 @@ import {
   AlarmClock,
   CalendarDays,
   Inbox,
+  FileText,
+  Hourglass,
   LayoutDashboard,
   ListTodo,
   PlugZap,
@@ -21,6 +23,8 @@ import {
 
 const routes = [
   { href: "/today", label: "Today", hint: "What matters now", Icon: SunMedium },
+  { href: "/briefing", label: "Briefing", hint: "Decision-ready day", Icon: FileText },
+  { href: "/waiting", label: "Waiting", hint: "Follow-up radar", Icon: Hourglass },
   { href: "/", label: "Command", hint: "Daily intelligence", Icon: LayoutDashboard },
   { href: "/assistant", label: "Zoro AI", hint: "Reason & act", Icon: Sparkles },
   { href: "/core", label: "Core Control", hint: "Approvals & autonomy", Icon: BrainCircuit },
