@@ -10,10 +10,12 @@ import { SystemClock } from "@/components/system-clock";
 import { ZoroPresence } from "@/components/zoro-presence";
 import { HouseFiveChrome } from "@/components/house-five-chrome";
 import { NotificationRuntime } from "@/components/notification-runtime";
+import { ConnectivityBanner } from "@/components/connectivity-banner";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="zoro-app nexus-shell">
+      <ConnectivityBanner />
       <a href="#workspace-content" className="hub-skip">Skip to content</a>
 
       <aside className="nexus-rail">
