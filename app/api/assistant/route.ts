@@ -75,7 +75,9 @@ function isCalendarAgendaIntent(message: string) {
 function hasExplicitTime(message: string) {
   const understood = normalizeAssistantInput(message);
   return /\b\d{1,2}(?::\d{2})?\s*(?:am|pm)\b|\b(?:noon|midnight|morning|afternoon|evening|tonight)\b/i.test(understood)
-    || /\bat\s+\d{1,2}(?::\d{2})?\b/i.test(understood);
+    || /\bat\s+\d{1,2}(?::\d{2})?\b/i.test(understood)
+    || /\b(?:in|after)\s+(?:\d+(?:\.\d+)?|a|an|one)\s*(?:seconds?|secs?|minutes?|mins?|hours?|hrs?|days?)\b/i.test(understood)
+    || /\b(?:in|after)\s+half\s+(?:an?\s+)?hour\b/i.test(understood);
 }
 
 function eventPreview(message: string): CalendarPendingAction | null {
@@ -828,9 +830,8 @@ export async function POST(request: NextRequest) {
     if (notePreview && !notePreview.needsContent) {
       const action: PendingAction = { type: "CREATE_NOTE", title: notePreview.title, content: notePreview.content };
       return NextResponse.json({
-        message: `Ready to save note "${notePreview.title}".`,
-        ...await prepareConfirmation(session.user.id, action),
-        engine: "tool",
+        ...await executeAction(session.user.id, action),
+        engine: "action",
         tool: "create_note",
       });
     }
@@ -873,15 +874,24 @@ export async function POST(request: NextRequest) {
     const taskRequest = contextualRequest(message, history, /\b(create task|add task|make a task|i have to|i need to|note that i need to)\b/i);
     const action = emailAction || reminderAction || taskPreview(taskRequest) || eventAction;
     if (action) {
+      // Low-risk personal writes should feel like an assistant, not a permit office.
+      // The user's explicit command is sufficient authorization for creating reminders,
+      // notes and tasks. External/destructive actions still use confirmation.
+      if (action.type === "CREATE_REMINDER" || action.type === "CREATE_TASK") {
+        return NextResponse.json({
+          ...await executeAction(session.user.id, action),
+          engine: "action",
+          tool: action.type.toLowerCase(),
+        });
+      }
+
       const label = action.type === "SEND_EMAIL"
         ? "send this email"
         : action.type === "CREATE_EMAIL_DRAFT"
           ? "create this Gmail draft"
-          : action.type === "CREATE_REMINDER"
-            ? `create this ${action.mode.toLowerCase()}`
-            : action.type === "CREATE_CALENDAR_EVENT"
-              ? "schedule this event"
-              : "create this task";
+          : action.type === "CREATE_CALENDAR_EVENT"
+            ? "schedule this event"
+            : "perform this action";
       return NextResponse.json({
         message: `I’m ready to ${label}. Review the details and confirm.`,
         ...await prepareConfirmation(session.user.id, action),
