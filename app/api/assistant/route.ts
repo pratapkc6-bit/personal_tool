@@ -42,11 +42,20 @@ function contextualRequest(
 ) {
   const current = normalizeAssistantInput(message);
   if (anchor.test(current)) return message;
-  if (current.split(/\s+/).filter(Boolean).length > 16) return message;
-  const previous = [...history].reverse().find((item) =>
-    item.role === "user" && anchor.test(normalizeAssistantInput(item.text))
-  );
-  return previous ? previous.text + " " + message : message;
+  if (current.split(/\s+/).filter(Boolean).length > 20) return message;
+
+  const userTurns = history
+    .filter((item) => item.role === "user")
+    .slice(-8);
+  let anchorIndex = -1;
+  for (let index = userTurns.length - 1; index >= 0; index--) {
+    if (anchor.test(normalizeAssistantInput(userTurns[index].text))) {
+      anchorIndex = index;
+      break;
+    }
+  }
+  if (anchorIndex < 0) return message;
+  return [...userTurns.slice(anchorIndex).map((item) => item.text), message].join(" ");
 }
 
 function isTaskListIntent(message: string) {
@@ -156,7 +165,7 @@ async function reminderUpdateResolution(
   const current = normalizeAssistantInput(message);
   const updateVerb = /\b(change|update|move|reschedule|edit|modify)\b/i;
   const confirmIntent = /\b(confirm|confirmed|approve|approved|do it|go ahead|yes please)\b/i.test(current);
-  const shortFollowUp = /^(change( it)?|do it|go ahead|confirm(ed)?|approve(d)?|yes( please)?|change and confirm(ed)?|change it and confirm(ed)?)[.!\s]*$/i.test(current);
+  const shortFollowUp = /^(change( it)?|do it|go ahead|confirm(ed)?|approve(d)?|yes( please)?|daily|every day|everyday|once|one time|today only|tonight only|change and confirm(ed)?|change it and confirm(ed)?)[.!\s]*$/i.test(current);
 
   const reminders = await db.reminder.findMany({
     where: { userId, status: { in: ["OPEN", "FIRED"] } },
@@ -184,7 +193,10 @@ async function reminderUpdateResolution(
         || reminders.some((item) => reminderMatchScore(normalized, item.title) > 0));
   });
 
-  if (!updateVerb.test(current) && !currentMentionsReminder && !(shortFollowUp && hasRecentUpdateAnchor && historyMentionsReminder)) {
+  const explicitUpdate = updateVerb.test(current)
+    && (/\b(reminder|alarm|time)\b/i.test(current)
+      || reminders.some((item) => reminderMatchScore(current, item.title) > 0));
+  if (!explicitUpdate && !(shortFollowUp && hasRecentUpdateAnchor && historyMentionsReminder)) {
     return null;
   }
 
@@ -293,9 +305,11 @@ async function reminderDeleteResolution(
   history: AssistantHistoryMessage[],
 ): Promise<{ action?: DeleteReminderPendingAction; message?: string; choices?: AssistantChoice[] } | null> {
   const current = normalizeAssistantInput(message);
-  const deleteIntent = /\b(delete|remove|cancel)\b.*\b(reminder|alarm)\b|\b(delete|remove)\s+it\b/i;
+  const explicitDelete = /\b(delete|remove|cancel)\b.*\b(reminder|alarm)\b/i.test(current);
+  const shortDelete = /^(delete|remove)\s+it[.!\s]*$/i.test(current);
   const anchor = /\b(delete|remove|cancel)\b.*\b(reminder|alarm)\b/i;
-  if (!deleteIntent.test(current) && !anchor.test(normalizeAssistantInput(contextualRequest(message, history, anchor)))) return null;
+  const contextual = contextualRequest(message, history, anchor);
+  if (!explicitDelete && !(shortDelete && anchor.test(normalizeAssistantInput(contextual)))) return null;
 
   const requestText = contextualRequest(message, history, anchor);
   const understood = normalizeAssistantInput(requestText);
@@ -330,9 +344,10 @@ async function noteDeleteResolution(
 ): Promise<{ action?: DeleteNotePendingAction; message?: string; choices?: AssistantChoice[] } | null> {
   const current = normalizeAssistantInput(message);
   const anchor = /\b(delete|remove)\b.*\bnote\b/i;
-  if (!anchor.test(current) && !/^delete it[.!\s]*$/i.test(current)) return null;
-
+  const explicitDelete = anchor.test(current);
+  const shortDelete = /^delete it[.!\s]*$/i.test(current);
   const requestText = contextualRequest(message, history, anchor);
+  if (!explicitDelete && !(shortDelete && anchor.test(normalizeAssistantInput(requestText)))) return null;
   const notes = await loadAssistantNotes(userId);
   if (!notes.length) return { message: "You do not have any saved notes." };
 
