@@ -25,6 +25,10 @@ export async function getSystemHealth(userId?:string) {
   }
   checks.push({key:"core",label:"Zoro Core storage",state:core?"healthy":database?"attention":"unavailable",detail:core?"Autonomy proposals and context graph are queryable.":"Core storage could not be verified for this session."});
 
+  const openai=Boolean(process.env.OPENAI_API_KEY?.trim());
+  const openaiModel=process.env.OPENAI_MODEL||"gpt-6-luna";
+  checks.push({key:"openai",label:"Zoro cloud reasoning",state:openai?"healthy":"attention",detail:openai?`OpenAI Responses provider configured with ${openaiModel}.`:"OPENAI_API_KEY is not configured; Zoro will use its local deterministic fallback."});
+
   const vapid=Boolean(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY||process.env.VAPID_PUBLIC_KEY) && Boolean(process.env.VAPID_PRIVATE_KEY);
   checks.push({key:"push",label:"Background push",state:vapid?"healthy":"attention",detail:vapid?"VAPID push infrastructure is configured.":"VAPID keys are incomplete; foreground alerts can still work."});
 
