@@ -24,3 +24,17 @@ export async function consumeConfirmation(userId: string, token: string): Promis
   const consumed = await db.setting.deleteMany({ where: { userId, key, value: { equals: record.value } } });
   return consumed.count === 1 ? action.data : null;
 }
+
+export async function consumeLatestConfirmation(userId: string): Promise<PendingAction | null> {
+  const record = await db.setting.findUnique({ where: { userId_key: { userId, key } } });
+  if (!record || !record.value || typeof record.value !== "object" || Array.isArray(record.value)) return null;
+  const value = record.value;
+  if (typeof value.expiresAt !== "number" || value.expiresAt < Date.now()) {
+    await db.setting.deleteMany({ where: { userId, key } });
+    return null;
+  }
+  const action = pendingActionSchema.safeParse(value.action);
+  if (!action.success) return null;
+  const consumed = await db.setting.deleteMany({ where: { userId, key, value: { equals: record.value } } });
+  return consumed.count === 1 ? action.data : null;
+}
