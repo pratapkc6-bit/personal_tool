@@ -100,6 +100,15 @@ function actionSummary(action: PendingAction) {
   if (action.type === "UPDATE_REMINDER") {
     return `Update reminder ${action.title}${action.recurrence === "DAILY" ? " every day" : ""}.`;
   }
+  if (action.type === "DELETE_REMINDER") {
+    return `Delete reminder ${action.title}.`;
+  }
+  if (action.type === "CREATE_NOTE") {
+    return `Save the note ${action.title}.`;
+  }
+  if (action.type === "DELETE_NOTE") {
+    return `Delete note ${action.title}.`;
+  }
   if (action.type === "CREATE_CALENDAR_EVENT") {
     return `Create the calendar event ${action.summary}.`;
   }
