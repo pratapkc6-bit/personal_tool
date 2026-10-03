@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Sparkles, X } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import type { AssistantSettings } from "@/lib/assistant-settings";
 
 type Mission = { headline?: string; overdue?: number };
@@ -46,7 +46,6 @@ function buildGreeting(settings: AssistantSettings, mission?: Mission) {
 
 export function ZoroPresence() {
   const pathname = usePathname();
-  const router = useRouter();
   const settingsRef = useRef<AssistantSettings | null>(null);
   const recognitionRef = useRef<RecognitionLike | null>(null);
   const speakingRef = useRef(false);
@@ -92,12 +91,15 @@ export function ZoroPresence() {
     const wake = settings.wakeWord.toLowerCase();
     const index = lower.indexOf(wake);
     const after = index >= 0 ? transcript.slice(index + settings.wakeWord.length).replace(/^[\s,.:;!?-]+/, "").trim() : "";
-    if (after) window.sessionStorage.setItem("zoro:pending-command", after);
-    window.sessionStorage.setItem("zoro:open-voice", "1");
 
-    const navigate = () => router.push("/assistant");
-    if (settings.spokenReplies) speak(settings.wakeResponse, settings, navigate);
-    else navigate();
+    const activateOrb = () => {
+      window.dispatchEvent(new CustomEvent("zoro:voice-orb-activate", {
+        detail: { command: after || undefined },
+      }));
+    };
+
+    if (settings.spokenReplies && after) speak(settings.wakeResponse, settings, activateOrb);
+    else activateOrb();
   }
 
   function startAmbient(settings = settingsRef.current) {
