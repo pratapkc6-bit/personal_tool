@@ -478,7 +478,30 @@ export function ZoroVoiceOrb() {
       })
       .catch(() => undefined);
 
+    const activateFromWakeWord = (event: Event) => {
+      const command = (event as CustomEvent<{ command?: string }>).detail?.command?.trim() || "";
+      if (!activeRef.current) {
+        activeRef.current = true;
+        setActive(true);
+        setPhase("opening");
+        setStatus("Zoro is waking up");
+        window.dispatchEvent(new Event("zoro:voice-session-open"));
+      }
+
+      if (command) {
+        window.speechSynthesis?.cancel();
+        speakingRef.current = false;
+        stopRecognition();
+        void sendCommand(command);
+      } else {
+        speak("I'm listening. What can I do for you?", true);
+      }
+    };
+
+    window.addEventListener("zoro:voice-orb-activate", activateFromWakeWord);
+
     return () => {
+      window.removeEventListener("zoro:voice-orb-activate", activateFromWakeWord);
       activeRef.current = false;
       stopRecognition();
       window.speechSynthesis?.cancel();
