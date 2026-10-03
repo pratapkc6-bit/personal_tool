@@ -407,8 +407,7 @@ export function ZoroVoiceOrb() {
       if (
         activeRef.current &&
         !speakingRef.current &&
-        !handlingResultRef.current &&
-        phase === "listening"
+        !handlingResultRef.current
       ) {
         restartTimerRef.current = window.setTimeout(() => startListening(), 450);
       }
