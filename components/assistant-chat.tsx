@@ -6,12 +6,16 @@ import {
   ArrowLeft,
   BriefcaseBusiness,
   Copy,
+  Keyboard,
   Mic,
   MicOff,
   Plus,
   Send,
   Settings,
+  ShieldCheck,
   Sparkles,
+  Volume2,
+  X,
 } from "lucide-react";
 import type { AssistantSettings } from "@/lib/assistant-settings";
 import type { PendingAction } from "@/lib/intelligence/assistant-contract";
@@ -116,6 +120,7 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
   const [voiceMode, setVoiceMode] = useState(false);
   const [voiceState, setVoiceState] = useState<VoiceState>("off");
   const [lastHeard, setLastHeard] = useState("");
+  const [liveTranscript, setLiveTranscript] = useState("");
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [copiedConversation, setCopiedConversation] = useState(false);
   const [showJobs, setShowJobs] = useState(false);
@@ -123,6 +128,7 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
   const messagesRef = useRef(messages);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const voiceModeRef = useRef(false);
+  const directVoiceRef = useRef(false);
   const awaitingCommandRef = useRef(false);
   const speakingRef = useRef(false);
   const busyRef = useRef(false);
@@ -186,7 +192,7 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
 
     if (!settings.handsFreeWakeWord) return;
     const timer = window.setTimeout(() => {
-      if (!voiceModeRef.current && !busyRef.current) enableVoiceMode();
+      if (!voiceModeRef.current && !busyRef.current) enableVoiceMode("wake");
     }, openedByWakeWord ? 450 : (settings.autoGreeting ? 5000 : 900));
     return () => window.clearTimeout(timer);
   // Startup behavior is intentionally evaluated once for this Assistant mount.
@@ -241,6 +247,8 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
     setVoiceMode(false);
     setVoiceState("off");
     setLastHeard("");
+    setLiveTranscript("");
+    directVoiceRef.current = false;
 
     if (restartTimerRef.current) window.clearTimeout(restartTimerRef.current);
     recognitionRef.current?.abort();
@@ -287,8 +295,9 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
       }
 
       if (wakePrompt) {
+        awaitingCommandRef.current = true;
         setVoiceState("awake");
-        restartListening(450);
+        restartListening(350);
         return;
       }
 
@@ -297,8 +306,9 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
         return;
       }
 
-      setVoiceState("listening");
-      restartListening(450);
+      awaitingCommandRef.current = directVoiceRef.current;
+      setVoiceState(directVoiceRef.current ? "awake" : "listening");
+      restartListening(350);
     };
 
     utterance.onend = finish;
@@ -327,6 +337,7 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
 
     if (fromVoice) {
       recognitionRef.current?.stop();
+      setLiveTranscript("");
       setVoiceState("thinking");
     }
 
@@ -390,6 +401,7 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
     const transcript = raw.trim();
     if (!transcript) return;
 
+    setLiveTranscript("");
     setLastHeard(transcript);
 
     if (awaitingCommandRef.current) {
@@ -428,7 +440,7 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
 
     const recognition = new Recognition();
     recognition.continuous = true;
-    recognition.interimResults = false;
+    recognition.interimResults = true;
     recognition.lang = settings.language;
 
     recognition.onstart = () => {
@@ -438,22 +450,31 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
     };
 
     recognition.onresult = (event) => {
+      let interim = "";
       for (let index = event.resultIndex; index < event.results.length; index++) {
         const result = event.results[index];
-        if (!result?.isFinal) continue;
-        handleTranscript(result[0]?.transcript || "");
+        const transcript = result?.[0]?.transcript || "";
+        if (result?.isFinal) {
+          setLiveTranscript("");
+          handleTranscript(transcript);
+        } else {
+          interim += transcript + " ";
+        }
       }
+      if (interim.trim()) setLiveTranscript(interim.trim());
     };
 
     recognition.onerror = (event) => {
       if (event.error === "not-allowed" || event.error === "service-not-allowed") {
         voiceModeRef.current = false;
         setVoiceMode(false);
+        setLiveTranscript("");
         setVoiceState("permission");
         return;
       }
 
-      if (voiceModeRef.current && !speakingRef.current) restartListening(700);
+      if (event.error === "no-speech") setLiveTranscript("");
+      if (voiceModeRef.current && !speakingRef.current) restartListening(600);
     };
 
     recognition.onend = () => {
@@ -466,21 +487,35 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
     return recognition;
   }
 
-  function enableVoiceMode() {
+  function enableVoiceMode(mode: "direct" | "wake" = "direct") {
     const recognition = recognitionRef.current || createRecognition();
     if (!recognition) return;
 
+    const direct = mode === "direct";
     voiceModeRef.current = true;
-    awaitingCommandRef.current = false;
+    directVoiceRef.current = direct;
+    awaitingCommandRef.current = direct;
     setVoiceMode(true);
     setVoiceState("starting");
     setLastHeard("");
+    setLiveTranscript("");
 
     try {
       recognition.start();
     } catch {
-      restartListening(250);
+      restartListening(200);
     }
+  }
+
+  function interruptAndListen() {
+    if (!voiceModeRef.current) return;
+    window.speechSynthesis?.cancel();
+    speakingRef.current = false;
+    directVoiceRef.current = true;
+    awaitingCommandRef.current = true;
+    setLiveTranscript("");
+    setVoiceState("awake");
+    restartListening(120);
   }
 
   async function confirmAction() {
@@ -533,14 +568,14 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
   }
 
   const voiceLabel =
-    voiceState === "starting" ? "Starting microphone…"
-    : voiceState === "listening" ? "Listening for “" + wakeWord + "”…"
-    : voiceState === "awake" ? "Listening to your request…"
-    : voiceState === "thinking" ? "Thinking through your request…"
-    : voiceState === "speaking" ? "Speaking…"
+    voiceState === "starting" ? "Opening the microphone…"
+    : voiceState === "listening" ? "Say “" + wakeWord + "” when you need me."
+    : voiceState === "awake" ? "Speak naturally. I’m listening."
+    : voiceState === "thinking" ? "Working on that now…"
+    : voiceState === "speaking" ? "Zoro is replying. You can interrupt anytime."
     : voiceState === "permission" ? "Microphone permission blocked"
     : voiceState === "unsupported" ? "Voice recognition unavailable"
-    : "Voice ready when you are";
+    : "Voice is ready.";
 
   function messageTime(value?: string) {
     if (!value) return "";
@@ -606,6 +641,11 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
               <p className="zoro-command-intro">
                 Ask naturally. Zoro can reason across your calendar, tasks, Gmail intelligence and reminders, then prepare actions for your approval.
               </p>
+              <div className="zoro-command-capability-row" aria-label="Zoro capabilities">
+                <span><Mic size={13} /> Voice</span>
+                <span><Sparkles size={13} /> Reason</span>
+                <span><ShieldCheck size={13} /> Confirm before acting</span>
+              </div>
               <div className="zoro-command-starters">
                 {QUICK_PROMPTS.slice(0, 4).map((prompt) => (
                   <button key={prompt} disabled={busy} onClick={() => void send(prompt)}>
@@ -615,7 +655,7 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
               </div>
               <button
                 className="zoro-command-voice-launch"
-                onClick={voiceMode ? stopVoiceMode : enableVoiceMode}
+                onClick={voiceMode ? stopVoiceMode : () => enableVoiceMode("direct")}
               >
                 <Mic size={21} />
                 <span>Talk to Zoro</span>
@@ -714,7 +754,7 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
         <div className="zoro-command-composer">
           <button
             className={"zoro-command-mic " + (voiceMode ? "is-live" : "")}
-            onClick={voiceMode ? stopVoiceMode : enableVoiceMode}
+            onClick={voiceMode ? stopVoiceMode : () => enableVoiceMode("direct")}
             aria-label={voiceMode ? "Stop Voice Mode" : "Start Voice Mode"}
           >
             {voiceMode ? <Mic size={21} /> : <MicOff size={21} />}
@@ -750,16 +790,127 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
       </footer>
 
       {voiceMode && !["permission", "unsupported"].includes(voiceState) && (
-        <div className="zoro-voice-immersive" role="dialog" aria-label="Zoro Voice Mode">
-          <button className="zoro-voice-close" onClick={stopVoiceMode}>Close</button>
-          <div className={"zoro-voice-orb state-" + voiceState}>
-            <span /><span /><span />
-            <Mic size={34} />
-          </div>
-          <p className="zoro-command-eyebrow">VOICE MODE</p>
-          <h2>{commandStatus}</h2>
-          <p>{voiceLabel}</p>
-          {lastHeard && <small>“{lastHeard}”</small>}
+        <div className={"zoro-voice-immersive zoro-voice-v3 state-" + voiceState} role="dialog" aria-modal="true" aria-label="Zoro Voice Mode">
+          <header className="zoro-voice-topbar">
+            <div className="zoro-voice-session">
+              <span className="zoro-voice-session-dot" />
+              <div>
+                <strong>Zoro Voice</strong>
+                <small>Live assistant session</small>
+              </div>
+            </div>
+            <div className="zoro-voice-top-actions">
+              <span className="zoro-voice-private"><ShieldCheck size={14} /> Actions require approval</span>
+              <button className="zoro-voice-close" onClick={stopVoiceMode} aria-label="Close Voice Mode"><X size={18} /></button>
+            </div>
+          </header>
+
+          <main className="zoro-voice-stage">
+            <button
+              className={"zoro-voice-orb-button state-" + voiceState}
+              onClick={voiceState === "speaking" ? interruptAndListen : undefined}
+              disabled={voiceState !== "speaking"}
+              aria-label={voiceState === "speaking" ? "Interrupt Zoro and start listening" : commandStatus}
+            >
+              <span className="zoro-voice-halo halo-one" />
+              <span className="zoro-voice-halo halo-two" />
+              <span className="zoro-voice-halo halo-three" />
+              <span className="zoro-voice-waveform" aria-hidden="true">
+                {Array.from({ length: 11 }).map((_, index) => <i key={index} />)}
+              </span>
+              <span className="zoro-voice-center">
+                {voiceState === "speaking" ? <Volume2 size={31} /> : <Mic size={31} />}
+              </span>
+            </button>
+
+            <p className="zoro-command-eyebrow">ZORO VOICE MODE</p>
+            <h2>{commandStatus}</h2>
+            <p className="zoro-voice-state-copy">{voiceLabel}</p>
+
+            <section className={"zoro-voice-transcript " + (liveTranscript ? "is-live" : "")} aria-live="polite">
+              <span>{voiceState === "speaking" ? "ZORO" : "YOU"}</span>
+              <p>
+                {liveTranscript
+                  || (voiceState === "speaking"
+                    ? (messages.at(-1)?.role === "assistant" ? messages.at(-1)?.text : "Replying…")
+                    : lastHeard || "Start speaking. Your words will appear here.")}
+              </p>
+            </section>
+
+            {busy && (
+              <div className="zoro-voice-working">
+                <span><i /><i /><i /></span>
+                <div>
+                  <strong>Zoro is working</strong>
+                  <small>Reasoning across your available context</small>
+                </div>
+              </div>
+            )}
+
+            {pendingAction && (
+              <section className="zoro-voice-approval">
+                <div className="zoro-voice-approval-head">
+                  <span>READY TO ACT</span>
+                  <strong>Approve before Zoro changes anything.</strong>
+                </div>
+                <div className="zoro-voice-approval-body">
+                  {pendingAction.type === "CREATE_TASK" ? (
+                    <>
+                      <strong>{pendingAction.title}</strong>
+                      <p>Create task · {pendingAction.priority} priority{pendingAction.dueAt ? " · " + new Date(pendingAction.dueAt).toLocaleString("en-AU") : ""}</p>
+                    </>
+                  ) : pendingAction.type === "CREATE_CALENDAR_EVENT" ? (
+                    <>
+                      <strong>{pendingAction.summary}</strong>
+                      <p>Create calendar event · {new Date(pendingAction.start).toLocaleString("en-AU")}</p>
+                    </>
+                  ) : (
+                    <>
+                      <strong>Sync MYOB roster</strong>
+                      <p>Reconcile roster-managed events with Google Calendar.</p>
+                    </>
+                  )}
+                </div>
+                <div className="zoro-voice-approval-actions">
+                  <button onClick={() => { setPendingAction(null); setConfirmationToken(null); awaitingCommandRef.current = true; restartListening(200); }}>Cancel</button>
+                  <button disabled={busy || !confirmationToken} onClick={confirmAction}>Confirm action</button>
+                </div>
+              </section>
+            )}
+
+            {!busy && !pendingAction && (voiceState === "awake" || voiceState === "listening") && (
+              <div className="zoro-voice-quick-actions" aria-label="Voice quick commands">
+                {["Plan my day", "Check important email", "What’s next?"].map((prompt) => (
+                  <button key={prompt} onClick={() => void send(prompt, true)}>{prompt}</button>
+                ))}
+              </div>
+            )}
+          </main>
+
+          <footer className="zoro-voice-footer">
+            <button className="zoro-voice-type-button" onClick={stopVoiceMode}>
+              <Keyboard size={17} /><span>Return to typing</span>
+            </button>
+            {voiceState === "speaking" ? (
+              <button className="zoro-voice-primary-control" onClick={interruptAndListen}>
+                <Mic size={19} /><span>Interrupt & speak</span>
+              </button>
+            ) : (
+              <button
+                className="zoro-voice-primary-control"
+                onClick={() => {
+                  directVoiceRef.current = true;
+                  awaitingCommandRef.current = true;
+                  setLiveTranscript("");
+                  setVoiceState("awake");
+                  restartListening(120);
+                }}
+                disabled={busy}
+              >
+                <Mic size={19} /><span>{busy ? "Zoro is working" : "Speak now"}</span>
+              </button>
+            )}
+          </footer>
         </div>
       )}
 

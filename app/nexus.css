@@ -2068,3 +2068,459 @@ section[aria-label="On-device model"] {
   .timeline-upcoming-item { flex-basis:150px; }
   .timeline-section-head h3 { font-size:12px; }
 }
+
+
+/* ========================================================================
+   Zoro Voice v7.5 · premium direct-conversation mode
+   ======================================================================== */
+.zoro-command-shell {
+  background:
+    radial-gradient(circle at 50% -8%,rgba(79,218,255,.16),transparent 31rem),
+    radial-gradient(circle at 86% 36%,rgba(118,83,255,.09),transparent 27rem),
+    radial-gradient(circle at 12% 76%,rgba(53,106,153,.08),transparent 24rem),
+    linear-gradient(180deg,#03070d 0%,#050b13 48%,#02060b 100%);
+}
+.zoro-command-shell::after {
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  opacity:.15;
+  background:
+    linear-gradient(115deg,transparent 0 47%,rgba(135,222,255,.08) 50%,transparent 53%),
+    repeating-linear-gradient(90deg,transparent 0 89px,rgba(120,190,240,.035) 90px);
+  mask-image:linear-gradient(to bottom,black,transparent 84%);
+}
+.zoro-command-header {
+  border-bottom-color:rgba(133,200,244,.10);
+  background:linear-gradient(180deg,rgba(3,8,14,.88),rgba(3,8,14,.62));
+}
+.zoro-command-welcome { max-width:720px; }
+.zoro-command-orb {
+  width:128px;
+  height:128px;
+  border-radius:40px;
+  border-color:rgba(105,231,255,.25);
+  background:
+    radial-gradient(circle at 50% 48%,rgba(126,239,255,.27),rgba(105,231,255,.065) 36%,rgba(56,86,140,.03) 65%,transparent 72%);
+  box-shadow:
+    inset 0 0 56px rgba(105,231,255,.055),
+    0 0 0 1px rgba(255,255,255,.012),
+    0 30px 110px rgba(0,0,0,.46),
+    0 0 72px rgba(75,204,255,.08);
+}
+.zoro-command-welcome h1 {
+  max-width:680px;
+  font-size:clamp(34px,7vw,56px);
+  font-weight:520;
+  letter-spacing:-.06em;
+}
+.zoro-command-intro { max-width:590px; font-size:12px; }
+.zoro-command-capability-row {
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:6px;
+  margin-top:14px;
+}
+.zoro-command-capability-row span {
+  min-height:30px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:0 10px;
+  border:1px solid rgba(127,177,220,.09);
+  border-radius:999px;
+  color:#61778c;
+  background:rgba(255,255,255,.016);
+  font-size:8px;
+  font-weight:720;
+}
+.zoro-command-capability-row svg { color:#6fe7fb; }
+.zoro-command-starters { margin-top:19px; }
+.zoro-command-starters button {
+  min-height:54px;
+  border-color:rgba(128,184,230,.10);
+  background:linear-gradient(145deg,rgba(255,255,255,.026),rgba(255,255,255,.012));
+}
+.zoro-command-voice-launch {
+  min-height:52px;
+  padding:0 21px;
+  box-shadow:0 12px 38px rgba(62,201,239,.12);
+}
+
+.zoro-command-composer-zone {
+  background:
+    linear-gradient(180deg,rgba(3,7,13,0),rgba(3,7,13,.86) 28%,rgba(3,7,13,.96));
+  border-top-color:transparent;
+  padding-top:14px;
+}
+.zoro-command-composer {
+  border-color:rgba(110,218,249,.18);
+  background:rgba(8,16,27,.78);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.026),
+    0 18px 65px rgba(0,0,0,.32),
+    0 0 0 1px rgba(255,255,255,.008);
+}
+.zoro-command-mic.is-live {
+  box-shadow:0 0 24px rgba(105,231,255,.13);
+}
+
+/* Full voice surface */
+.zoro-voice-v3 {
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr) auto;
+  align-content:stretch;
+  justify-items:stretch;
+  padding:0;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 42%,rgba(82,220,255,.145),transparent 25rem),
+    radial-gradient(circle at 50% 35%,rgba(99,88,255,.075),transparent 40rem),
+    linear-gradient(180deg,rgba(2,6,12,.995),rgba(3,8,14,.995));
+}
+.zoro-voice-v3::before {
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  opacity:.20;
+  background-image:
+    linear-gradient(rgba(116,197,240,.045) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(116,197,240,.045) 1px,transparent 1px);
+  background-size:38px 38px;
+  mask-image:radial-gradient(circle at center,black,transparent 74%);
+}
+.zoro-voice-topbar {
+  position:relative;
+  z-index:2;
+  min-height:72px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:max(12px,env(safe-area-inset-top)) 18px 10px;
+  border-bottom:1px solid rgba(127,190,231,.08);
+  background:rgba(2,6,11,.52);
+  backdrop-filter:blur(24px);
+}
+.zoro-voice-session { display:flex; align-items:center; gap:10px; min-width:0; }
+.zoro-voice-session-dot {
+  width:9px;
+  height:9px;
+  flex:0 0 auto;
+  border-radius:999px;
+  background:#75f0bc;
+  box-shadow:0 0 18px rgba(117,240,188,.55);
+}
+.zoro-voice-session > div { display:grid; gap:2px; }
+.zoro-voice-session strong { color:#edf8ff; font-size:11px; }
+.zoro-voice-session small { color:#596d83; font-size:8px; }
+.zoro-voice-top-actions { display:flex; align-items:center; gap:7px; }
+.zoro-voice-private {
+  min-height:36px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:0 10px;
+  border:1px solid rgba(122,179,220,.08);
+  border-radius:11px;
+  color:#61758a;
+  background:rgba(255,255,255,.012);
+  font-size:8px;
+  font-weight:700;
+}
+.zoro-voice-v3 .zoro-voice-close {
+  position:static;
+  width:40px;
+  min-height:40px;
+  padding:0;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  color:#7f91a6;
+  background:rgba(255,255,255,.018);
+}
+
+.zoro-voice-stage {
+  position:relative;
+  z-index:1;
+  min-height:0;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:30px 20px 24px;
+}
+.zoro-voice-orb-button {
+  position:relative;
+  width:clamp(180px,25vw,245px);
+  height:clamp(180px,25vw,245px);
+  flex:0 0 auto;
+  display:grid;
+  place-items:center;
+  margin-bottom:30px;
+  border:0;
+  border-radius:50%;
+  color:#a8f3ff;
+  background:
+    radial-gradient(circle at 50% 50%,rgba(106,232,255,.18),rgba(73,115,178,.055) 44%,transparent 68%);
+  box-shadow:
+    0 0 0 1px rgba(105,231,255,.10),
+    0 0 110px rgba(71,206,246,.13);
+  cursor:default;
+}
+.zoro-voice-orb-button:disabled { opacity:1; }
+.zoro-voice-orb-button.state-speaking { cursor:pointer; }
+.zoro-voice-halo {
+  position:absolute;
+  border:1px solid rgba(105,231,255,.14);
+  border-radius:50%;
+  pointer-events:none;
+}
+.zoro-voice-halo.halo-one { inset:10px; }
+.zoro-voice-halo.halo-two { inset:31px; border-color:rgba(152,124,255,.18); }
+.zoro-voice-halo.halo-three { inset:54px; border-color:rgba(105,231,255,.22); }
+.zoro-voice-center {
+  position:relative;
+  z-index:3;
+  width:76px;
+  height:76px;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(132,235,255,.30);
+  border-radius:50%;
+  color:#b8f6ff;
+  background:rgba(84,208,239,.09);
+  box-shadow:inset 0 0 30px rgba(105,231,255,.08),0 0 34px rgba(105,231,255,.10);
+}
+.zoro-voice-waveform {
+  position:absolute;
+  z-index:2;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  pointer-events:none;
+}
+.zoro-voice-waveform i {
+  width:3px;
+  height:10px;
+  border-radius:999px;
+  background:#7cecff;
+  opacity:.12;
+}
+.zoro-voice-v3.state-awake .zoro-voice-waveform i,
+.zoro-voice-v3.state-listening .zoro-voice-waveform i { opacity:.55; }
+.zoro-voice-v3.state-speaking .zoro-voice-waveform i { background:#b79cff; opacity:.48; }
+.zoro-voice-v3.state-thinking .zoro-voice-center { color:#c4b2ff; border-color:rgba(177,148,255,.30); background:rgba(137,96,255,.08); }
+.zoro-voice-v3 h2 {
+  margin-top:9px;
+  color:#f2f8ff;
+  font-size:clamp(32px,6vw,48px);
+  font-weight:520;
+  letter-spacing:-.055em;
+}
+.zoro-voice-state-copy {
+  margin-top:8px!important;
+  max-width:520px;
+  color:#71849a!important;
+  font-size:11px!important;
+  line-height:1.55;
+}
+.zoro-voice-transcript {
+  width:min(100%,620px);
+  min-height:86px;
+  display:grid;
+  align-content:center;
+  gap:7px;
+  margin-top:24px;
+  padding:15px 17px;
+  border:1px solid rgba(126,180,222,.09);
+  border-radius:18px;
+  background:rgba(255,255,255,.018);
+  text-align:left;
+}
+.zoro-voice-transcript.is-live {
+  border-color:rgba(105,231,255,.24);
+  background:rgba(105,231,255,.035);
+}
+.zoro-voice-transcript > span {
+  color:#5d748b;
+  font-size:7px;
+  font-weight:850;
+  letter-spacing:.14em;
+}
+.zoro-voice-transcript p {
+  max-height:105px;
+  overflow:auto;
+  color:#dce8f4;
+  font-size:13px;
+  line-height:1.6;
+}
+.zoro-voice-working {
+  width:min(100%,620px);
+  display:flex;
+  align-items:center;
+  gap:11px;
+  margin-top:10px;
+  padding:11px 13px;
+  border:1px solid rgba(105,231,255,.11);
+  border-radius:14px;
+  background:rgba(105,231,255,.025);
+}
+.zoro-voice-working > span { display:flex; gap:3px; }
+.zoro-voice-working i { width:5px; height:5px; border-radius:999px; background:#72e9fb; opacity:.3; }
+.zoro-voice-working > div { display:grid; gap:2px; }
+.zoro-voice-working strong { color:#cbd8e5; font-size:9px; }
+.zoro-voice-working small { color:#586b80; font-size:8px; }
+.zoro-voice-approval {
+  width:min(100%,620px);
+  margin-top:12px;
+  padding:14px;
+  border:1px solid rgba(255,209,102,.20);
+  border-radius:17px;
+  background:rgba(255,209,102,.035);
+  text-align:left;
+}
+.zoro-voice-approval-head { display:grid; gap:4px; }
+.zoro-voice-approval-head span { color:#ffd166; font-size:7px; font-weight:850; letter-spacing:.14em; }
+.zoro-voice-approval-head strong { color:#cbb98f; font-size:9px; }
+.zoro-voice-approval-body {
+  display:grid;
+  gap:4px;
+  margin-top:10px;
+  padding:11px;
+  border:1px solid rgba(255,255,255,.05);
+  border-radius:12px;
+  background:rgba(0,0,0,.16);
+}
+.zoro-voice-approval-body strong { color:#edf4fb; font-size:11px; }
+.zoro-voice-approval-body p { color:#74869b; font-size:9px; line-height:1.45; }
+.zoro-voice-approval-actions { display:flex; gap:7px; margin-top:10px; }
+.zoro-voice-approval-actions button {
+  flex:1;
+  min-height:42px;
+  border:1px solid rgba(134,172,229,.10);
+  border-radius:11px;
+  color:#8b9caf;
+  background:rgba(255,255,255,.018);
+  font-size:9px;
+  font-weight:760;
+}
+.zoro-voice-approval-actions button:last-child {
+  color:#061017;
+  border-color:rgba(105,231,255,.26);
+  background:linear-gradient(135deg,#70eafd,#b0f7ff);
+}
+.zoro-voice-quick-actions {
+  width:min(100%,620px);
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:12px;
+}
+.zoro-voice-quick-actions button {
+  min-height:36px;
+  padding:0 11px;
+  border:1px solid rgba(128,184,225,.09);
+  border-radius:999px;
+  color:#75899e;
+  background:rgba(255,255,255,.014);
+  font-size:8px;
+}
+
+.zoro-voice-footer {
+  position:relative;
+  z-index:2;
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  padding:10px 16px max(12px,env(safe-area-inset-bottom));
+  border-top:1px solid rgba(127,190,231,.08);
+  background:rgba(2,6,11,.70);
+  backdrop-filter:blur(22px);
+}
+.zoro-voice-footer button {
+  min-height:48px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:0 16px;
+  border-radius:14px;
+  font-size:9px;
+  font-weight:780;
+}
+.zoro-voice-type-button {
+  border:1px solid rgba(128,184,225,.10);
+  color:#8598ad;
+  background:rgba(255,255,255,.018);
+}
+.zoro-voice-primary-control {
+  min-width:170px;
+  border:1px solid rgba(105,231,255,.28);
+  color:#051017;
+  background:linear-gradient(135deg,#70eafd,#b4f8ff);
+  box-shadow:0 12px 34px rgba(76,208,242,.11);
+}
+
+@media(prefers-reduced-motion:no-preference){
+  .zoro-voice-v3.state-awake .zoro-voice-halo.halo-one,
+  .zoro-voice-v3.state-listening .zoro-voice-halo.halo-one { animation:zoroVoiceHalo 2.1s ease-in-out infinite; }
+  .zoro-voice-v3.state-awake .zoro-voice-halo.halo-two,
+  .zoro-voice-v3.state-listening .zoro-voice-halo.halo-two { animation:zoroVoiceHalo 2.1s .22s ease-in-out infinite; }
+  .zoro-voice-v3.state-thinking .zoro-voice-halo.halo-two { animation:zoroVoiceSpin 5s linear infinite; }
+  .zoro-voice-v3.state-speaking .zoro-voice-halo.halo-three { animation:zoroVoiceHalo 1.25s ease-in-out infinite; }
+  .zoro-voice-v3.state-awake .zoro-voice-waveform i,
+  .zoro-voice-v3.state-listening .zoro-voice-waveform i,
+  .zoro-voice-v3.state-speaking .zoro-voice-waveform i { animation:zoroVoiceBar .9s ease-in-out infinite alternate; }
+  .zoro-voice-waveform i:nth-child(2n){animation-delay:.12s!important}
+  .zoro-voice-waveform i:nth-child(3n){animation-delay:.24s!important}
+  .zoro-voice-waveform i:nth-child(4n){animation-delay:.34s!important}
+  .zoro-voice-working i:nth-child(1){animation:thinkDot 1s infinite}
+  .zoro-voice-working i:nth-child(2){animation:thinkDot 1s .15s infinite}
+  .zoro-voice-working i:nth-child(3){animation:thinkDot 1s .3s infinite}
+}
+@keyframes zoroVoiceHalo { 50% { transform:scale(1.07); opacity:.5; } }
+@keyframes zoroVoiceSpin { to { transform:rotate(360deg); } }
+@keyframes zoroVoiceBar { from { height:8px; opacity:.2; } to { height:34px; opacity:.72; } }
+
+@media(max-width:680px){
+  .zoro-command-orb { width:102px; height:102px; border-radius:32px; }
+  .zoro-command-welcome h1 { font-size:clamp(31px,10vw,43px); }
+  .zoro-command-capability-row { margin-top:11px; }
+  .zoro-voice-topbar { min-height:64px; padding-inline:11px; }
+  .zoro-voice-private { display:none; }
+  .zoro-voice-stage { justify-content:flex-start; padding:30px 12px 20px; }
+  .zoro-voice-orb-button { width:168px; height:168px; margin:16px 0 24px; }
+  .zoro-voice-halo.halo-one { inset:9px; }
+  .zoro-voice-halo.halo-two { inset:26px; }
+  .zoro-voice-halo.halo-three { inset:44px; }
+  .zoro-voice-center { width:64px; height:64px; }
+  .zoro-voice-v3 h2 { font-size:34px; }
+  .zoro-voice-transcript { min-height:78px; margin-top:18px; padding:13px 14px; border-radius:16px; }
+  .zoro-voice-transcript p { font-size:12px; }
+  .zoro-voice-quick-actions {
+    justify-content:flex-start;
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    scrollbar-width:none;
+  }
+  .zoro-voice-quick-actions::-webkit-scrollbar { display:none; }
+  .zoro-voice-quick-actions button { flex:0 0 auto; }
+  .zoro-voice-footer { padding-inline:9px; }
+  .zoro-voice-footer button { flex:1; min-width:0; padding-inline:10px; }
+  .zoro-voice-primary-control { min-width:0; }
+}
+@media(max-width:390px){
+  .zoro-command-capability-row span:nth-child(2) { display:none; }
+  .zoro-voice-stage { padding-top:20px; }
+  .zoro-voice-orb-button { width:150px; height:150px; }
+  .zoro-voice-footer button span { font-size:8px; }
+}
