@@ -18,3 +18,13 @@ test("reminder parser supports natural 'set the reminder' wording and recurring 
   assert.match(source,/every day\|everyday\|daily/);
   assert.match(source,/ring/);
 });
+
+
+test("relative reminders are treated as complete commands", () => {
+  const tools=readFileSync(new URL("../lib/intelligence/assistant-tools.ts",import.meta.url),"utf8");
+  const route=readFileSync(new URL("../app/api/assistant/route.ts",import.meta.url),"utf8");
+  assert.match(tools,/\(\?:in\|after\)/);
+  assert.match(tools,/seconds\?\|secs\?\|minutes\?\|mins\?\|hours\?\|hrs\?\|days\?/);
+  assert.match(route,/action\.type === "CREATE_REMINDER" \|\| action\.type === "CREATE_TASK"/);
+  assert.match(route,/executeAction\(session\.user\.id, action\)/);
+});
