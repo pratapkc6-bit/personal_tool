@@ -102,6 +102,7 @@ function eventPreview(message: string): CalendarPendingAction | null {
     .replace(parsed.matchedText, "")
     .replace(/^(?:please\s+)?(?:add|schedule|book|create|put|set|block)\s+(?:an?\s+)?/i, "")
     .replace(/\b(?:to|in)\s+(?:my\s+)?calendar\b/gi, "")
+    .replace(/\bfor\s+\d+\s*(?:minutes?|mins?|hours?|hrs?)\b/gi, "")
     .replace(/\s+/g, " ")
     .replace(/^[,.:;\-\s]+|[,.:;\-\s]+$/g, "")
     .trim();
@@ -230,7 +231,16 @@ async function reminderUpdateResolution(
     .map((item) => ({ item, score: reminderMatchScore(understood, item.title) }))
     .sort((a, b) => b.score - a.score || a.item.remindAt.getTime() - b.item.remindAt.getTime())[0];
 
-  const selected = existing?.score ? existing.item : reminders.length === 1 ? reminders[0] : null;
+  const secondRanked = reminders.length > 1
+    ? reminders
+        .map((item) => ({ item, score: reminderMatchScore(understood, item.title) }))
+        .sort((a, b) => b.score - a.score || a.item.remindAt.getTime() - b.item.remindAt.getTime())[1]
+    : undefined;
+  const selected = existing?.score && (!secondRanked || secondRanked.score < existing.score)
+    ? existing.item
+    : reminders.length === 1
+      ? reminders[0]
+      : null;
   const timeZone = selected?.timezone || process.env.APP_TIMEZONE || "Australia/Darwin";
 
   const clockTurn = [...contextualTurns, message]
@@ -333,7 +343,9 @@ async function reminderDeleteResolution(
     .map((item) => ({ item, score: reminderMatchScore(understood, item.title) }))
     .sort((a, b) => b.score - a.score || a.item.remindAt.getTime() - b.item.remindAt.getTime());
 
-  const selected = ranked[0]?.score ? ranked[0].item : reminders.length === 1 ? reminders[0] : null;
+  const selected = ranked[0]?.score && (!ranked[1] || ranked[1].score < ranked[0].score)
+    ? ranked[0].item
+    : reminders.length === 1 ? reminders[0] : null;
   if (!selected) {
     return {
       message: "Which reminder should I delete?",
@@ -364,7 +376,9 @@ async function noteDeleteResolution(
     .map((item) => ({ item, score: noteMatchScore(item, requestText) }))
     .sort((a, b) => b.score - a.score);
 
-  const selected = ranked[0]?.score ? ranked[0].item : notes.length === 1 ? notes[0] : null;
+  const selected = ranked[0]?.score && (!ranked[1] || ranked[1].score < ranked[0].score)
+    ? ranked[0].item
+    : notes.length === 1 ? notes[0] : null;
   if (!selected) {
     return {
       message: "Which note should I delete?",
@@ -644,8 +658,14 @@ export async function POST(request: NextRequest) {
     const patroAnchor = /\b(nepali\s+(?:patro|calendar|date)|patro|bikram\s+sambat|bs\s+date|tithi|nepali\s+festival)\b/i;
     const patroRequest = contextualRequest(message, history, patroAnchor);
     const patroFollowUp = /^(?:and\s+)?(?:what(?:'s| is)?\s+(?:on|for)\s+that\s+day|what about (?:today|tomorrow|that day)|today|tomorrow|that day)[?.!\s]*$/i.test(understood);
-    if (isPatroIntent(message) || (patroFollowUp && isPatroIntent(patroRequest))) {
-      return NextResponse.json({ message: answerPatro(patroRequest), engine: "tool", tool: "nepali_patro" });
+    if (isPatroIntent(message)) {
+      return NextResponse.json({ message: answerPatro(message), engine: "tool", tool: "nepali_patro" });
+    }
+    if (patroFollowUp && isPatroIntent(patroRequest)) {
+      const relativePatroRequest = /\b(today|tomorrow|yesterday)\b/i.test(understood)
+        ? "Nepali Patro " + message
+        : patroRequest;
+      return NextResponse.json({ message: answerPatro(relativePatroRequest), engine: "tool", tool: "nepali_patro" });
     }
 
     if (isGmailScanIntent(message)) {
@@ -690,8 +710,11 @@ export async function POST(request: NextRequest) {
     const calendarReadAnchor = /\b(?:what(?:'s| is)?|show|list|check|tell me|do i have)\b.*\b(?:calendar|schedule|agenda|events?)\b/i;
     const calendarRequest = contextualRequest(message, history, calendarReadAnchor);
     const calendarFollowUp = /^(?:and\s+)?(?:what about\s+)?(?:today|tomorrow|tonight|this morning|this afternoon)[?.!\s]*$/i.test(understood);
-    if (isCalendarAgendaIntent(message) || (calendarFollowUp && isCalendarAgendaIntent(calendarRequest))) {
-      return NextResponse.json({ ...await calendarAgenda(session.user.id, calendarRequest), engine: "tool", tool: "calendar" });
+    if (isCalendarAgendaIntent(message)) {
+      return NextResponse.json({ ...await calendarAgenda(session.user.id, message), engine: "tool", tool: "calendar" });
+    }
+    if (calendarFollowUp && isCalendarAgendaIntent(calendarRequest)) {
+      return NextResponse.json({ ...await calendarAgenda(session.user.id, message), engine: "tool", tool: "calendar" });
     }
 
     if (/^(please )?(sync|add|check|update|refresh)\s+(my |the )?(myob )?roster[.!?]*$/i.test(understood)) {
