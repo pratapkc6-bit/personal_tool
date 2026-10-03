@@ -10,7 +10,7 @@ function localInputValue(date=new Date(Date.now()+60*60_000)){
   return new Date(date.getTime()-offset).toISOString().slice(0,16);
 }
 function pretty(value:string){
-  try{return new Intl.DateTimeFormat("en-AU",{dateStyle:"full",timeStyle:"short"}).format(new Date(value))}
+  try{return new Intl.DateTimeFormat("en-AU",{timeZone:"Australia/Darwin",dateStyle:"full",timeStyle:"short"}).format(new Date(value))}
   catch{return value}
 }
 
