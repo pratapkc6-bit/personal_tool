@@ -14,6 +14,7 @@ import { prepareConfirmation, consumeConfirmation } from "@/lib/intelligence/con
 import { buildMission } from "@/lib/intelligence/mission";
 import { answerWithOpenAI, openAIConfigured } from "@/lib/openai-provider";
 import { emailPreview, isGmailScanIntent, isReminderListIntent, parseAssistantDate, reminderPreview } from "@/lib/intelligence/assistant-tools";
+import { formatZoroDateTime } from "@/lib/time";
 
 export const maxDuration = 60;
 
@@ -83,7 +84,7 @@ async function executeAction(userId: string, action: PendingAction) {
     await audit({ userId, action: action.mode === "ALARM" ? "ALARM_CREATED" : "REMINDER_CREATED", source: "AssistantConfirmed", sourceRef: reminder.id, newState: reminder, result: "SUCCESS" });
     await activity({ userId, type: "REMINDER", summary: `${action.mode === "ALARM" ? "Alarm" : "Reminder"} created: ${reminder.title}`, details: { reminderId: reminder.id, remindAt: reminder.remindAt } });
     const delivery = settings.masterEnabled && settings.pushEnabled && subscriptions > 0 ? " Background push is enabled." : " It will ring while Zoro is open; enable Notifications for background alerts.";
-    return { message: `Created ${action.mode.toLowerCase()} "${action.title}" for ${new Date(action.remindAt).toLocaleString("en-AU")}.${delivery}` };
+    return { message: `Created ${action.mode.toLowerCase()} "${action.title}" for ${formatZoroDateTime(action.remindAt,action.timezone)} (${action.timezone}).${delivery}` };
   }
 
   if (action.type === "CREATE_EMAIL_DRAFT" || action.type === "SEND_EMAIL") {
@@ -153,7 +154,7 @@ export async function POST(request: NextRequest) {
 
     if (isReminderListIntent(message)) {
       const reminders = await db.reminder.findMany({ where: { userId: session.user.id, status: { in: ["OPEN", "FIRED"] } }, orderBy: { remindAt: "asc" }, take: 10 });
-      const text = reminders.length ? reminders.map((item) => `• ${item.title} — ${new Date(item.snoozedUntil || item.remindAt).toLocaleString("en-AU")}${item.recurrence === "DAILY" ? " · daily" : ""}`).join("\n") : "You have no open reminders or alarms.";
+      const text = reminders.length ? reminders.map((item) => `• ${item.title} — ${formatZoroDateTime(item.snoozedUntil || item.remindAt,item.timezone || undefined)}${item.recurrence === "DAILY" ? " · daily" : ""}`).join("\n") : "You have no open reminders or alarms.";
       return NextResponse.json({ message: text, engine: "tool", tool: "reminders" });
     }
 

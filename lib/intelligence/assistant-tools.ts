@@ -1,6 +1,7 @@
 import * as chrono from "chrono-node";
 import type { PendingAction } from "@/lib/intelligence/assistant-contract";
 import { normalizeAssistantInput } from "@/lib/intelligence/local-assistant";
+import { APP_TIMEZONE, chronoReferenceForTimezone, zonedDateTime, zonedParts } from "@/lib/time";
 
 type ReminderAction = Extract<PendingAction, { type: "CREATE_REMINDER" }>;
 type EmailAction = Extract<PendingAction, { type: "CREATE_EMAIL_DRAFT" | "SEND_EMAIL" }>;
@@ -9,17 +10,19 @@ function pad(value: number) {
   return String(value).padStart(2, "0");
 }
 
-export function parseAssistantDate(text: string, now = new Date()) {
-  const result = chrono.parse(text, now, { forwardDate: true })[0];
-  if (!result) return null;
-  const c = result.start;
-  const year = c.get("year") ?? now.getFullYear();
-  const month = c.get("month") ?? now.getMonth() + 1;
-  const day = c.get("day") ?? now.getDate();
-  const hour = c.get("hour") ?? 9;
-  const minute = c.get("minute") ?? 0;
-  const date = new Date(`${year}-${pad(month)}-${pad(day)}T${pad(hour)}:${pad(minute)}:00+09:30`);
-  return { date, matchedText: result.text, hour, minute };
+export function parseAssistantDate(text: string, now = new Date(), timeZone = APP_TIMEZONE) {
+  const localNow=zonedParts(now,timeZone);
+  const reference=chronoReferenceForTimezone(now,timeZone);
+  const result=chrono.parse(text,reference,{forwardDate:true})[0];
+  if(!result)return null;
+  const c=result.start;
+  const year=c.get("year")??localNow.year;
+  const month=c.get("month")??localNow.month;
+  const day=c.get("day")??localNow.day;
+  const hour=c.get("hour")??9;
+  const minute=c.get("minute")??0;
+  const date=zonedDateTime({year,month,day,hour,minute,second:0},timeZone);
+  return {date,matchedText:result.text,hour,minute,timeZone};
 }
 
 function cleanTitle(value: string) {
@@ -34,14 +37,17 @@ function cleanTitle(value: string) {
 export function reminderPreview(message: string): ReminderAction | null {
   const understood = normalizeAssistantInput(message);
   const alarm = /\b(set\s+(?:an?\s+)?alarm|alarm me|wake me|alarm)\b/i.test(understood);
-  const reminder = /\b(remind me|remember me|set\s+(?:a\s+)?reminder|reminder)\b/i.test(understood);
+  const reminder = /\b(remind me|remember me|set\s+(?:(?:a|the)\s+)?reminder|reminder)\b/i.test(understood);
   if (!alarm && !reminder) return null;
   const parsed = parseAssistantDate(understood);
   if (!parsed) return null;
   const recurrence = /\b(every day|everyday|daily)\b/i.test(understood) ? "DAILY" : "NONE";
   let title = understood
-    .replace(/^(please\s+)?(remind me(?: to)?|remember me(?: to)?|set\s+(?:a\s+)?reminder(?: to)?|set\s+(?:an?\s+)?alarm(?: for| to)?|alarm me(?: to)?|wake me(?: up)?(?: to)?|alarm)\s*/i, "")
-    .replace(parsed.matchedText, "");
+    .replace(/^(please\s+)?(remind me(?: to)?|remember me(?: to)?|set\s+(?:(?:a|the)\s+)?reminder(?:\s+(?:of|for|to))?|set\s+(?:an?\s+)?alarm(?: for| to)?|alarm me(?: to)?|wake me(?: up)?(?: to)?|alarm)\s*/i, "")
+    .replace(parsed.matchedText, "")
+    .replace(/\b(?:and\s+)?(?:set|make)(?:\s+it)?\s+(?:ring|alarm)(?:\s+for\s+it)?\b.*$/i, "")
+    .replace(/\b(?:and\s+)?ring(?:\s+for\s+it)?\b.*$/i, "")
+    .replace(/\b(?:at|for|to)\s*$/i, "");
   title = cleanTitle(title);
   if (!title) title = alarm ? "Alarm" : "Reminder";
   return {
@@ -51,7 +57,7 @@ export function reminderPreview(message: string): ReminderAction | null {
     mode: alarm ? "ALARM" : "REMINDER",
     recurrence,
     recurrenceTime: recurrence === "DAILY" ? `${pad(parsed.hour)}:${pad(parsed.minute)}` : undefined,
-    timezone: process.env.APP_TIMEZONE || "Australia/Darwin",
+    timezone: APP_TIMEZONE,
     ringSeconds: alarm ? 10 : 3,
   };
 }

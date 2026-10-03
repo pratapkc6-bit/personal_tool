@@ -1,10 +1,16 @@
 import { buildSecretaryBriefing } from "@/lib/secretary";
 import { getGoogleServices } from "@/lib/google";
+import { getPersonalProfileContext } from "@/lib/personal-profile";
+import { ZORO_APP_LAYOUT } from "@/lib/zoro-app-map";
+import { APP_TIMEZONE, formatZoroDateTime } from "@/lib/time";
 
 export type AssistantContext = Awaited<ReturnType<typeof buildAssistantContext>>;
 
 export async function buildAssistantContext(userId: string) {
-  const briefing = await buildSecretaryBriefing(userId);
+  const [briefing,personalProfile] = await Promise.all([
+    buildSecretaryBriefing(userId),
+    getPersonalProfileContext(userId)
+  ]);
   const now = new Date();
   const horizon = new Date(now.getTime() + 7 * 86_400_000);
   let calendarStatus: "available" | "unavailable" | "partial" = "unavailable";
@@ -43,7 +49,10 @@ export async function buildAssistantContext(userId: string) {
 
   return {
     generatedAt: now.toISOString(),
-    timezone: process.env.APP_TIMEZONE || "Australia/Darwin",
+    timezone: APP_TIMEZONE,
+    localNow: formatZoroDateTime(now,APP_TIMEZONE),
+    appLayout: ZORO_APP_LAYOUT,
+    personalProfile,
     summary: briefing.summary,
     lastGmailScanAt: briefing.lastGmailScanAt,
     topPriorities: briefing.topPriorities,

@@ -27,5 +27,6 @@ export async function getGoogleServices(userId: string) {
   return {
     calendar: google.calendar({ version: "v3", auth }),
     gmail: google.gmail({ version: "v1", auth }),
+    drive: google.drive({ version: "v3", auth }),
   };
 }
