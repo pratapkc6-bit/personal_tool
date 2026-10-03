@@ -11,20 +11,44 @@ export type OpenAIAnswer={
   usage?:{inputTokens?:number;outputTokens?:number;totalTokens?:number};
 };
 
+export type OpenAIRoute={
+  model:string;
+  reasoningEffort:"low"|"medium"|"high";
+  verbosity:"low"|"medium";
+  maxOutputTokens:number;
+  mode:"quick"|"standard"|"deep";
+};
+
 export function openAIConfigured(){
   return Boolean(process.env.OPENAI_API_KEY?.trim());
 }
 
+export function chooseOpenAIRoute(message:string):OpenAIRoute{
+  const text=message.trim();
+  const deep=/\b(analy[sz]e|compare|strategy|trade-?off|pros and cons|prioriti[sz]e|plan my (day|week)|what should i do and why|decision|evaluate|deep|reason through|conflict|schedule around|best approach)\b/i.test(text);
+  const quick=/^(hi|hello|hey|thanks|thank you|ok|okay|yes|no|who are you|what can you do)[.!?\s]*$/i.test(text) ||
+    text.length<80 && /\b(when|where|what time|how many|which one)\b/i.test(text);
+
+  if(deep){
+    return {model:SMART_MODEL,reasoningEffort:"high",verbosity:"medium",maxOutputTokens:1400,mode:"deep"};
+  }
+  if(quick){
+    return {model:DEFAULT_MODEL,reasoningEffort:"low",verbosity:"low",maxOutputTokens:650,mode:"quick"};
+  }
+  return {model:DEFAULT_MODEL,reasoningEffort:"medium",verbosity:"medium",maxOutputTokens:1000,mode:"standard"};
+}
+
 export function chooseOpenAIModel(message:string){
-  const complex=/\b(analy[sz]e|compare|strategy|plan my|deep|reason|trade-?off|pros and cons|recommend|prioriti[sz]e everything|what should i do and why)\b/i.test(message);
-  return complex?SMART_MODEL:DEFAULT_MODEL;
+  return chooseOpenAIRoute(message).model;
 }
 
 export function compactAssistantContext(context:AssistantContext){
   return {
     generatedAt:context.generatedAt,
     timezone:context.timezone,
+    lastGmailScanAt:context.lastGmailScanAt,
     calendarStatus:context.calendarStatus,
+    calendarHorizon:context.calendarHorizon,
     summary:context.summary,
     priorities:context.topPriorities.slice(0,5).map(x=>({
       title:x.title,priority:x.priority,dueAt:x.dueAt,nextAction:x.nextAction,reason:x.reason
@@ -38,7 +62,7 @@ export function compactAssistantContext(context:AssistantContext){
     })),
     followups:context.followups.slice(0,8),
     tasks:context.tasks.slice(0,12),
-    calendarEvents:context.calendarEvents.slice(0,16)
+    calendarEvents:context.calendarEvents.slice(0,20)
   };
 }
 
@@ -48,10 +72,16 @@ export function buildZoroInstructions(context:AssistantContext){
     "You are Zoro, a private personal AI secretary.",
     "Be concise, practical, specific, and calm. Prefer a clear next action over generic advice.",
     "Use the supplied Zoro context as the source of truth for the user's personal tasks, email intelligence, follow-ups, deadlines, and calendar.",
+    "Reason carefully about dates, deadlines, schedule conflicts, freshness, and dependencies before answering planning questions.",
+    "Distinguish known facts from suggestions or estimates. Never turn missing context into a claim that something does not exist.",
+    "When relative dates such as today, tomorrow, or next week could be confusing, anchor the answer with an exact date.",
+    "For priorities, explain the most important reason in one short sentence and give the next concrete action.",
+    "If two pieces of context conflict, call out the conflict and prefer the newer timestamp rather than silently guessing.",
+    "If the user asks for a current external fact that is not present in Zoro context, say a live lookup is needed instead of inventing an answer.",
     "Never invent an email, event, deadline, task, status, person, or completed action that is not in the supplied context.",
     "If the context says Calendar is unavailable or partial, state that limitation instead of claiming the user is free.",
     "Never claim you sent email, changed Calendar, created a task, or completed another external action. Zoro's deterministic action layer handles writes and confirmation separately.",
-    "When useful, explain why something matters, but keep the response easy to scan.",
+    "Do not expose private chain-of-thought. Give concise conclusions, reasons, and actionable steps only.",
     "The user's operating timezone is "+context.timezone+".",
     "Personal context snapshot follows. It contains summaries, not raw Gmail bodies:",
     snapshot
@@ -83,7 +113,7 @@ export async function answerWithOpenAI(
   const key=process.env.OPENAI_API_KEY?.trim();
   if(!key)return null;
 
-  const model=chooseOpenAIModel(message);
+  const route=chooseOpenAIRoute(message);
   const controller=new AbortController();
   const timer=setTimeout(()=>controller.abort(),22_000);
   try{
@@ -95,12 +125,12 @@ export async function answerWithOpenAI(
       method:"POST",
       headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},
       body:JSON.stringify({
-        model,
+        model:route.model,
         instructions:buildZoroInstructions(context),
         input,
-        reasoning:{effort:"medium"},
-        text:{verbosity:"medium"},
-        max_output_tokens:1000,
+        reasoning:{effort:route.reasoningEffort},
+        text:{verbosity:route.verbosity},
+        max_output_tokens:route.maxOutputTokens,
         store:false
       }),
       signal:controller.signal,
@@ -119,7 +149,7 @@ export async function answerWithOpenAI(
     if(!text)return null;
     return {
       text,
-      model:data.model||model,
+      model:data.model||route.model,
       usage:data.usage?{
         inputTokens:data.usage.input_tokens,
         outputTokens:data.usage.output_tokens,

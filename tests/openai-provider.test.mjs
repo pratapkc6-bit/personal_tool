@@ -10,19 +10,26 @@ test("OpenAI provider keeps API key server-side",()=>{
   assert.match(source,/store:false/);
 });
 
-test("OpenAI provider defaults to low-cost Luna and caps output",()=>{
+test("OpenAI provider defaults to low-cost Luna and adapts reasoning",()=>{
   assert.match(source,/gpt-6-luna/);
-  assert.match(source,/max_output_tokens:1000/);
-  assert.match(source,/reasoning:\{effort:"medium"\}/);
+  assert.match(source,/reasoningEffort:"high"/);
+  assert.match(source,/reasoningEffort:"medium"/);
+  assert.match(source,/reasoningEffort:"low"/);
+  assert.match(source,/maxOutputTokens:1400/);
+  assert.match(source,/maxOutputTokens:1000/);
 });
 
 test("OpenAI provider sends compact derived context instead of raw Gmail bodies",()=>{
   assert.match(source,/emailActions:context\.emailActions\.slice/);
+  assert.match(source,/lastGmailScanAt:context\.lastGmailScanAt/);
+  assert.match(source,/calendarHorizon:context\.calendarHorizon/);
   assert.doesNotMatch(source,/messageBody|rawBody|gmailBody|bodyText/);
   assert.match(source,/raw Gmail bodies/);
 });
 
-test("Zoro instructions preserve deterministic write-action boundary",()=>{
+test("Zoro instructions improve planning without weakening action safety",()=>{
+  assert.match(source,/schedule conflicts, freshness, and dependencies/);
+  assert.match(source,/Distinguish known facts from suggestions or estimates/);
   assert.match(source,/deterministic action layer handles writes and confirmation separately/);
   assert.match(source,/Never claim you sent email, changed Calendar, created a task/);
 });
