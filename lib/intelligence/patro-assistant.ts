@@ -1,5 +1,6 @@
 import { createRequire } from "node:module";
 import { normalizeAssistantInput } from "@/lib/intelligence/local-assistant";
+import { APP_TIMEZONE, zonedParts } from "@/lib/time";
 
 const require = createRequire(import.meta.url);
 const patro: any = require("@namlo/nepali-calendar");
@@ -15,10 +16,9 @@ function textArray(value: unknown) {
 
 function targetDateFromMessage(message: string) {
   const understood = normalizeAssistantInput(message);
-  const now = new Date();
-  if (/\btomorrow\b/i.test(understood)) return new Date(now.getTime() + 86_400_000);
-  if (/\byesterday\b/i.test(understood)) return new Date(now.getTime() - 86_400_000);
-  return now;
+  const now = zonedParts(new Date(), APP_TIMEZONE);
+  const offset = /\btomorrow\b/i.test(understood) ? 1 : /\byesterday\b/i.test(understood) ? -1 : 0;
+  return new Date(Date.UTC(now.year, now.month - 1, now.day + offset, 12, 0, 0));
 }
 
 export function isPatroIntent(message: string) {
