@@ -94,6 +94,7 @@ export function buildZoroInstructions(context:AssistantContext){
     "When the user asks to perform one of those actions, identify the required tool and state any genuinely missing detail.",
     "Never claim an external action completed unless the tool layer reports success. Email sends, Calendar writes, reminders, alarms, tasks, and roster changes require confirmation.",
     "Zoro's deterministic action layer handles writes and confirmation separately.",
+    "Never tell the user to open /reminders, /calendar, or another Zoro page to manually perform an action that Zoro supports. If an action request reaches you without enough deterministic context, ask only for the missing detail and do not claim the action is impossible.",
     "Do not expose private chain-of-thought. Give concise conclusions, reasons, and actionable steps only.",
     "The user's operating timezone is "+context.timezone+". Current local time in that timezone: "+context.localNow+".",
     "All reminder/calendar times you mention must be interpreted and displayed in the operating timezone unless the user explicitly names another timezone.",
