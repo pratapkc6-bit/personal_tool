@@ -7,7 +7,7 @@ import { BottomNav } from "@/components/bottom-nav";
 import { APP_VERSION } from "@/lib/release";
 import { QuickCapture } from "@/components/quick-capture";
 import { WorkspaceNav } from "@/components/workspace-nav";
-import { ZoroLauncher } from "@/components/zoro-launcher";
+import { ZoroVoiceOrb } from "@/components/zoro-voice-orb";
 import { NexusCommand } from "@/components/nexus-command";
 import { SystemClock } from "@/components/system-clock";
 import { ZoroPresence } from "@/components/zoro-presence";
@@ -85,7 +85,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       <NotificationRuntime />
       <ZoroPresence />
-      <ZoroLauncher />
+      <ZoroVoiceOrb />
       <BottomNav />
     </div>
   );
