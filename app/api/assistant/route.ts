@@ -419,8 +419,7 @@ async function enrichEmailRecipient(
 ): Promise<{ text: string; message?: string; choices?: AssistantChoice[] }> {
   if (/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i.test(requestText)) return { text: requestText };
 
-  const understood = normalizeAssistantInput(requestText);
-  const recipientMatch = /\b(?:send|write|draft|prepare)?\s*(?:an?\s+)?(?:email|mail)\s+(?:to\s+)?([a-z][a-z .'-]{1,50}?)(?=\s+(?:saying|that|about|subject|message|body|to say)\b|$)/i.exec(understood);
+  const recipientMatch = /\b(?:send|write|draft|prepare)?\s*(?:an?\s+)?(?:email|mail)\s+(?:to\s+)?([a-z][a-z .'-]{1,50}?)(?=\s+(?:tell|say|saying|that|with|about|subject|message|body|to say)\b|$)/i.exec(requestText);
   const name = recipientMatch?.[1]?.trim().replace(/^(?:to\s+)/i, "") || "";
 
   if (!name || /^(?:an?|the|email|mail)$/i.test(name)) {
@@ -440,10 +439,8 @@ async function enrichEmailRecipient(
   }))];
 
   if (addresses.length === 1 && recipientMatch) {
-    const rawName = requestText.slice(recipientMatch.index + recipientMatch[0].toLowerCase().indexOf(name), recipientMatch.index + recipientMatch[0].toLowerCase().indexOf(name) + name.length);
-    const enriched = rawName
-      ? requestText.replace(rawName, rawName + " <" + addresses[0] + ">")
-      : requestText + " " + addresses[0];
+    const rawName = recipientMatch[1];
+    const enriched = requestText.replace(rawName, rawName + " <" + addresses[0] + ">");
     return { text: enriched };
   }
 
@@ -453,7 +450,7 @@ async function enrichEmailRecipient(
       message: `I found more than one email address for ${name}. Which one should I use?`,
       choices: addresses.slice(0, 5).map((address) => ({
         label: address,
-        value: requestText.replace(name, address),
+        value: requestText.replace(recipientMatch?.[1] || name, address),
       })),
     };
   }
