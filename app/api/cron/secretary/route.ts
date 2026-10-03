@@ -10,10 +10,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const minute = new Date().getUTCMinutes();
-  const scanMail = minute % 5 === 0;
-  const syncRoster = minute % 30 === 0;
-
   const accounts = await db.account.findMany({
     where: { provider: "google" },
     select: { userId: true },
@@ -23,14 +19,12 @@ export async function GET(request: NextRequest) {
   const results = [];
   for (const account of accounts) {
     try {
-      const gmail = scanMail ? await scanGmail(account.userId) : { skippedByCadence: true };
-      let roster: unknown = { skippedByCadence: true };
-      if (syncRoster) {
-        try {
-          roster = await syncLatestMyobRoster(account.userId);
-        } catch (error) {
-          roster = { error: error instanceof Error ? error.message : "Roster sync failed" };
-        }
+      const gmail = await scanGmail(account.userId);
+      let roster: unknown;
+      try {
+        roster = await syncLatestMyobRoster(account.userId);
+      } catch (error) {
+        roster = { error: error instanceof Error ? error.message : "Roster sync failed" };
       }
       const alerts = await runAlertEngine(account.userId);
       results.push({ userId: account.userId, gmail, roster, alerts });
@@ -42,7 +36,11 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({
     ok: true,
     users: results.length,
-    cadence: { alerts: "1 minute", gmail: "5 minutes", roster: "30 minutes" },
-    results,
+    cadence: {
+      server: "daily on Vercel Hobby",
+      foregroundGmail: "every 5 minutes while Zoro is open",
+      foregroundReminders: "every 30 seconds while Zoro is open"
+    },
+    results
   });
 }

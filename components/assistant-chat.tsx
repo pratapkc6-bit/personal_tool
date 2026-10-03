@@ -4,9 +4,13 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import {
   ArrowLeft,
+  Bell,
   BriefcaseBusiness,
+  CalendarDays,
   Copy,
   Keyboard,
+  ListTodo,
+  Mail,
   Mic,
   MicOff,
   Plus,
@@ -72,13 +76,13 @@ type VoiceState =
   | "unsupported";
 
 const QUICK_PROMPTS = [
-  "What should I do now?",
-  "What's important today?",
-  "What changed since yesterday?",
-  "Show what I'm waiting for",
-  "Check my next appointment",
-  "Summarize my urgent email",
+  "Check my urgent emails",
   "Plan my day",
+  "Show my reminders and alarms",
+  "What should I do now?",
+  "Check my next appointment",
+  "Sync my MYOB roster",
+  "What's important today?",
 ];
 
 const CHAT_STORAGE = "zoro:nexus:conversation:v1";
@@ -723,6 +727,17 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
                     <strong>Create event · {pendingAction.summary}</strong>
                     <p>{new Date(pendingAction.start).toLocaleString("en-AU")} → {new Date(pendingAction.end).toLocaleString("en-AU")}</p>
                   </>
+                ) : pendingAction.type === "CREATE_REMINDER" ? (
+                  <>
+                    <strong>{pendingAction.mode === "ALARM" ? "Set alarm" : "Create reminder"} · {pendingAction.title}</strong>
+                    <p>{new Date(pendingAction.remindAt).toLocaleString("en-AU")}{pendingAction.recurrence === "DAILY" ? " · repeats daily" : ""}</p>
+                  </>
+                ) : pendingAction.type === "SEND_EMAIL" || pendingAction.type === "CREATE_EMAIL_DRAFT" ? (
+                  <>
+                    <strong>{pendingAction.type === "SEND_EMAIL" ? "Send email" : "Create Gmail draft"} · {pendingAction.subject}</strong>
+                    <p>To: {pendingAction.to}</p>
+                    <p className="zoro-message-notice">{pendingAction.message}</p>
+                  </>
                 ) : (
                   <>
                     <strong>Sync MYOB roster</strong>
@@ -864,6 +879,16 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
                       <strong>{pendingAction.summary}</strong>
                       <p>Create calendar event · {new Date(pendingAction.start).toLocaleString("en-AU")}</p>
                     </>
+                  ) : pendingAction.type === "CREATE_REMINDER" ? (
+                    <>
+                      <strong>{pendingAction.title}</strong>
+                      <p>{pendingAction.mode === "ALARM" ? "Set alarm" : "Create reminder"} · {new Date(pendingAction.remindAt).toLocaleString("en-AU")}{pendingAction.recurrence === "DAILY" ? " · daily" : ""}</p>
+                    </>
+                  ) : pendingAction.type === "SEND_EMAIL" || pendingAction.type === "CREATE_EMAIL_DRAFT" ? (
+                    <>
+                      <strong>{pendingAction.subject}</strong>
+                      <p>{pendingAction.type === "SEND_EMAIL" ? "Send email" : "Create Gmail draft"} · {pendingAction.to}</p>
+                    </>
                   ) : (
                     <>
                       <strong>Sync MYOB roster</strong>
@@ -937,6 +962,12 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
               refreshKey={refreshKey}
               onPrompt={(prompt) => { setShowJobs(false); void send(prompt); }}
             />
+            <div className="zoro-source-row" aria-label="Zoro tools">
+              <button onClick={() => { setShowJobs(false); void send("Check my urgent emails"); }}><Mail size={14} /> Gmail</button>
+              <button onClick={() => { setShowJobs(false); void send("Check my next appointment"); }}><CalendarDays size={14} /> Calendar</button>
+              <button onClick={() => { setShowJobs(false); void send("Show my reminders and alarms"); }}><Bell size={14} /> Alerts</button>
+              <button onClick={() => { setShowJobs(false); void send("What should I do now?"); }}><ListTodo size={14} /> Tasks</button>
+            </div>
             {messages.length > 0 && (
               <button className="zoro-copy-conversation" onClick={() => void copyConversation()}>
                 <Copy size={15} /> {copiedConversation ? "Copied conversation" : "Copy conversation"}

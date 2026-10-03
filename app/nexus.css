@@ -2524,3 +2524,9 @@ section[aria-label="On-device model"] {
   .zoro-voice-orb-button { width:150px; height:150px; }
   .zoro-voice-footer button span { font-size:8px; }
 }
+
+/* Zoro tool shortcuts v7.6.1 */
+.zoro-context-drawer .zoro-source-row{margin:10px 0 2px;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.zoro-context-drawer .zoro-source-row button{min-height:42px;display:flex;align-items:center;justify-content:flex-start;gap:7px;padding:0 10px;border:1px solid rgba(134,172,229,.10);border-radius:11px;color:#8296aa;background:rgba(255,255,255,.018);font-size:8px;font-weight:720}
+.zoro-context-drawer .zoro-source-row button svg{color:#69e7ff}
+.zoro-context-drawer .zoro-source-row button:hover{border-color:rgba(105,231,255,.20);color:#c8d8e7;background:rgba(105,231,255,.025)}
