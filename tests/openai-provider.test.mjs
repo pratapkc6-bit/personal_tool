@@ -31,5 +31,5 @@ test("Zoro instructions improve planning without weakening action safety",()=>{
   assert.match(source,/schedule conflicts, freshness, and dependencies/);
   assert.match(source,/Distinguish known facts from suggestions or estimates/);
   assert.match(source,/deterministic action layer handles writes and confirmation separately/);
-  assert.match(source,/Never claim you sent email, changed Calendar, created a task/);
+  assert.match(source,/Never claim an external action completed unless the tool layer reports success/);
 });
