@@ -5,7 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getGoogleServices } from "@/lib/google";
 import { buildAssistantContext } from "@/lib/intelligence/context-builder";
-import { answerWithLocalIntelligence, isOpenEndedConversation, normalizeAssistantInput, type AssistantHistoryMessage } from "@/lib/intelligence/local-assistant";
+import { answerWithLocalIntelligence, normalizeAssistantInput, type AssistantHistoryMessage } from "@/lib/intelligence/local-assistant";
 import { scanGmail } from "@/lib/gmail-scan";
 import { syncLatestMyobRoster } from "@/lib/roster-sync";
 import { audit, activity } from "@/lib/audit";
@@ -206,11 +206,6 @@ export async function POST(request: NextRequest) {
       engine: cloud ? "openai" : "local",
       model: cloud?.model,
       notice: cloud ? ("Cloud reasoning · "+cloud.model+". Personal context is limited to Zoro's compact derived summaries; external write actions still require Zoro confirmation.") : undefined,
-      deviceEligible: !cloud && isOpenEndedConversation(message, history),
-      deviceReference: JSON.stringify({ generatedAt: context.generatedAt, timezone: context.timezone,
-        calendarStatus: context.calendarStatus,
-        priorities: context.topPriorities.map(p => ({ title: p.title.slice(0, 180), nextAction: p.nextAction?.slice(0, 200), dueAt: p.dueAt })),
-      }),
       suggestedPrompts: ["What should I do now and why?", "Plan my day around my calendar", "Summarize my urgent email", "What am I waiting for?"],
     });
   } catch {

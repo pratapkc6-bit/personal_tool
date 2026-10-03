@@ -1285,3 +1285,439 @@ section[aria-label="On-device model"] {
     width: calc(100vw - 24px);
   }
 }
+
+
+/* ========================================================================
+   Zoro Command Mode v7.3 · immersive assistant surface
+   ======================================================================== */
+.zoro-command-shell {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  height: 100dvh;
+  overflow: hidden;
+  color: #eef7ff;
+  background:
+    radial-gradient(circle at 50% -10%, rgba(70,211,255,.13), transparent 34%),
+    radial-gradient(circle at 92% 30%, rgba(137,88,255,.08), transparent 28%),
+    linear-gradient(180deg,#050913 0%,#060b13 46%,#03070d 100%);
+}
+.zoro-command-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .24;
+  background-image:
+    linear-gradient(rgba(120,194,255,.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120,194,255,.028) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: linear-gradient(to bottom,black,transparent 76%);
+}
+.zoro-command-shell-main,
+.zoro-command-page,
+.zoro-command-mode { position: relative; height: 100%; min-height: 0; }
+.zoro-command-page { width: 100%; }
+.zoro-command-mode {
+  z-index: 1;
+  display: grid;
+  grid-template-rows: auto minmax(0,1fr) auto;
+  width: min(100%,980px);
+  margin: 0 auto;
+  overflow: hidden;
+}
+.zoro-command-header {
+  min-height: 70px;
+  display: grid;
+  grid-template-columns: minmax(90px,1fr) auto minmax(90px,1fr);
+  align-items: center;
+  gap: 10px;
+  padding: max(8px,env(safe-area-inset-top)) 16px 8px;
+  border-bottom: 1px solid rgba(130,184,235,.09);
+  background: rgba(4,8,15,.68);
+  backdrop-filter: blur(24px) saturate(140%);
+}
+.zoro-command-home,
+.zoro-command-tools button,
+.zoro-command-tools a {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid rgba(138,180,228,.10);
+  border-radius: 13px;
+  color: #8596aa;
+  background: rgba(255,255,255,.018);
+  font-size: 10px;
+  font-weight: 720;
+}
+.zoro-command-home { justify-self: start; padding: 0 12px; }
+.zoro-command-brand { display: flex; align-items: center; justify-content: center; gap: 9px; min-width: 0; }
+.zoro-command-brand > div { display: grid; gap: 2px; }
+.zoro-command-brand strong { color: #edf8ff; font-size: 13px; letter-spacing: .02em; }
+.zoro-command-brand small { color: #65778d; font-size: 8px; white-space: nowrap; }
+.zoro-command-mini-core {
+  position: relative;
+  width: 35px;
+  height: 35px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(104,226,255,.20);
+  border-radius: 12px;
+  color: #69e7ff;
+  background: radial-gradient(circle,rgba(105,231,255,.12),rgba(105,231,255,.025) 68%);
+}
+.zoro-command-mini-core > span { position: absolute; inset: 5px; border: 1px solid rgba(105,231,255,.20); border-radius: 9px; }
+.zoro-command-mini-core.is-active { box-shadow: 0 0 28px rgba(105,231,255,.18); }
+.zoro-command-tools { justify-self: end; display: flex; align-items: center; gap: 6px; }
+.zoro-command-tools button,
+.zoro-command-tools a { width: 42px; padding: 0; }
+.zoro-command-tools span { display: none; }
+
+.zoro-command-main { min-height: 0; overflow: hidden; }
+.zoro-command-stream {
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px clamp(14px,4vw,42px) 28px;
+  scrollbar-width: thin;
+  scrollbar-color: #25354a transparent;
+}
+.zoro-command-stream.is-empty { justify-content: center; }
+.zoro-command-welcome {
+  width: min(100%,650px);
+  margin: auto;
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  padding: 12px 0 20px;
+}
+.zoro-command-orb {
+  position: relative;
+  width: 112px;
+  height: 112px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 26px;
+  border: 1px solid rgba(105,231,255,.20);
+  border-radius: 34px;
+  color: #8ceeff;
+  background:
+    radial-gradient(circle at 50% 46%,rgba(105,231,255,.22),rgba(105,231,255,.05) 38%,transparent 70%);
+  box-shadow: inset 0 0 45px rgba(105,231,255,.05),0 20px 70px rgba(0,0,0,.36);
+}
+.zoro-command-orbit { position: absolute; border: 1px solid rgba(105,231,255,.15); border-radius: 31px; }
+.zoro-command-orbit.orbit-one { inset: 9px; }
+.zoro-command-orbit.orbit-two { inset: 19px; border-color: rgba(165,122,255,.18); transform: rotate(45deg); }
+.zoro-command-orbit.orbit-three { inset: 30px; border-color: rgba(105,231,255,.25); }
+.zoro-command-orb.is-active { box-shadow: 0 0 65px rgba(105,231,255,.16),inset 0 0 35px rgba(105,231,255,.08); }
+.zoro-command-eyebrow {
+  color: #688095;
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: .18em;
+}
+.zoro-command-welcome h1 {
+  margin-top: 9px;
+  color: #f4f9ff;
+  font-size: clamp(30px,7vw,47px);
+  font-weight: 560;
+  letter-spacing: -.05em;
+}
+.zoro-command-intro {
+  max-width: 550px;
+  margin-top: 13px;
+  color: #72849a;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.zoro-command-starters {
+  width: min(100%,540px);
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 8px;
+  margin-top: 24px;
+}
+.zoro-command-starters button {
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 13px;
+  border: 1px solid rgba(132,178,224,.11);
+  border-radius: 15px;
+  color: #9aabc0;
+  background: rgba(255,255,255,.022);
+  text-align: left;
+  font-size: 10px;
+}
+.zoro-command-starters button svg { flex: 0 0 auto; color: #69e7ff; }
+.zoro-command-starters button:hover { border-color: rgba(105,231,255,.25); background: rgba(105,231,255,.04); color: #d9e8f6; }
+.zoro-command-voice-launch {
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 14px;
+  padding: 0 18px;
+  border: 1px solid rgba(105,231,255,.30);
+  border-radius: 999px;
+  color: #061118;
+  background: linear-gradient(135deg,#6feaff,#b0f7ff);
+  font-size: 10px;
+  font-weight: 820;
+}
+.zoro-command-mode .zoro-message { width: min(88%,720px); }
+.zoro-command-mode .zoro-message-text { font-size: 13px; line-height: 1.7; }
+.zoro-command-mode .zoro-message-body { border-radius: 19px 19px 19px 6px; background: rgba(255,255,255,.028); }
+.zoro-command-mode .zoro-message.is-user .zoro-message-body {
+  border-color: rgba(105,231,255,.17);
+  border-radius: 19px 19px 6px 19px;
+  background: linear-gradient(135deg,rgba(27,67,91,.76),rgba(25,42,72,.80));
+}
+
+.zoro-work-card {
+  width: min(92%,620px);
+  align-self: center;
+  display: grid;
+  grid-template-columns: 38px minmax(0,1fr) auto;
+  align-items: center;
+  gap: 11px;
+  padding: 12px 13px;
+  border: 1px solid rgba(105,231,255,.14);
+  border-radius: 16px;
+  background: rgba(105,231,255,.025);
+}
+.zoro-work-core {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: #69e7ff;
+  background: rgba(105,231,255,.07);
+}
+.zoro-work-card strong { color: #dce9f5; font-size: 10px; }
+.zoro-work-card p { margin-top: 3px; color: #66788e; font-size: 8px; line-height: 1.5; }
+.zoro-work-dots { display: flex; gap: 3px; }
+.zoro-work-dots i { width: 5px; height: 5px; border-radius: 999px; background: #69e7ff; opacity: .25; }
+@media(prefers-reduced-motion:no-preference){
+  .zoro-work-dots i:nth-child(1){animation:thinkDot 1s infinite}
+  .zoro-work-dots i:nth-child(2){animation:thinkDot 1s .15s infinite}
+  .zoro-work-dots i:nth-child(3){animation:thinkDot 1s .3s infinite}
+  .zoro-command-orb.is-active{animation:zoroCommandPulse 2s ease-in-out infinite}
+}
+@keyframes zoroCommandPulse { 50% { transform:scale(1.025); filter:brightness(1.12); } }
+
+.zoro-action-sheet { margin: 4px auto 10px; }
+.zoro-command-composer-zone {
+  padding: 8px 14px max(10px,env(safe-area-inset-bottom));
+  border-top: 1px solid rgba(130,184,235,.09);
+  background: rgba(3,7,13,.84);
+  backdrop-filter: blur(24px) saturate(150%);
+}
+.zoro-command-prompt-rail { max-width: 860px; margin: 0 auto; }
+.zoro-command-composer {
+  width: min(100%,860px);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 48px minmax(0,1fr) 48px;
+  align-items: end;
+  gap: 7px;
+  padding: 6px;
+  border: 1px solid rgba(105,231,255,.16);
+  border-radius: 20px;
+  background: rgba(255,255,255,.028);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.02),0 14px 50px rgba(0,0,0,.20);
+}
+.zoro-command-composer:focus-within {
+  border-color: rgba(105,231,255,.38);
+  box-shadow: 0 0 0 3px rgba(105,231,255,.035),0 14px 50px rgba(0,0,0,.20);
+}
+.zoro-command-composer textarea {
+  width: 100%;
+  min-height: 46px;
+  max-height: 140px;
+  resize: none;
+  border: 0!important;
+  outline: 0;
+  padding: 12px 5px 9px!important;
+  color: #edf7ff;
+  background: transparent!important;
+  box-shadow: none!important;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.zoro-command-mic,
+.zoro-command-send {
+  width: 48px;
+  min-height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+}
+.zoro-command-mic { border: 1px solid rgba(132,178,224,.11); color: #71849a; background: rgba(255,255,255,.018); }
+.zoro-command-mic.is-live { color: #69e7ff; border-color: rgba(105,231,255,.32); background: rgba(105,231,255,.07); }
+.zoro-command-send { border: 1px solid rgba(105,231,255,.28); color: #041017; background: linear-gradient(135deg,#6feaff,#b0f7ff); }
+.zoro-command-send:disabled { opacity: .25; }
+
+.zoro-voice-immersive {
+  position: fixed;
+  inset: 0;
+  z-index: 130;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  padding: 24px;
+  text-align: center;
+  background:
+    radial-gradient(circle at 50% 43%,rgba(105,231,255,.13),transparent 27%),
+    rgba(2,6,12,.965);
+  backdrop-filter: blur(30px);
+}
+.zoro-voice-close {
+  position: absolute;
+  top: max(16px,env(safe-area-inset-top));
+  right: 16px;
+  min-height: 42px;
+  padding: 0 14px;
+  border: 1px solid rgba(132,178,224,.12);
+  border-radius: 13px;
+  color: #8c9db2;
+  background: rgba(255,255,255,.02);
+  font-size: 9px;
+}
+.zoro-voice-orb {
+  position: relative;
+  width: 170px;
+  height: 170px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 30px;
+  border: 1px solid rgba(105,231,255,.30);
+  border-radius: 50%;
+  color: #9cf0ff;
+  background: radial-gradient(circle,rgba(105,231,255,.21),rgba(105,231,255,.045) 48%,transparent 69%);
+  box-shadow: 0 0 90px rgba(105,231,255,.13);
+}
+.zoro-voice-orb > span { position: absolute; border: 1px solid rgba(105,231,255,.15); border-radius: 50%; }
+.zoro-voice-orb > span:nth-child(1){inset:12px}
+.zoro-voice-orb > span:nth-child(2){inset:28px;border-color:rgba(166,121,255,.20)}
+.zoro-voice-orb > span:nth-child(3){inset:45px}
+.zoro-voice-immersive h2 { margin-top: 9px; font-size: 33px; font-weight: 540; letter-spacing: -.04em; }
+.zoro-voice-immersive > p:not(.zoro-command-eyebrow) { margin-top: 9px; color: #74869c; font-size: 11px; }
+.zoro-voice-immersive small { max-width: 520px; margin-top: 20px; color: #aab9ca; font-size: 13px; line-height: 1.6; }
+@media(prefers-reduced-motion:no-preference){
+  .zoro-voice-orb.state-listening,.zoro-voice-orb.state-awake{animation:zoroVoicePulse 1.7s ease-in-out infinite}
+  .zoro-voice-orb.state-thinking{animation:zoroVoiceThink 2s linear infinite}
+}
+@keyframes zoroVoicePulse { 50% { transform:scale(1.05); box-shadow:0 0 120px rgba(105,231,255,.22); } }
+@keyframes zoroVoiceThink { to { transform:rotate(360deg); } }
+
+.zoro-command-alert {
+  position: fixed;
+  left: 50%;
+  bottom: calc(86px + env(safe-area-inset-bottom));
+  z-index: 140;
+  width: min(92vw,520px);
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 12px;
+  border: 1px solid rgba(255,202,100,.18);
+  border-radius: 14px;
+  color: #d8bd83;
+  background: rgba(21,17,10,.96);
+  font-size: 9px;
+}
+.zoro-command-alert button { margin-left: auto; min-height: 34px; padding: 0 9px; color: #e1c88f; }
+
+.zoro-context-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  justify-content: flex-end;
+  background: rgba(1,4,9,.68);
+  backdrop-filter: blur(9px);
+}
+.zoro-context-drawer {
+  width: min(92vw,430px);
+  height: 100dvh;
+  overflow-y: auto;
+  padding: max(18px,env(safe-area-inset-top)) 14px max(18px,env(safe-area-inset-bottom));
+  border-left: 1px solid rgba(105,231,255,.13);
+  background: #070d17;
+  box-shadow: -30px 0 90px rgba(0,0,0,.45);
+}
+.zoro-context-drawer-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 14px; }
+.zoro-context-drawer-head h2 { margin-top: 5px; color: #e7f1fb; font-size: 19px; letter-spacing: -.03em; }
+.zoro-context-drawer-head button {
+  min-height: 38px;
+  padding: 0 10px;
+  border: 1px solid rgba(132,178,224,.11);
+  border-radius: 11px;
+  color: #8192a7;
+  background: rgba(255,255,255,.02);
+  font-size: 9px;
+}
+.zoro-copy-conversation {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 10px;
+  border: 1px solid rgba(132,178,224,.11);
+  border-radius: 13px;
+  color: #8799ad;
+  background: rgba(255,255,255,.02);
+  font-size: 9px;
+}
+
+@media(max-width:680px){
+  .zoro-command-header {
+    min-height: 62px;
+    grid-template-columns: 48px minmax(0,1fr) auto;
+    padding-inline: 10px;
+  }
+  .zoro-command-home { width: 42px; padding: 0; }
+  .zoro-command-home span { display: none; }
+  .zoro-command-brand { justify-content: flex-start; }
+  .zoro-command-mini-core { width: 34px; height: 34px; }
+  .zoro-command-tools button,
+  .zoro-command-tools a { width: 38px; min-height: 38px; }
+  .zoro-command-tools button:nth-child(2) { display: none; }
+  .zoro-command-stream { padding: 16px 10px 20px; }
+  .zoro-command-stream.is-empty { padding-bottom: 8px; }
+  .zoro-command-welcome { padding-inline: 8px; }
+  .zoro-command-orb { width: 92px; height: 92px; margin-bottom: 20px; border-radius: 29px; }
+  .zoro-command-welcome h1 { font-size: clamp(29px,9vw,38px); }
+  .zoro-command-intro { max-width: 350px; font-size: 11px; }
+  .zoro-command-starters { grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 20px; }
+  .zoro-command-starters button { min-height: 48px; padding: 8px 10px; font-size: 9px; line-height: 1.35; }
+  .zoro-command-mode .zoro-message { width: 96%; }
+  .zoro-command-mode .zoro-message-text { font-size: 12px; }
+  .zoro-command-mode .zoro-message-avatar { display: none; }
+  .zoro-command-mode .zoro-message.is-zoro { grid-template-columns: 1fr; }
+  .zoro-command-composer-zone { padding: 7px 8px max(8px,env(safe-area-inset-bottom)); }
+  .zoro-command-composer { grid-template-columns: 44px minmax(0,1fr) 44px; border-radius: 18px; }
+  .zoro-command-mic,.zoro-command-send { width: 44px; min-height: 44px; border-radius: 13px; }
+  .zoro-command-composer textarea { min-height: 44px; padding-top: 11px!important; font-size: 12px; }
+  .zoro-command-prompt-rail { padding-bottom: 6px; }
+  .zoro-work-card { width: 96%; }
+  .zoro-voice-orb { width: 145px; height: 145px; }
+}
+@media(max-width:390px){
+  .zoro-command-brand small { display: none; }
+  .zoro-command-tools button:first-child { display: inline-flex; }
+  .zoro-command-tools a { display: none; }
+  .zoro-command-starters { grid-template-columns: 1fr; }
+  .zoro-command-starters button:nth-child(n+4) { display: none; }
+}

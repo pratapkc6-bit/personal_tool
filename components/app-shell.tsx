@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Cpu, ShieldCheck } from "lucide-react";
 import { BottomNav } from "@/components/bottom-nav";
 import { APP_VERSION } from "@/lib/release";
@@ -13,6 +16,19 @@ import { NotificationRuntime } from "@/components/notification-runtime";
 import { ConnectivityBanner } from "@/components/connectivity-banner";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const assistantMode = pathname === "/assistant" || pathname.startsWith("/assistant/");
+
+  if (assistantMode) {
+    return (
+      <div className="zoro-command-shell">
+        <ConnectivityBanner />
+        <main id="workspace-content" className="zoro-command-shell-main">{children}</main>
+        <NotificationRuntime />
+      </div>
+    );
+  }
+
   return (
     <div className="zoro-app nexus-shell">
       <ConnectivityBanner />

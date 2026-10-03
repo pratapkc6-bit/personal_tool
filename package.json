@@ -1,6 +1,6 @@
 {
   "name": "pratap-personal-secretary",
-  "version": "7.2.0",
+  "version": "7.3.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -15,7 +15,6 @@
     "db:migrate:deploy": "prisma migrate deploy"
   },
   "dependencies": {
-    "@mlc-ai/web-llm": "0.2.85",
     "@fullcalendar/daygrid": "6.1.19",
     "@fullcalendar/interaction": "6.1.19",
     "@fullcalendar/list": "6.1.19",
