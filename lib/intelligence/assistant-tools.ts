@@ -47,6 +47,7 @@ export function reminderPreview(message: string): ReminderAction | null {
     .replace(parsed.matchedText, "")
     .replace(/\b(?:and\s+)?(?:set|make)(?:\s+it)?\s+(?:ring|alarm)(?:\s+for\s+it)?\b.*$/i, "")
     .replace(/\b(?:and\s+)?ring(?:\s+for\s+it)?\b.*$/i, "")
+    .replace(/\b(every day|everyday|daily)\b/gi, "")
     .replace(/\b(?:at|for|to)\s*$/i, "");
   title = cleanTitle(title);
   if (!title) title = alarm ? "Alarm" : "Reminder";
