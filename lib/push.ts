@@ -4,21 +4,9 @@ import { db } from "@/lib/db";
 import { vapidConfigured } from "@/lib/notification-settings";
 
 export type AlertPriority="NORMAL"|"IMPORTANT"|"CRITICAL";
-
 export type AlertInput={
-  userId:string;
-  type:string;
-  category:string;
-  priority:AlertPriority;
-  title:string;
-  body:string;
-  dedupeKey?:string;
-  source?:string;
-  sourceRef?:string;
-  url?:string;
-  alarmSeconds?:number;
-  metadata?:Prisma.InputJsonValue;
-  deliverPush?:boolean;
+  userId:string;type:string;category:string;priority:AlertPriority;title:string;body:string;dedupeKey?:string;
+  source?:string;sourceRef?:string;url?:string;alarmSeconds?:number;metadata?:Prisma.InputJsonValue;deliverPush?:boolean;
 };
 
 function setupWebPush(){
@@ -42,8 +30,10 @@ export async function createAndDeliverAlert(input:AlertInput){
       created=false;
     }else throw error;
   }
+
   if(!notification)return {created:false,pushed:0,notification:null};
-  if(!created||input.deliverPush===false||!setupWebPush())return {created,pushed:0,notification};
+  if(input.deliverPush===false||!setupWebPush())return {created,pushed:0,notification};
+  if(!created&&notification.deliveredAt)return {created,pushed:0,notification};
 
   const subscriptions=await db.pushSubscription.findMany({where:{userId:input.userId}});
   const payload=JSON.stringify({

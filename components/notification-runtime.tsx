@@ -39,7 +39,8 @@ export function NotificationRuntime(){
 
   useEffect(()=>{
     let stopped=false;
-    async function check(){
+
+    async function checkReminders(){
       if(stopped||document.visibilityState!=="visible")return;
       try{
         const res=await fetch("/api/reminders",{cache:"no-store"});if(!res.ok)return;
@@ -59,10 +60,29 @@ export function NotificationRuntime(){
         }
       }catch{}
     }
-    void check();const timer=window.setInterval(()=>void check(),30_000);
-    const visible=()=>{if(document.visibilityState==="visible")void check()};
+
+    async function scanMail(){
+      if(stopped||document.visibilityState!=="visible")return;
+      try{await fetch("/api/gmail/scan",{method:"POST",cache:"no-store"});}catch{}
+    }
+
+    void checkReminders();
+    void scanMail();
+    const reminderTimer=window.setInterval(()=>void checkReminders(),30_000);
+    const mailTimer=window.setInterval(()=>void scanMail(),5*60_000);
+    const visible=()=>{
+      if(document.visibilityState==="visible"){
+        void checkReminders();
+        void scanMail();
+      }
+    };
     document.addEventListener("visibilitychange",visible);
-    return()=>{stopped=true;window.clearInterval(timer);document.removeEventListener("visibilitychange",visible)};
+    return()=>{
+      stopped=true;
+      window.clearInterval(reminderTimer);
+      window.clearInterval(mailTimer);
+      document.removeEventListener("visibilitychange",visible);
+    };
   },[]);
 
   return null;
