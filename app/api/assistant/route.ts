@@ -72,6 +72,12 @@ function isCalendarAgendaIntent(message: string) {
   ) && !/\b(add|create|schedule|book|set|put|move|delete|remove)\b/i.test(understood);
 }
 
+function hasExplicitTime(message: string) {
+  const understood = normalizeAssistantInput(message);
+  return /\b\d{1,2}(?::\d{2})?\s*(?:am|pm)\b|\b(?:noon|midnight|morning|afternoon|evening|tonight)\b/i.test(understood)
+    || /\bat\s+\d{1,2}(?::\d{2})?\b/i.test(understood);
+}
+
 function eventPreview(message: string): CalendarPendingAction | null {
   const understood = normalizeAssistantInput(message);
   if (/\b(remind me|remember me|reminder|alarm|create task|add task|make a task|i have to|i need to|note that i need to)\b/i.test(understood)) return null;
@@ -782,16 +788,18 @@ export async function POST(request: NextRequest) {
 
     const reminderAnchor = /\b(remind me|remember me|set\s+(?:a\s+)?reminder|set\s+(?:an?\s+)?alarm|alarm me|wake me)\b/i;
     const reminderRequest = contextualRequest(message, history, reminderAnchor);
-    const reminderAction = reminderPreview(reminderRequest);
+    let reminderAction = reminderPreview(reminderRequest);
+    if (reminderAction && !hasExplicitTime(reminderRequest)) reminderAction = null;
     if (!reminderAction && reminderAnchor.test(normalizeAssistantInput(reminderRequest))) {
       return NextResponse.json({ message: "What time should I set it for?", engine: "tool", tool: "reminders" });
     }
 
     const eventAnchor = /\b(add|schedule|book|create|put|set|block)\b.*\b(appointment|workout|meeting|event|gym|class|check-?up|dinner|lunch|call|interview)\b/i;
     const eventRequest = contextualRequest(message, history, eventAnchor);
-    const eventAction = eventPreview(eventRequest);
+    let eventAction = eventPreview(eventRequest);
+    if (eventAction && !hasExplicitTime(eventRequest)) eventAction = null;
     if (!eventAction && eventAnchor.test(normalizeAssistantInput(eventRequest))) {
-      return NextResponse.json({ message: "When should I schedule it?", engine: "tool", tool: "calendar" });
+      return NextResponse.json({ message: "What time should I schedule it for?", engine: "tool", tool: "calendar" });
     }
 
     const taskRequest = contextualRequest(message, history, /\b(create task|add task|make a task|i have to|i need to|note that i need to)\b/i);
