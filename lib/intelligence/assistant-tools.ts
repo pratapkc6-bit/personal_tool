@@ -11,16 +11,64 @@ function pad(value: number) {
 }
 
 export function parseAssistantDate(text: string, now = new Date(), timeZone = APP_TIMEZONE) {
+  const normalized = normalizeAssistantInput(text);
+
+  const numericRelative = /\b(?:in|after)\s+(\d+(?:\.\d+)?)\s*(seconds?|secs?|minutes?|mins?|hours?|hrs?|days?)\b/i.exec(normalized);
+  const halfHourRelative = /\b(?:in|after)\s+half\s+(?:an?\s+)?hour\b/i.exec(normalized);
+  const articleRelative = /\b(?:in|after)\s+(?:a|an|one)\s+(second|minute|hour|day)\b/i.exec(normalized);
+
+  let relativeMs: number | null = null;
+  let relativeText = "";
+
+  if (numericRelative) {
+    const amount = Number(numericRelative[1]);
+    const unit = numericRelative[2].toLowerCase();
+    const multiplier = unit.startsWith("sec")
+      ? 1_000
+      : unit.startsWith("min")
+        ? 60_000
+        : unit.startsWith("hour") || unit.startsWith("hr")
+          ? 3_600_000
+          : 86_400_000;
+    relativeMs = amount * multiplier;
+    relativeText = numericRelative[0];
+  } else if (halfHourRelative) {
+    relativeMs = 30 * 60_000;
+    relativeText = halfHourRelative[0];
+  } else if (articleRelative) {
+    const unit = articleRelative[1].toLowerCase();
+    relativeMs = unit === "second"
+      ? 1_000
+      : unit === "minute"
+        ? 60_000
+        : unit === "hour"
+          ? 3_600_000
+          : 86_400_000;
+    relativeText = articleRelative[0];
+  }
+
+  if (relativeMs !== null) {
+    const date = new Date(now.getTime() + relativeMs);
+    const local = zonedParts(date, timeZone);
+    return {
+      date,
+      matchedText: relativeText,
+      hour: local.hour,
+      minute: local.minute,
+      timeZone,
+    };
+  }
+
   const localNow=zonedParts(now,timeZone);
   const reference=chronoReferenceForTimezone(now,timeZone);
   const result=chrono.parse(text,reference,{forwardDate:true})[0];
   if(!result)return null;
-  const c=result.start;
-  const year=c.get("year")??localNow.year;
-  const month=c.get("month")??localNow.month;
-  const day=c.get("day")??localNow.day;
-  const hour=c.get("hour")??9;
-  const minute=c.get("minute")??0;
+  const component=result.start;
+  const year=component.get("year")??localNow.year;
+  const month=component.get("month")??localNow.month;
+  const day=component.get("day")??localNow.day;
+  const hour=component.get("hour")??9;
+  const minute=component.get("minute")??0;
   const date=zonedDateTime({year,month,day,hour,minute,second:0},timeZone);
   return {date,matchedText:result.text,hour,minute,timeZone};
 }
@@ -43,7 +91,8 @@ export function reminderPreview(message: string): ReminderAction | null {
   if (!parsed) return null;
   const recurrence = /\b(every day|everyday|daily)\b/i.test(understood) ? "DAILY" : "NONE";
   let title = understood
-    .replace(/^(please\s+)?(remind me(?: to)?|remember me(?: to)?|set\s+(?:(?:a|the)\s+)?reminder(?:\s+(?:of|for|to))?|set\s+(?:an?\s+)?alarm(?: for| to)?|alarm me(?: to)?|wake me(?: up)?(?: to)?|alarm)\s*/i, "")
+    .replace(/^(please\s+)?(remind me(?:\s+(?:to|that))?|remember me(?:\s+(?:to|that))?|set\s+(?:(?:a|the)\s+)?reminder(?:\s+(?:of|for|to))?|set\s+(?:an?\s+)?alarm(?: for| to)?|alarm me(?: to)?|wake me(?: up)?(?: to)?|alarm)\s*/i, "")
+    .replace(/^that\s+/i, "")
     .replace(parsed.matchedText, "")
     .replace(/\b(?:and\s+)?(?:set|make)(?:\s+it)?\s+(?:ring|alarm)(?:\s+for\s+it)?\b.*$/i, "")
     .replace(/\b(?:and\s+)?ring(?:\s+for\s+it)?\b.*$/i, "")
