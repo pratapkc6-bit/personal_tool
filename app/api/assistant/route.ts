@@ -422,7 +422,7 @@ async function enrichEmailRecipient(
 ): Promise<{ text: string; message?: string; choices?: AssistantChoice[] }> {
   if (/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i.test(requestText)) return { text: requestText };
 
-  const recipientMatch = /\b(?:send|write|draft|prepare)?\s*(?:an?\s+)?(?:email|mail)\s+(?:to\s+)?([a-z][a-z .'-]{1,50}?)(?=\s+(?:tell|say|saying|that|with|about|subject|message|body|to say)\b|$)/i.exec(requestText);
+  const recipientMatch = /\b(?:send|write|draft|prepare)?\s*(?:an?\s+)?(?:email|mail)\s+(?:to\s+)?([a-z][a-z .'-]{1,50}?)(?=\s*(?::|,|-|;|\b(?:tell|say|saying|that|with|about|subject|message|body|to say)\b|$))/i.exec(requestText);
   const name = recipientMatch?.[1]?.trim().replace(/^(?:to\s+)/i, "") || "";
 
   if (!name || /^(?:an?|the|email|mail)$/i.test(name)) {
@@ -752,7 +752,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const noteRequest = contextualRequest(message, history, /\b(?:take|make|create|save|write|add)\s+(?:a\s+)?note\b|\bnote\s+(?:down|this)\b/i);
+    const noteRequest = contextualRequest(message, history, /\b(?:take|make|create|save|write|add|set)\s+(?:a\s+)?note\b|\bnote\s+(?:down|this|to self)\b|\bremember\s+(?:this|that)\b/i);
     const notePreview = noteCreatePreview(noteRequest);
     if (notePreview?.needsContent) {
       return NextResponse.json({ message: "What should I save in the note?", engine: "tool", tool: "notes" });
