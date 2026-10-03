@@ -1,6 +1,6 @@
 # Pratap Personal Secretary
 
-Current release: **v7.0.0 — Briefing, Radar & Intelligence**, a 50-change upgrade with Daily Briefing 2.0, Waiting Radar, Calendar Intelligence, Intel Triage and global recovery UX.
+Current release: **v7.1.0 — OpenAI Brain**, adding an optional server-side Responses API reasoning layer with local fallback and confirmation-safe actions.
 
 A private, mobile-first AI personal secretary that connects Gmail, Google Calendar, tasks, MYOB work rosters, follow-ups, reminders, activity history and natural-language assistance.
 
