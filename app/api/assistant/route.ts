@@ -641,8 +641,11 @@ export async function POST(request: NextRequest) {
 
     await db.setting.deleteMany({ where: { userId: session.user.id, key: "assistant_pending_action" } });
 
-    if (isPatroIntent(message)) {
-      return NextResponse.json({ message: answerPatro(message), engine: "tool", tool: "nepali_patro" });
+    const patroAnchor = /\b(nepali\s+(?:patro|calendar|date)|patro|bikram\s+sambat|bs\s+date|tithi|nepali\s+festival)\b/i;
+    const patroRequest = contextualRequest(message, history, patroAnchor);
+    const patroFollowUp = /^(?:and\s+)?(?:what(?:'s| is)?\s+(?:on|for)\s+that\s+day|what about (?:today|tomorrow|that day)|today|tomorrow|that day)[?.!\s]*$/i.test(understood);
+    if (isPatroIntent(message) || (patroFollowUp && isPatroIntent(patroRequest))) {
+      return NextResponse.json({ message: answerPatro(patroRequest), engine: "tool", tool: "nepali_patro" });
     }
 
     if (isGmailScanIntent(message)) {
@@ -684,8 +687,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: text, engine: "tool", tool: "tasks" });
     }
 
-    if (isCalendarAgendaIntent(message)) {
-      return NextResponse.json({ ...await calendarAgenda(session.user.id, message), engine: "tool", tool: "calendar" });
+    const calendarReadAnchor = /\b(?:what(?:'s| is)?|show|list|check|tell me|do i have)\b.*\b(?:calendar|schedule|agenda|events?)\b/i;
+    const calendarRequest = contextualRequest(message, history, calendarReadAnchor);
+    const calendarFollowUp = /^(?:and\s+)?(?:what about\s+)?(?:today|tomorrow|tonight|this morning|this afternoon)[?.!\s]*$/i.test(understood);
+    if (isCalendarAgendaIntent(message) || (calendarFollowUp && isCalendarAgendaIntent(calendarRequest))) {
+      return NextResponse.json({ ...await calendarAgenda(session.user.id, calendarRequest), engine: "tool", tool: "calendar" });
     }
 
     if (/^(please )?(sync|add|check|update|refresh)\s+(my |the )?(myob )?roster[.!?]*$/i.test(understood)) {
