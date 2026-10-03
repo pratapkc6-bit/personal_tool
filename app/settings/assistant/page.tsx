@@ -6,6 +6,7 @@ import {
   loadAssistantSettings,
 } from "@/lib/assistant-settings";
 import { AssistantSettingsForm } from "@/components/assistant-settings-form";
+import { BrainCircuit, Cloud, ShieldCheck } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -40,6 +41,19 @@ export default async function AssistantSettingsPage() {
           Back to Assistant
         </Link>
       </div>
+
+      <section className="professional-card assistant-provider-card">
+        <div className="professional-section-heading">
+          <div><p className="professional-kicker">AI BRAIN</p><h2>Cloud reasoning</h2></div>
+          <BrainCircuit size={19}/>
+        </div>
+        <div className="assistant-provider-status">
+          <span className={process.env.OPENAI_API_KEY?"is-ready":"is-attention"}><Cloud size={16}/>{process.env.OPENAI_API_KEY?"OpenAI connected":"OpenAI not configured"}</span>
+          <strong>{process.env.OPENAI_MODEL||"gpt-6-luna"}</strong>
+        </div>
+        <p className="professional-body-copy">Zoro uses OpenAI only for reasoning and conversation. Calendar, task and other write actions stay inside Zoro's confirmation-controlled action layer.</p>
+        <div className="assistant-provider-privacy"><ShieldCheck size={15}/><span>API secrets stay server-side. Zoro sends compact derived context rather than raw Gmail message bodies.</span></div>
+      </section>
 
       <AssistantSettingsForm
         initialSettings={settings}
