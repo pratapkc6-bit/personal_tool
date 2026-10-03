@@ -759,7 +759,7 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
                 ) : pendingAction.type === "CREATE_REMINDER" ? (
                   <>
                     <strong>{pendingAction.mode === "ALARM" ? "Set alarm" : "Create reminder"} · {pendingAction.title}</strong>
-                    <p>{new Date(pendingAction.remindAt).toLocaleString("en-AU")}{pendingAction.recurrence === "DAILY" ? " · repeats daily" : ""}</p>
+                    <p>{new Date(pendingAction.remindAt).toLocaleString("en-AU",{timeZone:pendingAction.timezone||"Australia/Darwin"})}{pendingAction.recurrence === "DAILY" ? " · repeats daily" : ""}</p>
                   </>
                 ) : pendingAction.type === "SEND_EMAIL" || pendingAction.type === "CREATE_EMAIL_DRAFT" ? (
                   <>
@@ -914,7 +914,7 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
                   ) : pendingAction.type === "CREATE_REMINDER" ? (
                     <>
                       <strong>{pendingAction.title}</strong>
-                      <p>{pendingAction.mode === "ALARM" ? "Set alarm" : "Create reminder"} · {new Date(pendingAction.remindAt).toLocaleString("en-AU")}{pendingAction.recurrence === "DAILY" ? " · daily" : ""}</p>
+                      <p>{pendingAction.mode === "ALARM" ? "Set alarm" : "Create reminder"} · {new Date(pendingAction.remindAt).toLocaleString("en-AU",{timeZone:pendingAction.timezone||"Australia/Darwin"})}{pendingAction.recurrence === "DAILY" ? " · daily" : ""}</p>
                     </>
                   ) : pendingAction.type === "SEND_EMAIL" || pendingAction.type === "CREATE_EMAIL_DRAFT" ? (
                     <>
