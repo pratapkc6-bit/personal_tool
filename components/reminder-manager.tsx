@@ -33,7 +33,7 @@ export function ReminderManager(){
     if(!title.trim())return setStatus("Give the reminder a title.");
     setBusy(true);
     try{
-      const date=new Date(when);
+      const date=new Date(`${when}:00+09:30`);
       if(Number.isNaN(date.getTime()))throw new Error("Choose a valid date and time.");
       const res=await fetch("/api/reminders",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({title:title.trim(),remindAt:date.toISOString(),ringSeconds:ring?3:0,recurrence:daily?"DAILY":"NONE",recurrenceTime:daily?when.slice(11,16):undefined,timezone:"Australia/Darwin"})});
       const body=await res.json().catch(()=>({}));
