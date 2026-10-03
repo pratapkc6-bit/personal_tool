@@ -205,7 +205,7 @@ export async function POST(request: NextRequest) {
       message: cloud?.text || localAnswer,
       engine: cloud ? "openai" : "local",
       model: cloud?.model,
-      notice: cloud ? "Answered by Zoro's cloud reasoning layer. Personal context is limited to Zoro's compact derived summaries; external write actions still require Zoro confirmation." : undefined,
+      notice: cloud ? ("Cloud reasoning · "+cloud.model+". Personal context is limited to Zoro's compact derived summaries; external write actions still require Zoro confirmation.") : undefined,
       deviceEligible: !cloud && isOpenEndedConversation(message, history),
       deviceReference: JSON.stringify({ generatedAt: context.generatedAt, timezone: context.timezone,
         calendarStatus: context.calendarStatus,
