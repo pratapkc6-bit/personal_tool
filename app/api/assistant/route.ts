@@ -171,7 +171,10 @@ async function reminderUpdateResolution(
   const current = normalizeAssistantInput(message);
   const updateVerb = /\b(change|update|move|reschedule|edit|modify)\b/i;
   const confirmIntent = /\b(confirm|confirmed|approve|approved|do it|go ahead|yes please)\b/i.test(current);
-  const shortFollowUp = /^(change( it)?|do it|go ahead|confirm(ed)?|approve(d)?|yes( please)?|daily|every day|everyday|once|one time|today only|tonight only|change and confirm(ed)?|change it and confirm(ed)?)[.!\s]*$/i.test(current);
+  const shortFollowUp =
+    /^(change( it)?|do it|go ahead|confirm(ed)?|approve(d)?|yes( please)?|daily|every day|everyday|once|one time|today only|tonight only|change and confirm(ed)?|change it and confirm(ed)?)[.!\s]*$/i.test(current)
+    || /^(?:at\s+)?\d{1,2}(?::\d{2})?\s*(?:am|pm)[.!\s]*$/i.test(current)
+    || /^(today|tomorrow|tonight)(?:\s+at\s+\d{1,2}(?::\d{2})?\s*(?:am|pm))?[.!\s]*$/i.test(current);
 
   const reminders = await db.reminder.findMany({
     where: { userId, status: { in: ["OPEN", "FIRED"] } },
