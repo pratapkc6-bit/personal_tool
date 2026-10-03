@@ -15,6 +15,9 @@ const capabilities = [
 ];
 
 const releaseHighlights = [
+  "Zoro OpenAI Brain: optional Responses API reasoning layer with GPT-6 Luna by default and local deterministic fallback.",
+  "Cloud AI receives compact Zoro-derived context rather than raw Gmail bodies, while all write actions remain behind Zoro confirmation.",
+  "Assistant Settings and System Health now show OpenAI provider status without exposing secrets.",
   "Zoro Nexus 7.0: 50 major changes across Daily Briefing 2.0, Waiting Radar, Calendar Intelligence, Intel Triage and resilience.",
   "Daily Briefing now combines tasks, follow-ups, reminders, approvals, urgent email, calendar pressure and freshness into one decision-ready view.",
   "Waiting Radar adds overdue/due/upcoming/unscheduled follow-up buckets with one-tap completion and postponing.",
