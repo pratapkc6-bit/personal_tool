@@ -436,29 +436,68 @@ async function enrichEmailRecipient(
 ): Promise<{ text: string; message?: string; choices?: AssistantChoice[] }> {
   if (/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i.test(requestText)) return { text: requestText };
 
-  const recipientMatch = /\b(?:send|write|draft|prepare)?\s*(?:an?\s+)?(?:email|mail)\s+(?:to\s+)?([a-z][a-z .'-]{1,50}?)(?=\s*(?::|,|-|;|\b(?:tell|say|saying|that|with|about|subject|message|body|to say)\b|$))/i.exec(requestText);
+  const rows = await db.emailIntelligence.findMany({
+    where: { userId, sender: { not: null } },
+    select: { sender: true },
+    orderBy: { processedAt: "desc" },
+    take: 80,
+  });
+
+  const contacts = rows.flatMap((row) => {
+    const sender = row.sender || "";
+    const email = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i.exec(sender)?.[0];
+    if (!email) return [];
+    const display = sender
+      .replace(/<[^>]+>/g, "")
+      .replace(/^["']|["']$/g, "")
+      .trim();
+    return [{ display, email }];
+  });
+
+  const normalizedRequest = normalizeAssistantInput(requestText);
+  const directMatches = contacts.filter((contact) => {
+    const name = normalizeAssistantInput(contact.display);
+    return name.length >= 2 && normalizedRequest.includes(name);
+  });
+  const directAddresses = [...new Set(directMatches.map((item) => item.email))];
+
+  if (directAddresses.length === 1) {
+    const contact = directMatches.find((item) => item.email === directAddresses[0]);
+    if (contact?.display) {
+      const escaped = contact.display.replace(/[.*+?^{}$()|[\]\\]/g, "\\$&");
+      const enriched = requestText.replace(new RegExp(escaped, "i"), (match) => match + " <" + directAddresses[0] + ">");
+      return { text: enriched };
+    }
+  }
+
+  if (directAddresses.length > 1) {
+    return {
+      text: requestText,
+      message: "I found more than one matching email address. Which one should I use?",
+      choices: directAddresses.slice(0, 5).map((address) => ({
+        label: address,
+        value: requestText + " " + address,
+      })),
+    };
+  }
+
+  const recipientMatch = /\b(?:send|write|draft|prepare)?\s*(?:an?\s+)?(?:email|mail)\s+(?:to\s+)?([a-z][a-z .'-]{1,50}?)(?=\s*(?::|,|-|;|\b(?:tell|say|saying|that|with|about|subject|message|body|to say|i|we|he|she|they|please|thanks|thank)\b|$))/i.exec(requestText);
   const name = recipientMatch?.[1]?.trim().replace(/^(?:to\s+)/i, "") || "";
 
   if (!name || /^(?:an?|the|email|mail)$/i.test(name)) {
     return { text: requestText, message: "Who should I email? You can say a name or email address." };
   }
 
-  const rows = await db.emailIntelligence.findMany({
-    where: { userId, sender: { contains: name, mode: "insensitive" } },
-    select: { sender: true },
-    orderBy: { processedAt: "desc" },
-    take: 20,
+  const normalizedName = normalizeAssistantInput(name);
+  const nameMatches = contacts.filter((contact) => {
+    const display = normalizeAssistantInput(contact.display);
+    return display.includes(normalizedName) || normalizedName.includes(display);
   });
-
-  const addresses = [...new Set(rows.flatMap((row) => {
-    const match = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i.exec(row.sender || "");
-    return match ? [match[0]] : [];
-  }))];
+  const addresses = [...new Set(nameMatches.map((item) => item.email))];
 
   if (addresses.length === 1 && recipientMatch) {
     const rawName = recipientMatch[1];
-    const enriched = requestText.replace(rawName, rawName + " <" + addresses[0] + ">");
-    return { text: enriched };
+    return { text: requestText.replace(rawName, rawName + " <" + addresses[0] + ">") };
   }
 
   if (addresses.length > 1) {
