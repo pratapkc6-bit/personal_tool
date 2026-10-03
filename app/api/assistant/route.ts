@@ -13,6 +13,7 @@ import { audit, activity } from "@/lib/audit";
 import { requestSchema, type PendingAction } from "@/lib/intelligence/assistant-contract";
 import { prepareConfirmation, consumeConfirmation } from "@/lib/intelligence/confirmations";
 import { buildMission } from "@/lib/intelligence/mission";
+import { answerWithOpenAI, openAIConfigured } from "@/lib/openai-provider";
 
 export const maxDuration = 60;
 
@@ -191,14 +192,26 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: "I've prepared an action. Review the details below before confirming.", ...await prepareConfirmation(session.user.id, action), engine: "local" });
     }
     const context = await buildAssistantContext(session.user.id);
+    const localAnswer=answerWithLocalIntelligence(message, context, history);
+    let cloud:null|Awaited<ReturnType<typeof answerWithOpenAI>>=null;
+    if(openAIConfigured()){
+      try{
+        cloud=await answerWithOpenAI(message,context,history);
+      }catch(error){
+        console.warn("OpenAI provider unavailable; using deterministic fallback.",error instanceof Error?error.message:"unknown");
+      }
+    }
     return NextResponse.json({
-      message: answerWithLocalIntelligence(message, context, history), engine: "local",
-      deviceEligible: isOpenEndedConversation(message, history),
+      message: cloud?.text || localAnswer,
+      engine: cloud ? "openai" : "local",
+      model: cloud?.model,
+      notice: cloud ? "Answered by Zoro's cloud reasoning layer. Personal context is limited to Zoro's compact derived summaries; external write actions still require Zoro confirmation." : undefined,
+      deviceEligible: !cloud && isOpenEndedConversation(message, history),
       deviceReference: JSON.stringify({ generatedAt: context.generatedAt, timezone: context.timezone,
         calendarStatus: context.calendarStatus,
         priorities: context.topPriorities.map(p => ({ title: p.title.slice(0, 180), nextAction: p.nextAction?.slice(0, 200), dueAt: p.dueAt })),
       }),
-      suggestedPrompts: ["Plan my day", "Which emails need action?", "What deadlines are coming?"],
+      suggestedPrompts: ["What should I do now and why?", "Plan my day around my calendar", "Summarize my urgent email", "What am I waiting for?"],
     });
   } catch {
     return NextResponse.json({ error: "I couldn't complete that request. Check your connection and try again. If an action was being confirmed, check Calendar or Tasks before preparing it again." }, { status: 500 });
