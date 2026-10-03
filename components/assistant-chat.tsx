@@ -36,6 +36,11 @@ type Message = {
   createdAt?: string;
 };
 
+type AssistantChoice = {
+  label: string;
+  value: string;
+};
+
 type SpeechRecognitionResultLike = {
   isFinal: boolean;
   0: { transcript: string };
@@ -102,8 +107,30 @@ function speechText(text: string) {
   return text
     .replace(/\[[A-Z_]+\]/g, "")
     .replace(/[•#]/g, "")
+    .replace(/\*\*/g, "")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function renderMessageText(text: string) {
+  const lines = text.split("\n");
+  return (
+    <>
+      {lines.map((line, lineIndex) => {
+        const parts = line.split(/(\*\*[^*]+\*\*)/g);
+        return (
+          <span key={lineIndex}>
+            {parts.map((part, partIndex) =>
+              part.startsWith("**") && part.endsWith("**") && part.length > 4
+                ? <strong key={partIndex}>{part.slice(2, -2)}</strong>
+                : <span key={partIndex}>{part}</span>
+            )}
+            {lineIndex < lines.length - 1 && <br />}
+          </span>
+        );
+      })}
+    </>
+  );
 }
 
 export function AssistantChat({ settings }: { settings: AssistantSettings }) {
@@ -115,6 +142,7 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
   const [hydrated, setHydrated] = useState(false);
   const [confirmationToken, setConfirmationToken] = useState<string | null>(null);
   const [suggestions, setSuggestions] = useState(QUICK_PROMPTS);
+  const [choices, setChoices] = useState<AssistantChoice[]>([]);
   const [refreshKey, setRefreshKey] = useState(0);
   const conversationEnd = useRef<HTMLDivElement | null>(null);
   const composerRef = useRef<HTMLTextAreaElement | null>(null);
@@ -242,6 +270,7 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
     setMessages(freshConversation());
     setPendingAction(null);
     setConfirmationToken(null);
+    setChoices([]);
     setSuggestions(QUICK_PROMPTS);
     resetComposer();
     try {
@@ -353,6 +382,39 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
     const value = (valueOverride ?? input).trim();
     if (!value || busyRef.current) return;
 
+    const normalizedCommand = value.toLowerCase().replace(/[.!?]/g, "").trim();
+
+    if (
+      pendingAction &&
+      confirmationToken &&
+      /^(confirm|confirmed|approve|approved|yes|yes please|do it|go ahead)$/.test(normalizedCommand)
+    ) {
+      resetComposer();
+      setChoices([]);
+      setMessages((current) => [
+        ...current,
+        { role: "user", text: value, createdAt: new Date().toISOString() },
+      ]);
+      await confirmAction();
+      return;
+    }
+
+    if (
+      pendingAction &&
+      /^(cancel|cancel it|no|never mind|nevermind|stop)$/.test(normalizedCommand)
+    ) {
+      resetComposer();
+      setPendingAction(null);
+      setConfirmationToken(null);
+      setChoices([]);
+      setMessages((current) => [
+        ...current,
+        { role: "user", text: value, createdAt: new Date().toISOString() },
+        { role: "assistant", text: "Cancelled. I did not change anything.", engine: "action", createdAt: new Date().toISOString() },
+      ]);
+      return;
+    }
+
     const history = messagesRef.current.slice(-20).map(({ role, text }) => ({
       role,
       text: text.slice(0, 4000),
@@ -360,6 +422,7 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
 
     setPendingAction(null);
     setConfirmationToken(null);
+    setChoices([]);
     resetComposer();
     setMessages((current) => [
       ...current,
@@ -398,6 +461,7 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
       ]);
       setPendingAction(data.pendingAction || null);
       setConfirmationToken(data.confirmationToken || null);
+      setChoices(Array.isArray(data.choices) ? data.choices.slice(0, 6) : []);
       if (data.suggestedPrompts?.length) setSuggestions(data.suggestedPrompts);
       if (/scan complete/i.test(reply)) setRefreshKey((key) => key + 1);
       setBusy(false);
@@ -415,6 +479,7 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
       }
     } catch {
       const reply = "I couldn't complete that request. Please try again.";
+      setChoices([]);
       setMessages((current) => [
         ...current,
         { role: "assistant", text: reply, createdAt: new Date().toISOString() },
@@ -594,6 +659,7 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
     } finally {
       setPendingAction(null);
       setConfirmationToken(null);
+      setChoices([]);
       setBusy(false);
       busyRef.current = false;
       if (voiceModeRef.current && !speakingRef.current) restartListening();
@@ -714,8 +780,7 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
                     </button>
                   )}
                 </div>
-                <div className="zoro-message-text">{message.text}</div>
-                {message.notice && <p className="zoro-message-notice">{message.notice}</p>}
+                <div className="zoro-message-text">{renderMessageText(message.text)}</div>
                 {message.sources && message.sources.length > 0 && (
                   <div className="zoro-source-row">
                     {message.sources.map((source) => (
@@ -726,6 +791,31 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
               </div>
             </article>
           ))}
+
+          {choices.length > 0 && !pendingAction && !busy && (
+            <section className="zoro-action-card zoro-action-sheet">
+              <div className="zoro-action-head">
+                <span>CHOOSE ONE</span>
+                <strong>Tap an option instead of typing it again.</strong>
+              </div>
+              <div className="zoro-command-starters">
+                {choices.map((choice) => (
+                  <button
+                    key={choice.label + choice.value}
+                    onClick={() => {
+                      if (choice.label.toLowerCase() === "cancel") {
+                        setChoices([]);
+                        return;
+                      }
+                      void send(choice.value);
+                    }}
+                  >
+                    <span>{choice.label}</span>
+                  </button>
+                ))}
+              </div>
+            </section>
+          )}
 
           {busy && (
             <section className="zoro-work-card" aria-live="polite">
@@ -761,6 +851,11 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
                     <strong>{pendingAction.mode === "ALARM" ? "Set alarm" : "Create reminder"} · {pendingAction.title}</strong>
                     <p>{new Date(pendingAction.remindAt).toLocaleString("en-AU",{timeZone:pendingAction.timezone||"Australia/Darwin"})}{pendingAction.recurrence === "DAILY" ? " · repeats daily" : ""}</p>
                   </>
+                ) : pendingAction.type === "UPDATE_REMINDER" ? (
+                  <>
+                    <strong>Update reminder · {pendingAction.title}</strong>
+                    <p>{new Date(pendingAction.remindAt).toLocaleString("en-AU",{timeZone:pendingAction.timezone||"Australia/Darwin"})}{pendingAction.recurrence === "DAILY" ? " · repeats daily" : " · one time"}</p>
+                  </>
                 ) : pendingAction.type === "SEND_EMAIL" || pendingAction.type === "CREATE_EMAIL_DRAFT" ? (
                   <>
                     <strong>{pendingAction.type === "SEND_EMAIL" ? "Send email" : "Create Gmail draft"} · {pendingAction.subject}</strong>
@@ -775,7 +870,7 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
                 )}
               </div>
               <div className="zoro-action-buttons">
-                <button disabled={busy} onClick={() => { setPendingAction(null); setConfirmationToken(null); }}>Cancel</button>
+                <button disabled={busy} onClick={() => { setPendingAction(null); setConfirmationToken(null); setChoices([]); }}>Cancel</button>
                 <button disabled={busy || !confirmationToken} onClick={confirmAction}>Confirm</button>
               </div>
             </section>
@@ -916,6 +1011,11 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
                       <strong>{pendingAction.title}</strong>
                       <p>{pendingAction.mode === "ALARM" ? "Set alarm" : "Create reminder"} · {new Date(pendingAction.remindAt).toLocaleString("en-AU",{timeZone:pendingAction.timezone||"Australia/Darwin"})}{pendingAction.recurrence === "DAILY" ? " · daily" : ""}</p>
                     </>
+                  ) : pendingAction.type === "UPDATE_REMINDER" ? (
+                    <>
+                      <strong>{pendingAction.title}</strong>
+                      <p>Update reminder · {new Date(pendingAction.remindAt).toLocaleString("en-AU",{timeZone:pendingAction.timezone||"Australia/Darwin"})}{pendingAction.recurrence === "DAILY" ? " · daily" : " · one time"}</p>
+                    </>
                   ) : pendingAction.type === "SEND_EMAIL" || pendingAction.type === "CREATE_EMAIL_DRAFT" ? (
                     <>
                       <strong>{pendingAction.subject}</strong>
@@ -929,7 +1029,7 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
                   )}
                 </div>
                 <div className="zoro-voice-approval-actions">
-                  <button onClick={() => { setPendingAction(null); setConfirmationToken(null); awaitingCommandRef.current = true; restartListening(200); }}>Cancel</button>
+                  <button onClick={() => { setPendingAction(null); setConfirmationToken(null); setChoices([]); awaitingCommandRef.current = true; restartListening(200); }}>Cancel</button>
                   <button disabled={busy || !confirmationToken} onClick={confirmAction}>Confirm action</button>
                 </div>
               </section>
