@@ -884,6 +884,21 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
                     <strong>Update reminder · {pendingAction.title}</strong>
                     <p>{new Date(pendingAction.remindAt).toLocaleString("en-AU",{timeZone:pendingAction.timezone||"Australia/Darwin"})}{pendingAction.recurrence === "DAILY" ? " · repeats daily" : " · one time"}</p>
                   </>
+                ) : pendingAction.type === "DELETE_REMINDER" ? (
+                  <>
+                    <strong>Delete reminder · {pendingAction.title}</strong>
+                    <p>This reminder will be removed.</p>
+                  </>
+                ) : pendingAction.type === "CREATE_NOTE" ? (
+                  <>
+                    <strong>Save note · {pendingAction.title}</strong>
+                    <p className="zoro-message-notice">{pendingAction.content}</p>
+                  </>
+                ) : pendingAction.type === "DELETE_NOTE" ? (
+                  <>
+                    <strong>Delete note · {pendingAction.title}</strong>
+                    <p>This saved note will be removed.</p>
+                  </>
                 ) : pendingAction.type === "SEND_EMAIL" || pendingAction.type === "CREATE_EMAIL_DRAFT" ? (
                   <>
                     <strong>{pendingAction.type === "SEND_EMAIL" ? "Send email" : "Create Gmail draft"} · {pendingAction.subject}</strong>
@@ -1043,6 +1058,21 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
                     <>
                       <strong>{pendingAction.title}</strong>
                       <p>Update reminder · {new Date(pendingAction.remindAt).toLocaleString("en-AU",{timeZone:pendingAction.timezone||"Australia/Darwin"})}{pendingAction.recurrence === "DAILY" ? " · daily" : " · one time"}</p>
+                    </>
+                  ) : pendingAction.type === "DELETE_REMINDER" ? (
+                    <>
+                      <strong>{pendingAction.title}</strong>
+                      <p>Delete reminder</p>
+                    </>
+                  ) : pendingAction.type === "CREATE_NOTE" ? (
+                    <>
+                      <strong>{pendingAction.title}</strong>
+                      <p>Save note</p>
+                    </>
+                  ) : pendingAction.type === "DELETE_NOTE" ? (
+                    <>
+                      <strong>{pendingAction.title}</strong>
+                      <p>Delete note</p>
                     </>
                   ) : pendingAction.type === "SEND_EMAIL" || pendingAction.type === "CREATE_EMAIL_DRAFT" ? (
                     <>
