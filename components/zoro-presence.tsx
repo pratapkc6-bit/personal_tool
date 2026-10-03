@@ -52,6 +52,7 @@ export function ZoroPresence() {
   const speakingRef = useRef(false);
   const activeRef = useRef(false);
   const ambientWantedRef = useRef(false);
+  const voiceSessionRef = useRef(false);
   const [needsGesture, setNeedsGesture] = useState(false);
   const [dismissed, setDismissed] = useState(false);
   const [status, setStatus] = useState("Voice needs one tap to activate.");
@@ -100,7 +101,7 @@ export function ZoroPresence() {
   }
 
   function startAmbient(settings = settingsRef.current) {
-    if (!settings?.handsFreeWakeWord || pathname === "/assistant" || document.visibilityState !== "visible") return;
+    if (voiceSessionRef.current || !settings?.handsFreeWakeWord || pathname === "/assistant" || document.visibilityState !== "visible") return;
     const Recognition = recognitionConstructor();
     if (!Recognition) { setStatus("Hands-free wake word is unavailable in this browser."); return; }
 
@@ -161,6 +162,28 @@ export function ZoroPresence() {
     if (settings.autoGreeting) speak(greetingPeriod() + ". Zoro is ready.", settings, () => startAmbient(settings));
     else startAmbient(settings);
   }
+
+  useEffect(() => {
+    const onVoiceSessionOpen = () => {
+      voiceSessionRef.current = true;
+      stopAmbient(true);
+    };
+    const onVoiceSessionClose = () => {
+      voiceSessionRef.current = false;
+      const current = settingsRef.current;
+      if (current?.handsFreeWakeWord && pathname !== "/assistant" && document.visibilityState === "visible") {
+        window.setTimeout(() => startAmbient(current), 450);
+      }
+    };
+
+    window.addEventListener("zoro:voice-session-open", onVoiceSessionOpen);
+    window.addEventListener("zoro:voice-session-close", onVoiceSessionClose);
+    return () => {
+      window.removeEventListener("zoro:voice-session-open", onVoiceSessionOpen);
+      window.removeEventListener("zoro:voice-session-close", onVoiceSessionClose);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
   useEffect(() => {
     setDismissed(window.localStorage.getItem("zoro:voice-prompt-dismissed") === "1");
