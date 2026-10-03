@@ -77,11 +77,11 @@ export async function deleteAssistantNote(userId: string, noteId: string) {
 export function noteCreatePreview(message: string) {
   const text = message.trim();
   const understood = normalizeAssistantInput(text);
-  const intent = /\b(?:take|make|create|save|write|add)\s+(?:a\s+)?note\b|\bnote\s+(?:down|this)\b/i;
+  const intent = /\b(?:take|make|create|save|write|add|set)\s+(?:a\s+)?note\b|\bnote\s+(?:down|this)\b/i;
   if (!intent.test(understood)) return null;
 
   const content = text
-    .replace(/^(?:please\s+)?(?:take|make|create|save|write|add)\s+(?:a\s+)?note\s*(?:that|saying|about|:|-)?\s*/i, "")
+    .replace(/^(?:please\s+)?(?:take|make|create|save|write|add|set)\s+(?:a\s+)?note\s*(?:that|saying|about|:|-)?\s*/i, "")
     .replace(/^(?:please\s+)?note\s+(?:down|this)\s*(?:that|:|-)?\s*/i, "")
     .trim();
 
