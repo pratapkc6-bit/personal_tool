@@ -68,47 +68,88 @@ async function reminderUpdateResolution(
   userId: string,
   message: string,
   history: AssistantHistoryMessage[],
-): Promise<{ action?: UpdateReminderPendingAction; message?: string; choices?: AssistantChoice[] } | null> {
-  let requestText = message;
-  let understood = normalizeAssistantInput(requestText);
+): Promise<{ action?: UpdateReminderPendingAction; message?: string; choices?: AssistantChoice[]; confirmed?: boolean } | null> {
+  const current = normalizeAssistantInput(message);
   const updateVerb = /\b(change|update|move|reschedule|edit|modify)\b/i;
-
-  if (!updateVerb.test(understood) && /\b(daily|every day|everyday|once|one time|today only|tonight only)\b/i.test(understood)) {
-    const previousUser = [...history].reverse().find((item) =>
-      item.role === "user" && updateVerb.test(normalizeAssistantInput(item.text))
-    );
-    const previousAssistant = [...history].reverse().find((item) => item.role === "assistant");
-    if (previousUser && previousAssistant && /\b(reminder|alarm|daily|today|tonight|9\s*pm|time)\b/i.test(previousAssistant.text)) {
-      requestText = previousUser.text + " " + message;
-      understood = normalizeAssistantInput(requestText);
-    }
-  }
-
-  if (!updateVerb.test(understood)) return null;
-  const parsed = parseAssistantDate(understood);
-  if (!parsed) return null;
+  const confirmIntent = /\b(confirm|confirmed|approve|approved|do it|go ahead|yes please)\b/i.test(current);
+  const shortFollowUp = /^(change( it)?|do it|go ahead|confirm(ed)?|approve(d)?|yes( please)?|change and confirm(ed)?|change it and confirm(ed)?)[.!\s]*$/i.test(current);
 
   const reminders = await db.reminder.findMany({
     where: { userId, status: { in: ["OPEN", "FIRED"] } },
     orderBy: { remindAt: "asc" },
     take: 50,
   });
-  if (!reminders.length) return { message: "You do not have an open reminder to update." };
+  if (!reminders.length) {
+    return updateVerb.test(current) || shortFollowUp ? { message: "You do not have an open reminder to update." } : null;
+  }
 
-  const ranked = reminders
+  const recentHistory = history.slice(-16);
+  const recentUserTurns = recentHistory.filter((item) => item.role === "user").map((item) => item.text);
+  const recentAssistantTurns = recentHistory.filter((item) => item.role === "assistant").map((item) => item.text);
+
+  const reminderConversation = [...recentUserTurns, ...recentAssistantTurns].join(" ");
+  const currentMentionsReminder = /\b(reminder|alarm)\b/i.test(current)
+    || reminders.some((item) => reminderMatchScore(current, item.title) > 0);
+  const historyMentionsReminder = /\b(reminder|alarm)\b/i.test(reminderConversation)
+    || reminders.some((item) => reminderMatchScore(reminderConversation, item.title) > 0);
+
+  const hasRecentUpdateAnchor = recentUserTurns.some((text) => {
+    const normalized = normalizeAssistantInput(text);
+    return updateVerb.test(normalized)
+      && (/\b(reminder|alarm|time)\b/i.test(normalized)
+        || reminders.some((item) => reminderMatchScore(normalized, item.title) > 0));
+  });
+
+  if (!updateVerb.test(current) && !currentMentionsReminder && !(shortFollowUp && hasRecentUpdateAnchor && historyMentionsReminder)) {
+    return null;
+  }
+
+  let anchor = -1;
+  for (let index = recentUserTurns.length - 1; index >= 0; index--) {
+    const normalized = normalizeAssistantInput(recentUserTurns[index]);
+    if (
+      updateVerb.test(normalized)
+      && (/\b(reminder|alarm|time)\b/i.test(normalized)
+        || reminders.some((item) => reminderMatchScore(normalized, item.title) > 0))
+    ) {
+      anchor = index;
+      break;
+    }
+  }
+
+  const contextualTurns = anchor >= 0 ? recentUserTurns.slice(anchor) : [];
+  const requestText = [...contextualTurns, message].join(" ").trim();
+  const understood = normalizeAssistantInput(requestText);
+
+  let existing = reminders
     .map((item) => ({ item, score: reminderMatchScore(understood, item.title) }))
-    .sort((a, b) => b.score - a.score || a.item.remindAt.getTime() - b.item.remindAt.getTime());
+    .sort((a, b) => b.score - a.score || a.item.remindAt.getTime() - b.item.remindAt.getTime())[0];
 
-  let existing = ranked[0]?.score ? ranked[0].item : reminders.length === 1 ? reminders[0] : null;
-  const timeZone = existing?.timezone || process.env.APP_TIMEZONE || "Australia/Darwin";
-  const parsedInZone = parseAssistantDate(understood, new Date(), timeZone) || parsed;
+  const selected = existing?.score ? existing.item : reminders.length === 1 ? reminders[0] : null;
+  const timeZone = selected?.timezone || process.env.APP_TIMEZONE || "Australia/Darwin";
+
+  const clockTurn = [...contextualTurns, message]
+    .reverse()
+    .find((text) => /\b\d{1,2}(?::\d{2})?\s*(?:am|pm)\b/i.test(text));
+  const parsed = parseAssistantDate(clockTurn || understood, new Date(), timeZone)
+    || parseAssistantDate(understood, new Date(), timeZone);
+
+  if (!parsed) {
+    if (shortFollowUp && hasRecentUpdateAnchor) {
+      return { message: "I remember you want to change the reminder, but I need the new time again." };
+    }
+    return updateVerb.test(current) || currentMentionsReminder
+      ? { message: "What time should I change the reminder to?" }
+      : null;
+  }
+
   const timeLabel = new Intl.DateTimeFormat("en-AU", {
     timeZone,
     hour: "numeric",
     minute: "2-digit",
-  }).format(parsedInZone.date);
+  }).format(parsed.date);
 
-  if (!existing) {
+  if (!selected) {
     return {
       message: "Which reminder should I change?",
       choices: reminders.slice(0, 5).map((item) => ({
@@ -118,35 +159,46 @@ async function reminderUpdateResolution(
     };
   }
 
-  const explicitDaily = /\b(daily|every day|everyday)\b/i.test(understood);
-  const explicitOnce = /\b(once|one time|today only|tonight only|do not repeat|don't repeat)\b/i.test(understood);
+  const recurrenceTurn = [...contextualTurns, message]
+    .reverse()
+    .find((text) => /\b(daily|every day|everyday|once|one time|today only|tonight only|do not repeat|don't repeat)\b/i.test(text));
+  const recurrenceText = normalizeAssistantInput(recurrenceTurn || understood);
+  const explicitDaily = /\b(daily|every day|everyday)\b/i.test(recurrenceText);
+  const explicitOnce = /\b(once|one time|today only|tonight only|do not repeat|don't repeat)\b/i.test(recurrenceText);
 
-  if (!explicitDaily && !explicitOnce && existing.recurrence !== "DAILY" && existing.remindAt.getTime() <= Date.now()) {
+  if (!explicitDaily && !explicitOnce && selected.recurrence !== "DAILY" && selected.remindAt.getTime() <= Date.now()) {
     return {
-      message: `"${existing.title}" is from an earlier date. How should I apply ${timeLabel}?`,
+      message: `"${selected.title}" is from an earlier date. How should I apply ${timeLabel}?`,
       choices: [
-        { label: `Once at ${timeLabel}`, value: `Change "${existing.title}" reminder to ${timeLabel} once` },
-        { label: `Daily at ${timeLabel}`, value: `Change "${existing.title}" reminder to ${timeLabel} daily` },
+        { label: `Once at ${timeLabel}`, value: `Change "${selected.title}" reminder to ${timeLabel} once` },
+        { label: `Daily at ${timeLabel}`, value: `Change "${selected.title}" reminder to ${timeLabel} daily` },
         { label: "Cancel", value: "Cancel" },
       ],
     };
   }
 
-  const recurrence: "NONE" | "DAILY" = explicitDaily ? "DAILY" : explicitOnce ? "NONE" : existing.recurrence === "DAILY" ? "DAILY" : "NONE";
+  const recurrence: "NONE" | "DAILY" = explicitDaily
+    ? "DAILY"
+    : explicitOnce
+      ? "NONE"
+      : selected.recurrence === "DAILY"
+        ? "DAILY"
+        : "NONE";
   const recurrenceTime = recurrence === "DAILY"
-    ? String(parsedInZone.hour).padStart(2, "0") + ":" + String(parsedInZone.minute).padStart(2, "0")
+    ? String(parsed.hour).padStart(2, "0") + ":" + String(parsed.minute).padStart(2, "0")
     : undefined;
 
   return {
+    confirmed: confirmIntent,
     action: {
       type: "UPDATE_REMINDER",
-      reminderId: existing.id,
-      title: existing.title,
-      remindAt: parsedInZone.date.toISOString(),
+      reminderId: selected.id,
+      title: selected.title,
+      remindAt: parsed.date.toISOString(),
       recurrence,
       recurrenceTime,
       timezone: timeZone,
-      ringSeconds: existing.ringSeconds,
+      ringSeconds: selected.ringSeconds,
     },
   };
 }
@@ -324,6 +376,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: reminderUpdate.message, engine: "tool", tool: "reminders" });
     }
     if (reminderUpdate?.action) {
+      if (reminderUpdate.confirmed) {
+        return NextResponse.json({
+          ...await executeAction(session.user.id, reminderUpdate.action),
+          engine: "action",
+          tool: "update_reminder",
+        });
+      }
       return NextResponse.json({
         message: `Ready to update "${reminderUpdate.action.title}".`,
         ...await prepareConfirmation(session.user.id, reminderUpdate.action),
