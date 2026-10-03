@@ -10,7 +10,7 @@ import { syncLatestMyobRoster } from "@/lib/roster-sync";
 import { audit, activity } from "@/lib/audit";
 import { loadNotificationSettings } from "@/lib/notification-settings";
 import { requestSchema, type PendingAction } from "@/lib/intelligence/assistant-contract";
-import { prepareConfirmation, consumeConfirmation } from "@/lib/intelligence/confirmations";
+import { prepareConfirmation, consumeConfirmation, consumeLatestConfirmation } from "@/lib/intelligence/confirmations";
 import { buildMission } from "@/lib/intelligence/mission";
 import { answerWithOpenAI, openAIConfigured } from "@/lib/openai-provider";
 import { emailPreview, isGmailScanIntent, isReminderListIntent, parseAssistantDate, reminderPreview } from "@/lib/intelligence/assistant-tools";
@@ -20,6 +20,8 @@ export const maxDuration = 60;
 
 type CalendarPendingAction = Extract<PendingAction, { type: "CREATE_CALENDAR_EVENT" }>;
 type TaskPendingAction = Extract<PendingAction, { type: "CREATE_TASK" }>;
+type UpdateReminderPendingAction = Extract<PendingAction, { type: "UPDATE_REMINDER" }>;
+type AssistantChoice = { label: string; value: string };
 
 function eventPreview(message: string): CalendarPendingAction | null {
   const understood = normalizeAssistantInput(message);
@@ -50,6 +52,103 @@ function taskPreview(message: string): TaskPendingAction | null {
     .trim();
   const title = rawTitle ? rawTitle.charAt(0).toUpperCase() + rawTitle.slice(1) : "";
   return { type: "CREATE_TASK", title: title || "Personal task", dueAt: due?.toISOString(), priority: /urgent|asap|important/i.test(message) ? "HIGH" : "MEDIUM", category: "PERSONAL", nextAction: title || "Complete the task" };
+}
+
+function reminderMatchScore(text: string, title: string) {
+  const normalizedTitle = normalizeAssistantInput(title).replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
+  if (!normalizedTitle) return 0;
+  let score = text.includes(normalizedTitle) ? 100 : 0;
+  for (const token of normalizedTitle.split(" ").filter((item) => item.length > 2)) {
+    if (text.includes(token)) score += 10;
+  }
+  return score;
+}
+
+async function reminderUpdateResolution(
+  userId: string,
+  message: string,
+  history: AssistantHistoryMessage[],
+): Promise<{ action?: UpdateReminderPendingAction; message?: string; choices?: AssistantChoice[] } | null> {
+  let requestText = message;
+  let understood = normalizeAssistantInput(requestText);
+  const updateVerb = /\b(change|update|move|reschedule|edit|modify)\b/i;
+
+  if (!updateVerb.test(understood) && /\b(daily|every day|everyday|once|one time|today only|tonight only)\b/i.test(understood)) {
+    const previousUser = [...history].reverse().find((item) =>
+      item.role === "user" && updateVerb.test(normalizeAssistantInput(item.text))
+    );
+    const previousAssistant = [...history].reverse().find((item) => item.role === "assistant");
+    if (previousUser && previousAssistant && /\b(reminder|alarm|daily|today|tonight|9\s*pm|time)\b/i.test(previousAssistant.text)) {
+      requestText = previousUser.text + " " + message;
+      understood = normalizeAssistantInput(requestText);
+    }
+  }
+
+  if (!updateVerb.test(understood)) return null;
+  const parsed = parseAssistantDate(understood);
+  if (!parsed) return null;
+
+  const reminders = await db.reminder.findMany({
+    where: { userId, status: { in: ["OPEN", "FIRED"] } },
+    orderBy: { remindAt: "asc" },
+    take: 50,
+  });
+  if (!reminders.length) return { message: "You do not have an open reminder to update." };
+
+  const ranked = reminders
+    .map((item) => ({ item, score: reminderMatchScore(understood, item.title) }))
+    .sort((a, b) => b.score - a.score || a.item.remindAt.getTime() - b.item.remindAt.getTime());
+
+  let existing = ranked[0]?.score ? ranked[0].item : reminders.length === 1 ? reminders[0] : null;
+  const timeZone = existing?.timezone || process.env.APP_TIMEZONE || "Australia/Darwin";
+  const parsedInZone = parseAssistantDate(understood, new Date(), timeZone) || parsed;
+  const timeLabel = new Intl.DateTimeFormat("en-AU", {
+    timeZone,
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(parsedInZone.date);
+
+  if (!existing) {
+    return {
+      message: "Which reminder should I change?",
+      choices: reminders.slice(0, 5).map((item) => ({
+        label: item.title,
+        value: `Change "${item.title}" reminder to ${timeLabel}`,
+      })),
+    };
+  }
+
+  const explicitDaily = /\b(daily|every day|everyday)\b/i.test(understood);
+  const explicitOnce = /\b(once|one time|today only|tonight only|do not repeat|don't repeat)\b/i.test(understood);
+
+  if (!explicitDaily && !explicitOnce && existing.recurrence !== "DAILY" && existing.remindAt.getTime() <= Date.now()) {
+    return {
+      message: `"${existing.title}" is from an earlier date. How should I apply ${timeLabel}?`,
+      choices: [
+        { label: `Once at ${timeLabel}`, value: `Change "${existing.title}" reminder to ${timeLabel} once` },
+        { label: `Daily at ${timeLabel}`, value: `Change "${existing.title}" reminder to ${timeLabel} daily` },
+        { label: "Cancel", value: "Cancel" },
+      ],
+    };
+  }
+
+  const recurrence: "NONE" | "DAILY" = explicitDaily ? "DAILY" : explicitOnce ? "NONE" : existing.recurrence === "DAILY" ? "DAILY" : "NONE";
+  const recurrenceTime = recurrence === "DAILY"
+    ? String(parsedInZone.hour).padStart(2, "0") + ":" + String(parsedInZone.minute).padStart(2, "0")
+    : undefined;
+
+  return {
+    action: {
+      type: "UPDATE_REMINDER",
+      reminderId: existing.id,
+      title: existing.title,
+      remindAt: parsedInZone.date.toISOString(),
+      recurrence,
+      recurrenceTime,
+      timezone: timeZone,
+      ringSeconds: existing.ringSeconds,
+    },
+  };
 }
 
 function encodeRawEmail(input: { to: string; subject: string; message: string }) {
@@ -85,6 +184,45 @@ async function executeAction(userId: string, action: PendingAction) {
     await activity({ userId, type: "REMINDER", summary: `${action.mode === "ALARM" ? "Alarm" : "Reminder"} created: ${reminder.title}`, details: { reminderId: reminder.id, remindAt: reminder.remindAt } });
     const delivery = settings.masterEnabled && settings.pushEnabled && subscriptions > 0 ? " Background push is enabled." : " It will ring while Zoro is open; enable Notifications for background alerts.";
     return { message: `Created ${action.mode.toLowerCase()} "${action.title}" for ${formatZoroDateTime(action.remindAt,action.timezone)} (${action.timezone}).${delivery}` };
+  }
+
+  if (action.type === "UPDATE_REMINDER") {
+    const existing = await db.reminder.findFirst({ where: { id: action.reminderId, userId } });
+    if (!existing) return { message: "That reminder no longer exists. Nothing was changed." };
+
+    const reminder = await db.reminder.update({
+      where: { id: existing.id },
+      data: {
+        remindAt: new Date(action.remindAt),
+        recurrence: action.recurrence,
+        recurrenceTime: action.recurrence === "DAILY" ? action.recurrenceTime : null,
+        timezone: action.timezone,
+        ringSeconds: action.ringSeconds,
+        status: "OPEN",
+        snoozedUntil: null,
+        completedAt: null,
+      },
+    });
+
+    await audit({
+      userId,
+      action: "REMINDER_UPDATED",
+      source: "AssistantConfirmed",
+      sourceRef: reminder.id,
+      previousState: existing,
+      newState: reminder,
+      result: "SUCCESS",
+    });
+    await activity({
+      userId,
+      type: "REMINDER",
+      summary: `Reminder updated: ${reminder.title}`,
+      details: { reminderId: reminder.id, remindAt: reminder.remindAt, recurrence: reminder.recurrence },
+    });
+
+    return {
+      message: `Updated "${reminder.title}" to ${formatZoroDateTime(reminder.remindAt, action.timezone)}${action.recurrence === "DAILY" ? " · daily" : ""}.`,
+    };
   }
 
   if (action.type === "CREATE_EMAIL_DRAFT" || action.type === "SEND_EMAIL") {
@@ -144,8 +282,19 @@ export async function POST(request: NextRequest) {
 
     const message = body.message!;
     const understood = normalizeAssistantInput(message);
-    await db.setting.deleteMany({ where: { userId: session.user.id, key: "assistant_pending_action" } });
     const history: AssistantHistoryMessage[] = body.history || [];
+
+    if (/^(confirm|confirmed|approve|approved|yes|yes please|do it|go ahead)[.!\s]*$/i.test(understood)) {
+      const action = await consumeLatestConfirmation(session.user.id);
+      if (action) return NextResponse.json({ ...await executeAction(session.user.id, action), engine: "action" });
+    }
+
+    if (/^(cancel|cancel it|no|never mind|nevermind|stop)[.!\s]*$/i.test(understood)) {
+      const cleared = await db.setting.deleteMany({ where: { userId: session.user.id, key: "assistant_pending_action" } });
+      if (cleared.count) return NextResponse.json({ message: "Cancelled. I did not change anything.", engine: "action" });
+    }
+
+    await db.setting.deleteMany({ where: { userId: session.user.id, key: "assistant_pending_action" } });
 
     if (isGmailScanIntent(message)) {
       const result = await gmailSummary(session.user.id);
@@ -160,6 +309,27 @@ export async function POST(request: NextRequest) {
 
     if (/^(please )?(sync|add|check|update|refresh)\s+(my |the )?(myob )?roster[.!?]*$/i.test(understood)) {
       return NextResponse.json({ message: "I can reconcile your latest MYOB roster with Google Calendar. Review the action first.", ...await prepareConfirmation(session.user.id, { type: "SYNC_MYOB_ROSTER" }), engine: "tool", tool: "roster" });
+    }
+
+    const reminderUpdate = await reminderUpdateResolution(session.user.id, message, history);
+    if (reminderUpdate?.choices?.length) {
+      return NextResponse.json({
+        message: reminderUpdate.message || "Choose an option.",
+        choices: reminderUpdate.choices,
+        engine: "tool",
+        tool: "reminders",
+      });
+    }
+    if (reminderUpdate?.message && !reminderUpdate.action) {
+      return NextResponse.json({ message: reminderUpdate.message, engine: "tool", tool: "reminders" });
+    }
+    if (reminderUpdate?.action) {
+      return NextResponse.json({
+        message: `Ready to update "${reminderUpdate.action.title}".`,
+        ...await prepareConfirmation(session.user.id, reminderUpdate.action),
+        engine: "tool",
+        tool: "update_reminder",
+      });
     }
 
     const action = emailPreview(message) || reminderPreview(message) || taskPreview(message) || eventPreview(message);
@@ -180,7 +350,6 @@ export async function POST(request: NextRequest) {
       message: cloud?.text || localAnswer,
       engine: cloud ? "openai" : "local",
       model: cloud?.model,
-      notice: cloud ? "Cloud reasoning is active. Zoro routes supported reads and write actions through its deterministic tool layer; writes still require confirmation." : undefined,
       suggestedPrompts: ["Check my urgent emails", "Plan my day around my calendar", "Show my reminders", "What should I do now and why?"],
     });
   } catch (error) {
