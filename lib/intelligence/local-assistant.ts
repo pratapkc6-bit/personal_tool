@@ -197,20 +197,22 @@ function capabilitiesAnswer(context: AssistantContext) {
       : "Right now I do not see anything urgent in the stored data.";
 
   return [
-    "I can act like a local Chief of Staff without sending your Gmail or Calendar content to an external AI model.",
+    "I can act as your personal operating assistant and use Zoro's tools instead of only telling you what to click.",
     "",
-    "I can currently:",
-    "• scan Gmail and separate action, deadline, security, waiting and low-value messages",
-    "• rank what deserves attention instead of repeating every alert",
-    "• tell you what to do now, today, or next",
-    "• show deadlines and explain why something is urgent",
-    "• plan today or tomorrow with free-time windows and overlapping-event warnings",
-    "• track waiting items and follow-ups",
-    "• prepare tasks, calendar events and MYOB roster changes, then ask for confirmation before writing",
+    "I can:",
+    "• create, update, list and delete reminders and alarms",
+    "• save, search, list and delete personal notes",
+    "• scan Gmail, summarize new/important messages and identify action items",
+    "• prepare and send emails after confirmation",
+    "• read your Google Calendar and create calendar events after confirmation",
+    "• answer Nepali Patro questions for today, tomorrow or a Bikram Sambat date",
+    "• create and list tasks, track deadlines and follow-ups",
+    "• sync MYOB roster data with Google Calendar",
+    "• plan your day around your calendar and priorities",
+    "",
+    "For write actions I ask only for genuinely missing information, then one final confirmation.",
     "",
     current,
-    "",
-    'Useful examples: “What should I do now?”, “Am I free tomorrow?”, “Which emails need action?”, “What deadlines are coming?”, or “Why is the second item urgent?”',
   ].join("\n");
 }
 
