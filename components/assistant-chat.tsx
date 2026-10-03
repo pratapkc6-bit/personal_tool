@@ -24,6 +24,7 @@ type Message = {
   text: string;
   sources?: Array<{ id: string; title: string; href: string }>;
   engine?: string;
+  model?: string;
   notice?: string;
   createdAt?: string;
 };
@@ -366,6 +367,7 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
           text: reply,
           sources: data.sources,
           engine: data.engine,
+          model: data.model,
           notice: data.notice,
           createdAt: new Date().toISOString(),
         },
@@ -629,7 +631,7 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
 
               <div className="zoro-message-body">
                 <div className="zoro-message-meta">
-                  <span>{message.role === "user" ? "YOU" : message.engine === "device" ? "ZORO · DEVICE" : message.engine === "action" ? "ZORO · ACTION" : "ZORO"}</span>
+                  <span>{message.role === "user" ? "YOU" : message.engine === "device" ? "ZORO · DEVICE" : message.engine === "action" ? "ZORO · ACTION" : message.engine === "openai" ? "ZORO · OPENAI" : "ZORO"}</span>
                   {message.createdAt && <time>{messageTime(message.createdAt)}</time>}
                   {message.role === "assistant" && (
                     <button onClick={() => void copyMessage(message.text, index)} aria-label="Copy response">
