@@ -12,11 +12,13 @@ import {
   CalendarClock,
   ChevronLeft,
   ChevronRight,
+  CircleAlert,
   Clock3,
-  LayoutList,
+  Focus,
   RefreshCw,
   Sparkles,
   X,
+  Zap,
 } from "lucide-react";
 
 function localInput(date: Date | null) {
@@ -30,6 +32,11 @@ function parseEventDate(value: EventInput["start"]) {
   if (value instanceof Date) return value;
   const date = new Date(value as string | number);
   return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function parseEventEnd(value: EventInput["end"], start: Date | null) {
+  const parsed = parseEventDate(value);
+  return parsed || (start ? new Date(start.getTime() + 60 * 60_000) : null);
 }
 
 function formatRange(start: Date, end: Date, view: string) {
@@ -57,6 +64,20 @@ function formatRange(start: Date, end: Date, view: string) {
   return `${startLabel} – ${endLabel}`;
 }
 
+function timeLabel(value: string | Date) {
+  const date = value instanceof Date ? value : new Date(value);
+  return date.toLocaleTimeString("en-AU", { hour: "numeric", minute: "2-digit" });
+}
+
+function eventDayLabel(date: Date) {
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+  if (date.toDateString() === today.toDateString()) return "Today";
+  if (date.toDateString() === tomorrow.toDateString()) return "Tomorrow";
+  return date.toLocaleDateString("en-AU", { weekday: "short", day: "numeric", month: "short" });
+}
+
 const views = [
   { id: "timeGridDay", label: "Day" },
   { id: "timeGridThreeDay", label: "3 days" },
@@ -80,6 +101,7 @@ export function CalendarBoard() {
   const [currentView, setCurrentView] = useState("timeGridWeek");
   const [rangeLabel, setRangeLabel] = useState("Your schedule");
   const [calendarHeight, setCalendarHeight] = useState(720);
+  const [scrollTime, setScrollTime] = useState("07:00:00");
 
   async function load() {
     setLoading(true);
@@ -92,40 +114,52 @@ export function CalendarBoard() {
     void load();
 
     const mobile = window.matchMedia("(max-width: 760px)").matches;
-    setCalendarHeight(mobile ? 640 : 720);
+    const now = new Date();
+    setCalendarHeight(mobile ? 610 : 760);
+    setScrollTime(`${String(Math.max(6, now.getHours() - 1)).padStart(2, "0")}:00:00`);
     if (mobile) {
       window.setTimeout(() => calendarRef.current?.getApi().changeView("timeGridDay"), 0);
     }
   }, []);
 
+  const normalizedEvents = useMemo(() => events.flatMap((event, index) => {
+    const startDate = parseEventDate(event.start);
+    if (!startDate) return [];
+    const endDate = parseEventEnd(event.end, startDate);
+    if (!endDate) return [];
+    return [{
+      id: String(event.id || index),
+      title: String(event.title || "Untitled event"),
+      start: startDate.toISOString(),
+      end: endDate.toISOString(),
+      allDay: Boolean(event.allDay),
+    }];
+  }), [events]);
+
+  const calendarIntel = useMemo(
+    () => analyzeCalendar(normalizedEvents, new Date()),
+    [normalizedEvents],
+  );
+
   const todayCount = useMemo(() => {
     const today = new Date();
-    return events.filter((event) => {
-      const eventDate = parseEventDate(event.start);
-      return eventDate && eventDate.toDateString() === today.toDateString();
-    }).length;
-  }, [events]);
+    return normalizedEvents.filter((event) => new Date(event.start).toDateString() === today.toDateString()).length;
+  }, [normalizedEvents]);
 
-  const nextEvent = useMemo(() => {
+  const upcoming = useMemo(() => {
     const now = Date.now();
     return events
-      .map((event) => ({ event, date: parseEventDate(event.start) }))
-      .filter((item): item is { event: EventInput; date: Date } => Boolean(item.date && item.date.getTime() >= now))
-      .sort((a, b) => a.date.getTime() - b.date.getTime())[0] || null;
+      .map((event, index) => {
+        const date = parseEventDate(event.start);
+        const endDate = parseEventEnd(event.end, date);
+        return { event, date, endDate, index };
+      })
+      .filter((item): item is { event: EventInput; date: Date; endDate: Date; index: number } =>
+        Boolean(item.date && item.endDate && item.endDate.getTime() >= now),
+      )
+      .sort((a, b) => a.date.getTime() - b.date.getTime())
+      .slice(0, 6);
   }, [events]);
-
-  const calendarIntel = useMemo(() => analyzeCalendar(events.flatMap((event,index) => {
-    const startDate=parseEventDate(event.start);
-    if(!startDate)return [];
-    const endDate=parseEventDate(event.end) || new Date(startDate.getTime()+60*60_000);
-    return [{
-      id:String(event.id||index),
-      title:String(event.title||"Untitled event"),
-      start:startDate.toISOString(),
-      end:endDate.toISOString(),
-      allDay:Boolean(event.allDay)
-    }];
-  }),new Date()),[events]);
 
   function choose(event: EventApi) {
     setSelected(event);
@@ -140,6 +174,19 @@ export function CalendarBoard() {
 
   function changeView(view: string) {
     calendarRef.current?.getApi().changeView(view);
+  }
+
+  function jumpToUpcoming(item: (typeof upcoming)[number]) {
+    const api = calendarRef.current?.getApi();
+    if (!api) return;
+    api.changeView("timeGridDay", item.date);
+    const id = item.event.id ? String(item.event.id) : "";
+    if (id) {
+      window.setTimeout(() => {
+        const event = api.getEventById(id);
+        if (event) choose(event);
+      }, 0);
+    }
   }
 
   async function updateEvent() {
@@ -176,27 +223,33 @@ export function CalendarBoard() {
     await load();
   }
 
-  const nextLabel = nextEvent
-    ? `${String(nextEvent.event.title || "Untitled event")} · ${nextEvent.date.toLocaleTimeString("en-AU", { hour: "numeric", minute: "2-digit" })}`
-    : "No upcoming event loaded";
+  const activeLabel = calendarIntel.activeEvent
+    ? calendarIntel.activeEvent.title
+    : "Nothing in progress";
+
+  const nextLabel = calendarIntel.nextEvent
+    ? calendarIntel.nextEvent.title
+    : "No upcoming event";
+
+  const freeBlock = calendarIntel.freeBlocks[0] || null;
 
   return (
-    <div className="nexus-calendar-workspace">
-      <section className="calendar-command-deck">
-        <div className="calendar-range">
+    <div className="timeline-workspace">
+      <section className="timeline-command-bar">
+        <div className="timeline-range-block">
           <span className="calendar-live-chip"><span /> LIVE GOOGLE CALENDAR</span>
           <h2>{rangeLabel}</h2>
-          <p>{loading ? "Synchronising your schedule…" : `${events.length} events loaded · ${todayCount} today`}</p>
+          <p>{loading ? "Synchronising your schedule…" : `${todayCount} today · ${events.length} loaded`}</p>
         </div>
 
-        <div className="calendar-control-stack">
-          <div className="calendar-nav-cluster" aria-label="Calendar navigation">
+        <div className="timeline-controls">
+          <div className="timeline-nav" aria-label="Calendar navigation">
             <button onClick={() => calendarRef.current?.getApi().prev()} aria-label="Previous period"><ChevronLeft size={18} /></button>
-            <button className="calendar-today-button" onClick={() => calendarRef.current?.getApi().today()}>Today</button>
+            <button className="timeline-today" onClick={() => calendarRef.current?.getApi().today()}>Today</button>
             <button onClick={() => calendarRef.current?.getApi().next()} aria-label="Next period"><ChevronRight size={18} /></button>
             <button onClick={() => void load()} aria-label="Refresh calendar" className={loading ? "is-loading" : ""}><RefreshCw size={16} /></button>
           </div>
-          <div className="calendar-view-tabs" aria-label="Calendar view">
+          <div className="timeline-view-switcher" aria-label="Calendar view">
             {views.map((item) => (
               <button
                 key={item.id}
@@ -210,34 +263,90 @@ export function CalendarBoard() {
         </div>
       </section>
 
-      <div className="calendar-insight-row calendar-intelligence-row">
-        <div className="calendar-insight">
-          <CalendarClock size={17} />
-          <div><span>Today</span><strong>{todayCount} scheduled</strong></div>
-        </div>
-        <div className="calendar-insight">
-          <Sparkles size={17} />
-          <div><span>Load</span><strong>{calendarIntel.loadScore}% booked</strong></div>
-        </div>
-        <div className={"calendar-insight "+(calendarIntel.conflicts.length?"calendar-insight-alert":"")}>
-          <Clock3 size={17} />
-          <div><span>Conflicts</span><strong>{calendarIntel.conflicts.length ? calendarIntel.conflicts.length+" detected" : "None"}</strong></div>
-        </div>
-        <div className="calendar-insight">
-          <Sparkles size={17} />
-          <div><span>Free block</span><strong>{calendarIntel.freeBlocks[0] ? calendarIntel.freeBlocks[0].minutes+" min" : "None"}</strong></div>
-        </div>
-        <div className="calendar-insight calendar-insight-wide">
-          <Clock3 size={17} />
-          <div><span>Next signal</span><strong>{nextLabel}</strong></div>
-        </div>
-      </div>
-      {calendarIntel.conflicts.length>0&&<div className="calendar-intelligence-warning">
-        <span>Schedule overlap detected</span>
-        <p>{calendarIntel.conflicts.slice(0,2).map(item=>item.first+" ↔ "+item.second).join(" · ")}</p>
-      </div>}
+      <section className="timeline-status-grid" aria-label="Schedule summary">
+        <article className="timeline-status-card is-now">
+          <span className="timeline-status-icon"><Zap size={17} /></span>
+          <div>
+            <span>Now</span>
+            <strong>{activeLabel}</strong>
+            <small>{calendarIntel.activeEvent ? `until ${timeLabel(calendarIntel.activeEvent.end)}` : "Your time is open"}</small>
+          </div>
+        </article>
 
-      <section className="nexus-calendar-shell">
+        <article className="timeline-status-card">
+          <span className="timeline-status-icon"><CalendarClock size={17} /></span>
+          <div>
+            <span>Next</span>
+            <strong>{nextLabel}</strong>
+            <small>{calendarIntel.nextEvent ? `${eventDayLabel(new Date(calendarIntel.nextEvent.start))} · ${timeLabel(calendarIntel.nextEvent.start)}` : "Nothing else loaded"}</small>
+          </div>
+        </article>
+
+        <article className="timeline-status-card">
+          <span className="timeline-status-icon"><Focus size={17} /></span>
+          <div>
+            <span>Best free block</span>
+            <strong>{freeBlock ? `${freeBlock.minutes} min free` : "No long block"}</strong>
+            <small>{freeBlock ? `${timeLabel(freeBlock.start)} – ${timeLabel(freeBlock.end)}` : "Your day is tightly packed"}</small>
+          </div>
+        </article>
+
+        <article className={"timeline-status-card is-load " + (calendarIntel.conflicts.length ? "has-conflict" : "")}>
+          <span className="timeline-status-icon">{calendarIntel.conflicts.length ? <CircleAlert size={17} /> : <Sparkles size={17} />}</span>
+          <div>
+            <span>Day load</span>
+            <strong>{calendarIntel.loadScore}% booked</strong>
+            <small>{calendarIntel.conflicts.length ? `${calendarIntel.conflicts.length} overlap${calendarIntel.conflicts.length === 1 ? "" : "s"}` : "No conflicts detected"}</small>
+            <span className="timeline-load-track" aria-hidden="true"><i style={{ width: `${calendarIntel.loadScore}%` }} /></span>
+          </div>
+        </article>
+      </section>
+
+      {calendarIntel.conflicts.length > 0 && (
+        <section className="timeline-conflict-banner">
+          <CircleAlert size={17} />
+          <div>
+            <strong>Schedule conflict</strong>
+            <p>{calendarIntel.conflicts.slice(0, 2).map((item) => item.first + " overlaps " + item.second).join(" · ")}</p>
+          </div>
+        </section>
+      )}
+
+      <section className="timeline-upcoming-panel">
+        <div className="timeline-section-head">
+          <div>
+            <p className="nexus-kicker">UP NEXT</p>
+            <h3>Your upcoming sequence</h3>
+          </div>
+          <span>{upcoming.length ? `${upcoming.length} visible` : "Clear"}</span>
+        </div>
+        {upcoming.length ? (
+          <div className="timeline-upcoming-rail">
+            {upcoming.map((item) => (
+              <button
+                key={String(item.event.id || item.index)}
+                className="timeline-upcoming-item"
+                onClick={() => jumpToUpcoming(item)}
+              >
+                <span>{eventDayLabel(item.date)}</span>
+                <strong>{String(item.event.title || "Untitled event")}</strong>
+                <small>{timeLabel(item.date)} – {timeLabel(item.endDate)}</small>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="timeline-empty-upcoming">
+            <Sparkles size={16} />
+            <span>No upcoming events are loaded. Your timeline is clear.</span>
+          </div>
+        )}
+      </section>
+
+      <section className="timeline-calendar-shell">
+        <div className="timeline-calendar-hint">
+          <span>Tap an event to inspect it</span>
+          <span>Tap a day in Month view to open that day</span>
+        </div>
         <FullCalendar
           ref={calendarRef}
           plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
@@ -260,13 +369,18 @@ export function CalendarBoard() {
           allDaySlot
           slotMinTime="06:00:00"
           slotMaxTime="23:00:00"
-          scrollTime="07:00:00"
+          scrollTime={scrollTime}
           slotDuration="00:30:00"
           slotLabelInterval="01:00"
           slotLabelFormat={{ hour: "numeric", minute: "2-digit", meridiem: "short" }}
           dayHeaderFormat={{ weekday: "short", day: "numeric", month: "short" }}
           height={calendarHeight}
           eventClick={(info) => choose(info.event)}
+          dateClick={(info) => {
+            if (currentView === "dayGridMonth") {
+              calendarRef.current?.getApi().changeView("timeGridDay", info.date);
+            }
+          }}
           datesSet={(info) => {
             setCurrentView(info.view.type);
             setRangeLabel(formatRange(info.start, info.end, info.view.type));
@@ -278,15 +392,13 @@ export function CalendarBoard() {
         />
       </section>
 
-      <p className="calendar-footnote"><LayoutList size={14} /> Mobile opens in Day view so your schedule stays readable instead of being squeezed into seven tiny columns.</p>
-
       {selected && (
         <div className="calendar-sheet-backdrop" onClick={() => setSelected(null)}>
-          <section className="calendar-event-sheet" onClick={(event) => event.stopPropagation()}>
+          <section className="calendar-event-sheet timeline-event-sheet" onClick={(event) => event.stopPropagation()}>
             <div className="calendar-sheet-handle" />
             <div className="calendar-sheet-head">
               <div>
-                <p className="nexus-kicker">{editing ? "EDIT / RESCHEDULE" : "EVENT INTELLIGENCE"}</p>
+                <p className="nexus-kicker">{editing ? "EDIT / RESCHEDULE" : "EVENT DETAILS"}</p>
                 <h2>{selected.title || "Untitled event"}</h2>
               </div>
               <button onClick={() => setSelected(null)} aria-label="Close event"><X size={18} /></button>
@@ -302,7 +414,7 @@ export function CalendarBoard() {
 
                 <div className="calendar-sheet-actions">
                   <button className="calendar-secondary" onClick={() => setSelected(null)}>Close</button>
-                  <button className="calendar-secondary" onClick={() => setEditing(true)}>Edit event</button>
+                  <button className="calendar-primary" onClick={() => setEditing(true)}>Edit event</button>
                   <button className="calendar-danger" onClick={() => setPreview(true)}>Delete</button>
                 </div>
 

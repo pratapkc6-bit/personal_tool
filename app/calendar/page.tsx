@@ -6,19 +6,21 @@ import { EventCreator } from "@/components/event-creator";
 export default function CalendarPage() {
   return (
     <div className="nexus-page immersive-page immersive-page-timeline">
-      <div id="live-calendar" className="professional-page-surface">
-      <div className="nexus-page-heading">
-        <div className="nexus-page-icon"><CalendarDays size={22} /></div>
-        <div className="nexus-page-title">
-          <p className="nexus-kicker">TEMPORAL MAP</p>
-          <h1>Your timeline</h1>
-          <p>See commitments, protect focus windows and preview every calendar write before it happens.</p>
+      <div id="live-calendar" className="timeline-page-surface">
+        <div className="timeline-page-heading">
+          <div className="timeline-page-title">
+            <span className="timeline-page-icon"><CalendarDays size={21} /></span>
+            <div>
+              <p className="nexus-kicker">ZORO TIMELINE</p>
+              <h1>Timeline</h1>
+              <p>See what is happening now, what is next, and where your free time actually is.</p>
+            </div>
+          </div>
+          <Suspense fallback={<div className="nexus-action-skeleton" aria-hidden />}>
+            <EventCreator />
+          </Suspense>
         </div>
-        <Suspense fallback={<div className="nexus-action-skeleton" aria-hidden />}>
-          <EventCreator />
-        </Suspense>
-      </div>
-      <CalendarBoard />
+        <CalendarBoard />
       </div>
     </div>
   );
