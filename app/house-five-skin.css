@@ -3224,3 +3224,31 @@ html[data-theme="normal"] .recovery-icon{background:#f1dfdc!important}
   .connectivity-banner{top:calc(8px + env(safe-area-inset-top))}
 }
 @media(prefers-reduced-motion:reduce){.recovery-loader{animation:none}}
+
+
+/* Zoro OpenAI cloud brain */
+.assistant-provider-card{display:grid;gap:12px}
+.assistant-provider-status{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:12px;border:1px solid var(--pro-line,#26313d);border-radius:11px;background:var(--pro-panel-3,#0f151d)
+}
+.assistant-provider-status>span{display:inline-flex;align-items:center;gap:7px;font-size:10px;font-weight:800}
+.assistant-provider-status>span.is-ready{color:var(--pro-success,#52c994)}
+.assistant-provider-status>span.is-attention{color:var(--pro-warning,#f0b45a)}
+.assistant-provider-status>strong{font-size:10px;color:var(--pro-text,#f4f7fb)}
+.assistant-provider-privacy{
+  display:flex;align-items:flex-start;gap:8px;padding:10px 11px;border-radius:10px;
+  background:rgba(82,201,148,.06);border:1px solid rgba(82,201,148,.18);
+  color:var(--pro-muted,#93a1b1);font-size:9px;line-height:1.5
+}
+.assistant-provider-privacy>svg{flex:0 0 auto;color:var(--pro-success,#52c994)}
+html[data-theme="normal"] .assistant-provider-status{
+  background:#fbf3e8!important;border-color:#dfcfbe!important;
+}
+html[data-theme="normal"] .assistant-provider-status>strong{color:#3b2d25!important}
+html[data-theme="normal"] .assistant-provider-status>span.is-ready{color:#52705b!important}
+html[data-theme="normal"] .assistant-provider-status>span.is-attention{color:#93662a!important}
+html[data-theme="normal"] .assistant-provider-privacy{
+  background:#eaf2eb!important;border-color:#c7d9cb!important;color:#657066!important;
+}
+html[data-theme="normal"] .assistant-provider-privacy>svg{color:#52705b!important}
