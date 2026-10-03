@@ -47,6 +47,21 @@ export const pendingActionSchema = z.discriminatedUnion("type", [
     timezone: z.string().min(1).max(80),
     ringSeconds: z.number().int().min(0).max(10),
   }).strict(),
+  z.object({
+    type: z.literal("DELETE_REMINDER"),
+    reminderId: z.string().min(1).max(191),
+    title: z.string().trim().min(1).max(180),
+  }).strict(),
+  z.object({
+    type: z.literal("CREATE_NOTE"),
+    title: z.string().trim().min(1).max(180),
+    content: z.string().trim().min(1).max(10000),
+  }).strict(),
+  z.object({
+    type: z.literal("DELETE_NOTE"),
+    noteId: z.string().uuid(),
+    title: z.string().trim().min(1).max(180),
+  }).strict(),
   z.object({ type: z.literal("CREATE_EMAIL_DRAFT"), ...emailFields }).strict(),
   z.object({ type: z.literal("SEND_EMAIL"), ...emailFields }).strict(),
   z.object({ type: z.literal("SYNC_MYOB_ROSTER") }).strict(),
