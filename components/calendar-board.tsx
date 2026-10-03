@@ -13,9 +13,7 @@ import {
   ChevronLeft,
   ChevronRight,
   CircleAlert,
-  Clock3,
   Focus,
-  RefreshCw,
   Sparkles,
   X,
   Zap,
@@ -100,6 +98,7 @@ export function CalendarBoard() {
   const [status, setStatus] = useState("");
   const [currentView, setCurrentView] = useState("timeGridWeek");
   const [rangeLabel, setRangeLabel] = useState("Your schedule");
+  const [rangeStart, setRangeStart] = useState<Date | null>(null);
   const [calendarHeight, setCalendarHeight] = useState(720);
   const [scrollTime, setScrollTime] = useState("07:00:00");
 
@@ -115,7 +114,7 @@ export function CalendarBoard() {
 
     const mobile = window.matchMedia("(max-width: 760px)").matches;
     const now = new Date();
-    setCalendarHeight(mobile ? 610 : 760);
+    setCalendarHeight(mobile ? 560 : 760);
     setScrollTime(`${String(Math.max(6, now.getHours() - 1)).padStart(2, "0")}:00:00`);
     if (mobile) {
       window.setTimeout(() => calendarRef.current?.getApi().changeView("timeGridDay"), 0);
@@ -223,15 +222,17 @@ export function CalendarBoard() {
     await load();
   }
 
-  const activeLabel = calendarIntel.activeEvent
-    ? calendarIntel.activeEvent.title
-    : "Nothing in progress";
-
   const nextLabel = calendarIntel.nextEvent
     ? calendarIntel.nextEvent.title
     : "No upcoming event";
 
   const freeBlock = calendarIntel.freeBlocks[0] || null;
+  const conflict = calendarIntel.conflicts[0] || null;
+  const compactDayLabel = (rangeStart || new Date()).toLocaleDateString("en-AU", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  }).toUpperCase();
 
   return (
     <div className="timeline-workspace">
@@ -244,81 +245,77 @@ export function CalendarBoard() {
 
         <div className="timeline-controls">
           <div className="timeline-nav" aria-label="Calendar navigation">
-            <button onClick={() => calendarRef.current?.getApi().prev()} aria-label="Previous period"><ChevronLeft size={18} /></button>
+            <button onClick={() => calendarRef.current?.getApi().prev()} aria-label="Previous period"><ChevronLeft size={19} /></button>
+            <button onClick={() => calendarRef.current?.getApi().next()} aria-label="Next period"><ChevronRight size={19} /></button>
             <button className="timeline-today" onClick={() => calendarRef.current?.getApi().today()}>Today</button>
-            <button onClick={() => calendarRef.current?.getApi().next()} aria-label="Next period"><ChevronRight size={18} /></button>
-            <button onClick={() => void load()} aria-label="Refresh calendar" className={loading ? "is-loading" : ""}><RefreshCw size={16} /></button>
           </div>
-          <div className="timeline-view-switcher" aria-label="Calendar view">
-            {views.map((item) => (
-              <button
-                key={item.id}
-                aria-pressed={currentView === item.id}
-                onClick={() => changeView(item.id)}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
+        </div>
+
+        <div className="timeline-view-switcher" aria-label="Calendar view">
+          {views.map((item) => (
+            <button
+              key={item.id}
+              aria-pressed={currentView === item.id}
+              onClick={() => changeView(item.id)}
+            >
+              {item.label}
+            </button>
+          ))}
         </div>
       </section>
 
       <section className="timeline-status-grid" aria-label="Schedule summary">
-        <article className="timeline-status-card is-now">
-          <span className="timeline-status-icon"><Zap size={17} /></span>
+        <article className="timeline-status-card is-next">
+          <span className="timeline-status-icon"><Zap size={20} /></span>
           <div>
-            <span>Now</span>
-            <strong>{activeLabel}</strong>
-            <small>{calendarIntel.activeEvent ? `until ${timeLabel(calendarIntel.activeEvent.end)}` : "Your time is open"}</small>
-          </div>
-        </article>
-
-        <article className="timeline-status-card">
-          <span className="timeline-status-icon"><CalendarClock size={17} /></span>
-          <div>
-            <span>Next</span>
+            <span>Next event</span>
             <strong>{nextLabel}</strong>
-            <small>{calendarIntel.nextEvent ? `${eventDayLabel(new Date(calendarIntel.nextEvent.start))} · ${timeLabel(calendarIntel.nextEvent.start)}` : "Nothing else loaded"}</small>
+            <small>{calendarIntel.nextEvent ? `${timeLabel(calendarIntel.nextEvent.start)} – ${timeLabel(calendarIntel.nextEvent.end)}` : "Nothing else loaded"}</small>
           </div>
+          <ChevronRight className="timeline-card-chevron" size={19} />
         </article>
 
-        <article className="timeline-status-card">
-          <span className="timeline-status-icon"><Focus size={17} /></span>
+        <article className="timeline-status-card is-free">
+          <span className="timeline-status-icon"><CalendarClock size={20} /></span>
           <div>
-            <span>Best free block</span>
+            <span>Free block</span>
             <strong>{freeBlock ? `${freeBlock.minutes} min free` : "No long block"}</strong>
             <small>{freeBlock ? `${timeLabel(freeBlock.start)} – ${timeLabel(freeBlock.end)}` : "Your day is tightly packed"}</small>
           </div>
+          <ChevronRight className="timeline-card-chevron" size={19} />
         </article>
 
-        <article className={"timeline-status-card is-load " + (calendarIntel.conflicts.length ? "has-conflict" : "")}>
-          <span className="timeline-status-icon">{calendarIntel.conflicts.length ? <CircleAlert size={17} /> : <Sparkles size={17} />}</span>
+        <article className="timeline-status-card is-load">
+          <span className="timeline-status-icon"><Focus size={20} /></span>
           <div>
             <span>Day load</span>
-            <strong>{calendarIntel.loadScore}% booked</strong>
-            <small>{calendarIntel.conflicts.length ? `${calendarIntel.conflicts.length} overlap${calendarIntel.conflicts.length === 1 ? "" : "s"}` : "No conflicts detected"}</small>
+            <strong>{calendarIntel.loadScore}% complete</strong>
+            <small>{calendarIntel.conflicts.length ? `${calendarIntel.conflicts.length} over limit` : "No overlaps"}</small>
             <span className="timeline-load-track" aria-hidden="true"><i style={{ width: `${calendarIntel.loadScore}%` }} /></span>
           </div>
+          <ChevronRight className="timeline-card-chevron" size={19} />
+        </article>
+
+        <article className={"timeline-status-card is-conflict " + (conflict ? "has-conflict" : "")}>
+          <span className="timeline-status-icon">{conflict ? <CircleAlert size={20} /> : <Sparkles size={20} />}</span>
+          <div>
+            <span>Schedule conflict</span>
+            <strong>{conflict ? conflict.first : "No conflict"}</strong>
+            <small>{conflict ? `overlaps ${conflict.second}` : "Everything fits cleanly"}</small>
+          </div>
+          <ChevronRight className="timeline-card-chevron" size={19} />
         </article>
       </section>
-
-      {calendarIntel.conflicts.length > 0 && (
-        <section className="timeline-conflict-banner">
-          <CircleAlert size={17} />
-          <div>
-            <strong>Schedule conflict</strong>
-            <p>{calendarIntel.conflicts.slice(0, 2).map((item) => item.first + " overlaps " + item.second).join(" · ")}</p>
-          </div>
-        </section>
-      )}
 
       <section className="timeline-upcoming-panel">
         <div className="timeline-section-head">
           <div>
             <p className="nexus-kicker">UP NEXT</p>
-            <h3>Your upcoming sequence</h3>
+            <h3>Your upcoming schedule</h3>
           </div>
-          <span>{upcoming.length ? `${upcoming.length} visible` : "Clear"}</span>
+          <button className="timeline-see-all" onClick={() => changeView("listWeek")}>
+            See all <ChevronRight size={15} />
+          </button>
         </div>
         {upcoming.length ? (
           <div className="timeline-upcoming-rail">
@@ -343,6 +340,10 @@ export function CalendarBoard() {
       </section>
 
       <section className="timeline-calendar-shell">
+        <div className="timeline-calendar-mobile-head">
+          <strong>{compactDayLabel}</strong>
+          <span>All day</span>
+        </div>
         <div className="timeline-calendar-hint">
           <span>Tap an event to inspect it</span>
           <span>Tap a day in Month view to open that day</span>
@@ -383,6 +384,7 @@ export function CalendarBoard() {
           }}
           datesSet={(info) => {
             setCurrentView(info.view.type);
+            setRangeStart(info.start);
             setRangeLabel(formatRange(info.start, info.end, info.view.type));
           }}
           eventClassNames={(arg) => [

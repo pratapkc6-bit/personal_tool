@@ -2530,3 +2530,247 @@ section[aria-label="On-device model"] {
 .zoro-context-drawer .zoro-source-row button{min-height:42px;display:flex;align-items:center;justify-content:flex-start;gap:7px;padding:0 10px;border:1px solid rgba(134,172,229,.10);border-radius:11px;color:#8296aa;background:rgba(255,255,255,.018);font-size:8px;font-weight:720}
 .zoro-context-drawer .zoro-source-row button svg{color:#69e7ff}
 .zoro-context-drawer .zoro-source-row button:hover{border-color:rgba(105,231,255,.20);color:#c8d8e7;background:rgba(105,231,255,.025)}
+
+
+/* ========================================================================
+   Timeline v7.7 · approved mobile-native reference design
+   ======================================================================== */
+.timeline-calendar-mobile-head,
+.timeline-card-chevron,
+.timeline-see-all { display:none; }
+
+@media(max-width:760px){
+  /* Make the whole shell read like a native mobile screen, not a desktop page. */
+  .nexus-stage{min-height:100dvh}
+  .nexus-topbar{
+    min-height:62px;
+    grid-template-columns:42px minmax(0,1fr) auto;
+    gap:8px;
+    padding:8px 10px;
+    border-bottom:1px solid rgba(107,187,235,.10);
+    background:rgba(3,7,13,.88);
+    backdrop-filter:blur(24px) saturate(150%);
+  }
+  .nexus-mobile-brand{
+    width:42px;height:42px;display:grid;place-items:center;border:1px solid rgba(105,231,255,.18);
+    border-radius:12px;background:linear-gradient(145deg,rgba(10,79,122,.86),rgba(4,33,57,.94));
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 8px 24px rgba(0,0,0,.22)
+  }
+  .nexus-mobile-brand>span{color:#7cecff;font-size:21px;font-weight:850}
+  .nexus-mobile-brand>strong{display:none}
+  .nexus-command-trigger{
+    min-height:42px;border-radius:999px;padding:0 12px;gap:8px;
+    border-color:rgba(114,176,222,.16);background:rgba(8,14,25,.76);font-size:9px;
+  }
+  .nexus-command-trigger kbd{display:none}
+  .nexus-topbar-actions{gap:5px}
+  .nexus-system-clock{display:none}
+  .nexus-topbar-actions>*{max-width:42px}
+  .nexus-topbar .hub-capture{width:42px;min-height:42px;padding:0;border-radius:50%;font-size:0}
+  .nexus-content{
+    width:100%;padding:10px 10px calc(116px + env(safe-area-inset-bottom));
+    min-height:calc(100dvh - 62px);
+  }
+  .nexus-footer{display:none}
+
+  .timeline-page-surface{gap:10px}
+  .timeline-page-heading{
+    min-height:88px;padding:15px 13px;border-radius:17px;
+    border-color:rgba(122,176,220,.11);
+    background:linear-gradient(135deg,rgba(11,20,34,.92),rgba(6,11,20,.94));
+  }
+  .timeline-page-title{align-items:center;gap:12px}
+  .timeline-page-icon{
+    width:48px;height:48px;border-radius:14px;color:#72eaff;
+    border-color:rgba(105,231,255,.23);background:rgba(105,231,255,.07)
+  }
+  .timeline-page-title .nexus-kicker{display:block;margin:0 0 4px;font-size:8px;letter-spacing:.22em}
+  .timeline-page-title h1{font-size:29px;line-height:1;font-weight:650;letter-spacing:-.045em}
+  .timeline-page-title p:last-child{display:none}
+  .timeline-page-heading .nexus-create-event{
+    position:fixed;right:17px;bottom:calc(96px + env(safe-area-inset-bottom));z-index:58;
+    width:58px;min-width:58px;height:58px;min-height:58px;padding:0;
+    display:grid;place-items:center;border:1px solid rgba(0,174,255,.72);border-radius:50%;
+    color:#7ceaff;background:rgba(5,42,70,.94);
+    box-shadow:0 0 0 2px rgba(0,153,255,.10),0 0 32px rgba(0,174,255,.25),0 16px 42px rgba(0,0,0,.40);
+    font-size:0;
+  }
+  .timeline-page-heading .nexus-create-event svg{width:28px;height:28px}
+
+  .timeline-command-bar{
+    grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:17px 14px 14px;border-radius:19px;
+    border-color:rgba(112,171,218,.13);
+    background:linear-gradient(145deg,rgba(11,21,36,.94),rgba(6,12,22,.96));
+  }
+  .timeline-range-block{min-width:0}
+  .calendar-live-chip{font-size:8px;letter-spacing:.20em}
+  .timeline-range-block h2{
+    margin-top:10px;font-size:28px;line-height:1.04;font-weight:680;letter-spacing:-.045em;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .timeline-range-block p{margin-top:5px;font-size:9px;color:#64748a}
+  .timeline-controls{align-self:center;justify-items:end}
+  .timeline-nav{justify-content:flex-end;gap:6px}
+  .timeline-nav button{
+    width:42px;min-width:42px;min-height:42px;border-radius:13px;
+    border-color:rgba(126,179,220,.12);background:rgba(255,255,255,.018);color:#8a9bb1;
+  }
+  .timeline-nav .timeline-today{
+    order:3;width:auto;min-width:76px;flex:0 0 auto;padding:0 14px;color:#dae5f1;
+    background:rgba(18,30,50,.74);font-size:10px;
+  }
+  .timeline-view-switcher{
+    grid-column:1/-1;width:100%;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
+    gap:0;margin-top:2px;padding:3px;border:1px solid rgba(123,178,221,.09);
+    border-radius:15px;background:rgba(3,8,16,.52);overflow:visible;
+  }
+  .timeline-view-switcher button{
+    min-width:0;min-height:45px;padding:0 5px;border:0;border-radius:12px;
+    color:#7d8ea5;background:transparent;font-size:9px;font-weight:760;
+  }
+  .timeline-view-switcher button[aria-pressed="true"]{
+    color:#061017;background:linear-gradient(135deg,#73e8ff,#56d7f5);
+    box-shadow:0 0 0 1px rgba(105,231,255,.20),0 8px 22px rgba(62,199,238,.12);
+  }
+
+  .timeline-status-grid{
+    display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;overflow:visible;
+  }
+  .timeline-status-card{
+    position:relative;min-width:0;min-height:132px;display:grid;
+    grid-template-columns:48px minmax(0,1fr) 18px;align-items:center;gap:10px;
+    padding:13px 12px;border-radius:18px;border:1px solid rgba(126,174,218,.10);
+    background:linear-gradient(145deg,rgba(11,21,36,.86),rgba(7,13,23,.92));
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.018);
+  }
+  .timeline-status-icon{
+    width:46px;height:46px;border-radius:50%;
+    color:#6fe7fb;background:radial-gradient(circle,rgba(105,231,255,.10),rgba(105,231,255,.025));
+    border:1px solid rgba(105,231,255,.15);
+  }
+  .timeline-status-card.is-free .timeline-status-icon{color:#9ba8ff;border-color:rgba(137,126,255,.18);background:rgba(137,126,255,.06)}
+  .timeline-status-card.is-load,
+  .timeline-status-card.is-conflict.has-conflict{
+    border-color:rgba(255,91,128,.22);
+    background:linear-gradient(145deg,rgba(34,13,26,.80),rgba(16,10,20,.92));
+  }
+  .timeline-status-card.is-load .timeline-status-icon,
+  .timeline-status-card.is-conflict.has-conflict .timeline-status-icon{
+    color:#ff6f91;border-color:rgba(255,95,132,.22);background:rgba(255,95,132,.08)
+  }
+  .timeline-status-card>div{align-self:center}
+  .timeline-status-card>div>span:first-child{font-size:7px;letter-spacing:.16em}
+  .timeline-status-card strong{
+    margin-top:6px;font-size:12px;line-height:1.25;white-space:normal;display:-webkit-box;
+    -webkit-line-clamp:2;-webkit-box-orient:vertical;
+  }
+  .timeline-status-card small{
+    margin-top:5px;font-size:9px;white-space:normal;display:-webkit-box;
+    -webkit-line-clamp:2;-webkit-box-orient:vertical;
+  }
+  .timeline-card-chevron{display:block;align-self:center;color:#788ba1}
+  .timeline-load-track{height:4px;margin-top:9px}
+  .timeline-load-track i{background:linear-gradient(90deg,#68e6fb,#86efff)}
+  .timeline-conflict-banner{display:none}
+
+  .timeline-upcoming-panel{
+    padding:15px 13px 13px;border-radius:18px;
+    border-color:rgba(126,175,218,.11);background:linear-gradient(145deg,rgba(8,18,31,.92),rgba(5,11,19,.95));
+  }
+  .timeline-section-head{align-items:center}
+  .timeline-section-head .nexus-kicker{margin-bottom:5px;font-size:8px;letter-spacing:.20em}
+  .timeline-section-head h3{font-size:14px;font-weight:530;color:#aebed1}
+  .timeline-see-all{
+    display:inline-flex;align-items:center;gap:5px;min-height:38px;padding:0 11px;border:1px solid rgba(120,175,221,.12);
+    border-radius:12px;color:#a8b8ca;background:rgba(14,27,45,.70);font-size:9px;font-weight:730;
+  }
+  .timeline-upcoming-rail{
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:13px;overflow:visible;
+  }
+  .timeline-upcoming-item{
+    min-width:0;min-height:122px;padding:13px 11px;border-radius:15px;
+    border-color:rgba(124,175,218,.12);background:rgba(7,14,25,.74);
+  }
+  .timeline-upcoming-item:nth-child(n+4){display:none}
+  .timeline-upcoming-item>span{font-size:8px;letter-spacing:.08em}
+  .timeline-upcoming-item strong{
+    margin-top:5px;font-size:11px;line-height:1.35;white-space:normal;display:-webkit-box;
+    -webkit-line-clamp:2;-webkit-box-orient:vertical;
+  }
+  .timeline-upcoming-item small{margin-top:5px;font-size:9px;line-height:1.35}
+
+  .timeline-calendar-shell{
+    position:relative;padding:12px 10px 10px;border-radius:18px;
+    border-color:rgba(126,175,218,.11);
+    background:
+      radial-gradient(circle at 75% 0%,rgba(141,54,94,.08),transparent 24rem),
+      linear-gradient(180deg,rgba(7,14,24,.96),rgba(3,8,14,.98));
+  }
+  .timeline-calendar-mobile-head{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;padding:2px 5px 12px;
+  }
+  .timeline-calendar-mobile-head strong{color:#abb8cb;font-size:11px;letter-spacing:.13em}
+  .timeline-calendar-mobile-head span{
+    min-height:34px;display:inline-flex;align-items:center;padding:0 11px;border:1px solid rgba(126,175,218,.10);
+    border-radius:11px;color:#95a8bd;background:rgba(14,27,45,.60);font-size:9px;
+  }
+  .timeline-calendar-hint{display:none}
+  .timeline-calendar-shell .fc{font-size:10px}
+  .timeline-calendar-shell .fc .fc-scrollgrid{border-radius:0;background:transparent}
+  .timeline-calendar-shell .fc .fc-col-header{display:none}
+  .timeline-calendar-shell .fc .fc-timegrid-axis{width:62px}
+  .timeline-calendar-shell .fc .fc-timegrid-slot{height:3.7em}
+  .timeline-calendar-shell .fc .fc-timegrid-axis-cushion,
+  .timeline-calendar-shell .fc .fc-timegrid-slot-label-cushion{
+    padding-right:10px;color:#728299;font-size:9px;
+  }
+  .timeline-calendar-shell .fc .fc-timegrid-slot-label-frame{text-align:right}
+  .timeline-calendar-shell .fc .fc-timegrid-now-indicator-line{
+    border-width:1px;border-color:#ff4d78;box-shadow:0 0 12px rgba(255,77,120,.30)
+  }
+  .timeline-calendar-shell .fc .fc-timegrid-now-indicator-arrow{
+    border-width:5px 0 5px 7px;border-color:transparent transparent transparent #ff4d78;
+  }
+  .timeline-calendar-shell .fc .fc-event{
+    padding:8px 10px;border:1px solid rgba(0,151,255,.95);border-left-width:3px;border-radius:10px;
+    color:#f3fbff;background:linear-gradient(135deg,rgba(7,107,189,.92),rgba(28,89,161,.92));
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 0 0 1px rgba(0,118,255,.16),0 10px 28px rgba(0,85,190,.15);
+  }
+  .timeline-calendar-shell .fc .fc-event-time{font-size:9px;opacity:.90}
+  .timeline-calendar-shell .fc .fc-event-title{margin-top:2px;font-size:11px;line-height:1.3}
+  .timeline-calendar-shell .fc .fc-timegrid-divider{display:none}
+  .timeline-calendar-shell .fc .fc-timegrid-col-bg{background:transparent}
+  .timeline-calendar-shell .fc .fc-day-today{background:transparent!important}
+
+  .nexus-mobile-dock{
+    left:8px;right:8px;bottom:max(6px,env(safe-area-inset-bottom));width:auto;
+    border:1px solid rgba(255,70,115,.20);border-radius:18px;
+    background:rgba(3,7,13,.92);backdrop-filter:blur(26px) saturate(150%);
+    box-shadow:0 -10px 46px rgba(0,0,0,.32);
+  }
+  .nexus-mobile-dock-inner{min-height:72px;padding:6px 8px}
+  .nexus-mobile-dock-link{
+    min-height:58px;border-radius:13px;color:#7f91a8;font-size:8px;
+  }
+  .nexus-mobile-dock-link[aria-current="page"]{
+    color:#dceafa;background:linear-gradient(145deg,rgba(7,73,117,.76),rgba(8,39,69,.82));
+  }
+  .nexus-mobile-dock-link[aria-current="page"] .nexus-mobile-icon{color:#70e9ff}
+  .zoro-dock-core{
+    width:58px;height:58px;min-width:58px;border:2px solid #ff416f;border-radius:50%;
+    color:#071018;background:linear-gradient(145deg,#62dfff,#7cc9ff);
+    box-shadow:0 0 0 3px rgba(255,65,111,.12),0 0 24px rgba(255,65,111,.38);
+  }
+}
+
+@media(max-width:430px){
+  .timeline-command-bar{grid-template-columns:minmax(0,1fr) auto}
+  .timeline-range-block h2{font-size:25px}
+  .timeline-nav button{width:38px;min-width:38px;min-height:38px}
+  .timeline-nav .timeline-today{min-width:68px;padding-inline:10px}
+  .timeline-status-card{min-height:126px;grid-template-columns:42px minmax(0,1fr) 14px;padding:12px 10px;gap:8px}
+  .timeline-status-icon{width:40px;height:40px}
+  .timeline-status-card strong{font-size:11px}
+  .timeline-upcoming-item{min-height:116px;padding:12px 9px}
+  .timeline-upcoming-item strong{font-size:10px}
+}
