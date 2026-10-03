@@ -9,7 +9,7 @@ export function zonedParts(date:Date,timeZone=APP_TIMEZONE):ZonedDateParts{
     timeZone,year:"numeric",month:"2-digit",day:"2-digit",
     hour:"2-digit",minute:"2-digit",second:"2-digit",hourCycle:"h23"
   }).formatToParts(date);
-  const value=(type:Intl.DateTimeFormatPartTypes)=>Number(parts.find(part=>part.type===type)?.value||0);
+  const value=(type:string)=>Number(parts.find(part=>part.type===type)?.value||0);
   return {year:value("year"),month:value("month"),day:value("day"),hour:value("hour"),minute:value("minute"),second:value("second")};
 }
 
