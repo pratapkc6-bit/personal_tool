@@ -404,14 +404,11 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
       /^(cancel|cancel it|no|never mind|nevermind|stop)$/.test(normalizedCommand)
     ) {
       resetComposer();
-      setPendingAction(null);
-      setConfirmationToken(null);
-      setChoices([]);
       setMessages((current) => [
         ...current,
         { role: "user", text: value, createdAt: new Date().toISOString() },
-        { role: "assistant", text: "Cancelled. I did not change anything.", engine: "action", createdAt: new Date().toISOString() },
       ]);
+      await cancelAction();
       return;
     }
 
@@ -666,6 +663,37 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
     }
   }
 
+  async function cancelAction() {
+    const hadPendingAction = Boolean(pendingAction || confirmationToken);
+    setPendingAction(null);
+    setConfirmationToken(null);
+    setChoices([]);
+
+    if (hadPendingAction) {
+      try {
+        await fetch("/api/assistant", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: "cancel" }),
+        });
+      } catch {
+        // Local cancellation still prevents an accidental tap in this session.
+      }
+    }
+
+    const reply = "Cancelled. I did not change anything.";
+    setMessages((current) => [
+      ...current,
+      { role: "assistant", text: reply, engine: "action", createdAt: new Date().toISOString() },
+    ]);
+
+    if (voiceModeRef.current && settings.spokenReplies) speak(reply);
+    else if (voiceModeRef.current) {
+      awaitingCommandRef.current = true;
+      restartListening(200);
+    }
+  }
+
   const voiceLabel =
     voiceState === "starting" ? "Opening the microphone…"
     : voiceState === "listening" ? "Say “" + wakeWord + "” when you need me."
@@ -870,7 +898,7 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
                 )}
               </div>
               <div className="zoro-action-buttons">
-                <button disabled={busy} onClick={() => { setPendingAction(null); setConfirmationToken(null); setChoices([]); }}>Cancel</button>
+                <button disabled={busy} onClick={() => void cancelAction()}>Cancel</button>
                 <button disabled={busy || !confirmationToken} onClick={confirmAction}>Confirm</button>
               </div>
             </section>
@@ -1029,7 +1057,7 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
                   )}
                 </div>
                 <div className="zoro-voice-approval-actions">
-                  <button onClick={() => { setPendingAction(null); setConfirmationToken(null); setChoices([]); awaitingCommandRef.current = true; restartListening(200); }}>Cancel</button>
+                  <button onClick={() => void cancelAction()}>Cancel</button>
                   <button disabled={busy || !confirmationToken} onClick={confirmAction}>Confirm action</button>
                 </div>
               </section>
