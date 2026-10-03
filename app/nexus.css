@@ -2774,3 +2774,466 @@ section[aria-label="On-device model"] {
   .timeline-upcoming-item{min-height:116px;padding:12px 9px}
   .timeline-upcoming-item strong{font-size:10px}
 }
+
+
+/* ========================================================================
+   Zoro Intelligence v7.8 · iPhone keyboard + mobile overflow hardening
+   ======================================================================== */
+.zoro-command-shell,
+.zoro-command-shell-main,
+.zoro-command-page,
+.zoro-command-mode,
+.zoro-command-main,
+.zoro-command-stream,
+.zoro-command-composer-zone,
+.zoro-command-composer,
+.zoro-voice-v3,
+.zoro-voice-stage,
+.zoro-voice-footer {
+  max-width: 100vw;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.zoro-command-mode,
+.zoro-command-main,
+.zoro-command-stream,
+.zoro-message,
+.zoro-message-body,
+.zoro-message-text,
+.zoro-message-notice,
+.zoro-action-card,
+.zoro-action-preview,
+.zoro-work-card,
+.zoro-voice-transcript,
+.zoro-voice-working,
+.zoro-voice-approval,
+.zoro-voice-approval-body {
+  min-width: 0;
+}
+
+.zoro-message-text,
+.zoro-message-notice,
+.zoro-action-preview,
+.zoro-action-preview p,
+.zoro-voice-transcript p,
+.zoro-voice-approval-body,
+.zoro-voice-approval-body p {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.zoro-command-prompt-rail,
+.zoro-voice-quick-actions {
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.zoro-command-prompt-rail::-webkit-scrollbar,
+.zoro-voice-quick-actions::-webkit-scrollbar { display: none; }
+
+@media (max-width: 480px) {
+  .zoro-command-shell {
+    top: var(--zoro-visual-top, 0px);
+    right: 0;
+    bottom: auto;
+    left: 0;
+    width: 100vw;
+    height: var(--zoro-visual-height, 100dvh);
+    max-height: var(--zoro-visual-height, 100dvh);
+    overflow: hidden;
+  }
+
+  .zoro-command-shell-main,
+  .zoro-command-page,
+  .zoro-command-mode {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    overflow: hidden;
+  }
+
+  .zoro-command-mode {
+    grid-template-rows: auto minmax(0, 1fr) auto;
+  }
+
+  .zoro-command-header {
+    min-height: 58px;
+    grid-template-columns: 42px minmax(0, 1fr) auto;
+    gap: 7px;
+    padding:
+      max(7px, env(safe-area-inset-top))
+      8px
+      7px;
+  }
+
+  .zoro-command-brand {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .zoro-command-brand > div {
+    min-width: 0;
+  }
+
+  .zoro-command-brand strong,
+  .zoro-command-brand small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .zoro-command-tools {
+    min-width: 0;
+    gap: 4px;
+  }
+
+  .zoro-command-tools button,
+  .zoro-command-tools a {
+    width: 38px;
+    min-width: 38px;
+    min-height: 38px;
+  }
+
+  .zoro-command-main {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .zoro-command-stream {
+    width: 100%;
+    min-height: 0;
+    padding: 12px 10px 14px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .zoro-command-mode .zoro-message {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .zoro-command-mode .zoro-message-body {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .zoro-command-mode .zoro-message-text {
+    width: 100%;
+    max-width: 100%;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .zoro-message-notice {
+    width: 100%;
+    max-width: 100%;
+    margin-top: 8px;
+    padding: 9px 10px;
+    font-size: 11px;
+    line-height: 1.45;
+  }
+
+  .zoro-action-sheet,
+  .zoro-work-card {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .zoro-command-prompt-rail {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 7px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0 1px 7px;
+  }
+
+  .zoro-command-prompt-rail button {
+    flex: 0 0 auto;
+    max-width: 78vw;
+    min-height: 36px;
+    padding: 0 12px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .zoro-command-composer-zone {
+    width: 100%;
+    padding:
+      7px
+      8px
+      max(8px, env(safe-area-inset-bottom));
+    border-top: 1px solid rgba(130,184,235,.09);
+    background: rgba(3,7,13,.96);
+  }
+
+  .zoro-command-composer {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr) 46px;
+    align-items: end;
+    gap: 6px;
+    padding: 5px;
+    overflow: hidden;
+    border-radius: 17px;
+  }
+
+  .zoro-command-composer textarea {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    max-height: 112px;
+    padding: 10px 4px 8px !important;
+    overflow-x: hidden;
+    overflow-y: auto;
+    font-size: 16px;
+    line-height: 1.42;
+  }
+
+  .zoro-command-composer textarea::placeholder {
+    font-size: 14px;
+    text-overflow: ellipsis;
+  }
+
+  .zoro-command-mic {
+    width: 42px;
+    min-width: 42px;
+    min-height: 44px;
+    border-radius: 13px;
+  }
+
+  .zoro-command-send {
+    width: 46px;
+    min-width: 46px;
+    min-height: 44px;
+    border-radius: 13px;
+  }
+
+  .zoro-command-welcome {
+    width: 100%;
+    max-width: 100%;
+    padding-inline: 4px;
+  }
+
+  .zoro-command-welcome h1 {
+    max-width: 100%;
+    font-size: clamp(30px, 9vw, 40px);
+  }
+
+  .zoro-command-intro {
+    width: 100%;
+    max-width: 360px;
+    font-size: 12px;
+  }
+
+  .zoro-command-capability-row {
+    width: 100%;
+    max-width: 100%;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding: 0 2px 4px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .zoro-command-capability-row::-webkit-scrollbar { display: none; }
+  .zoro-command-capability-row span {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .zoro-command-starters {
+    width: 100%;
+    max-width: 100%;
+    grid-template-columns: 1fr;
+  }
+
+  .zoro-command-starters button {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .zoro-voice-v3 {
+    top: var(--zoro-visual-top, 0px);
+    right: 0;
+    bottom: auto;
+    left: 0;
+    width: 100vw;
+    height: var(--zoro-visual-height, 100dvh);
+    max-height: var(--zoro-visual-height, 100dvh);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    overflow: hidden;
+  }
+
+  .zoro-voice-topbar {
+    min-height: 58px;
+    padding:
+      max(8px, env(safe-area-inset-top))
+      10px
+      8px;
+  }
+
+  .zoro-voice-session {
+    min-width: 0;
+  }
+
+  .zoro-voice-session > div {
+    min-width: 0;
+  }
+
+  .zoro-voice-session strong,
+  .zoro-voice-session small {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .zoro-voice-stage {
+    width: 100%;
+    min-height: 0;
+    justify-content: flex-start;
+    padding: 18px 12px 14px;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .zoro-voice-orb-button {
+    width: 150px;
+    height: 150px;
+    margin: 8px 0 18px;
+  }
+
+  .zoro-voice-v3 h2 {
+    max-width: 100%;
+    font-size: 32px;
+  }
+
+  .zoro-voice-state-copy {
+    width: 100%;
+    max-width: 360px;
+    font-size: 12px !important;
+    line-height: 1.45;
+  }
+
+  .zoro-voice-transcript,
+  .zoro-voice-working,
+  .zoro-voice-approval {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .zoro-voice-transcript {
+    min-height: 76px;
+    margin-top: 15px;
+    padding: 12px 13px;
+  }
+
+  .zoro-voice-transcript p {
+    max-height: 96px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .zoro-voice-quick-actions {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 7px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0 1px 3px;
+  }
+
+  .zoro-voice-quick-actions button {
+    flex: 0 0 auto;
+    max-width: 76vw;
+    min-height: 36px;
+    white-space: nowrap;
+  }
+
+  .zoro-voice-footer {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 8px;
+    padding:
+      8px
+      9px
+      max(9px, env(safe-area-inset-bottom));
+  }
+
+  .zoro-voice-footer button {
+    width: 100%;
+    min-width: 0;
+    min-height: 48px;
+    padding: 0 8px;
+    overflow: hidden;
+    font-size: 11px;
+  }
+
+  .zoro-voice-footer button span {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .zoro-voice-primary-control {
+    min-width: 0;
+  }
+
+  .zoro-command-alert {
+    width: calc(100vw - 20px);
+    max-width: calc(100vw - 20px);
+    bottom: calc(72px + env(safe-area-inset-bottom));
+  }
+
+  .zoro-context-drawer {
+    width: 100vw;
+    max-width: 100vw;
+  }
+}
+
+@media (max-width: 390px) {
+  .zoro-command-header {
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+  }
+
+  .zoro-command-tools button:first-child {
+    display: none;
+  }
+
+  .zoro-command-composer {
+    grid-template-columns: 40px minmax(0, 1fr) 44px;
+  }
+
+  .zoro-command-mic {
+    width: 40px;
+    min-width: 40px;
+  }
+
+  .zoro-command-send {
+    width: 44px;
+    min-width: 44px;
+  }
+
+  .zoro-voice-orb-button {
+    width: 136px;
+    height: 136px;
+  }
+
+  .zoro-voice-footer button {
+    font-size: 10px;
+  }
+}

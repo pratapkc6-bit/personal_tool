@@ -174,6 +174,35 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
   }, [busy]);
 
   useEffect(() => {
+    const viewport = window.visualViewport;
+    const root = document.documentElement;
+
+    const syncViewport = () => {
+      if (!viewport) {
+        root.style.removeProperty("--zoro-visual-height");
+        root.style.removeProperty("--zoro-visual-top");
+        return;
+      }
+
+      root.style.setProperty("--zoro-visual-height", viewport.height + "px");
+      root.style.setProperty("--zoro-visual-top", viewport.offsetTop + "px");
+    };
+
+    syncViewport();
+    viewport?.addEventListener("resize", syncViewport);
+    viewport?.addEventListener("scroll", syncViewport);
+    window.addEventListener("orientationchange", syncViewport);
+
+    return () => {
+      viewport?.removeEventListener("resize", syncViewport);
+      viewport?.removeEventListener("scroll", syncViewport);
+      window.removeEventListener("orientationchange", syncViewport);
+      root.style.removeProperty("--zoro-visual-height");
+      root.style.removeProperty("--zoro-visual-top");
+    };
+  }, []);
+
+  useEffect(() => {
     return () => {
       voiceModeRef.current = false;
       if (restartTimerRef.current) window.clearTimeout(restartTimerRef.current);
@@ -778,6 +807,9 @@ export function AssistantChat({ settings }: { settings: AssistantSettings }) {
             ref={composerRef}
             value={input}
             onChange={(event) => setInput(event.target.value)}
+            onFocus={() => {
+              window.setTimeout(() => composerRef.current?.scrollIntoView({ block: "nearest" }), 180);
+            }}
             onInput={(event) => {
               event.currentTarget.style.height = "0px";
               event.currentTarget.style.height = Math.min(event.currentTarget.scrollHeight, 140) + "px";
